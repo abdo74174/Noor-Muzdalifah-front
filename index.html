@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Data Entry System</title>
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+    <div class="auth-wrapper">
+        <!-- Animated Background Shapes -->
+        <div class="auth-bg-shape shape-1"></div>
+        <div class="auth-bg-shape shape-2"></div>
+        <div class="auth-bg-shape shape-3"></div>
+
+        <div class="auth-card glass">
+            <!-- Language Switcher -->
+            <div class="auth-lang-wrapper">
+                <div class="lang-switcher">
+                    <button class="lang-btn" onclick="setLang('en')">EN</button>
+                    <button class="lang-btn" onclick="setLang('ar')">AR</button>
+                </div>
+            </div>
+
+            <div class="text-center">
+                <h1 data-key="login_title" style="margin-bottom: 0.5rem;">Welcome Back</h1>
+                <p style="color: var(--text-muted); margin-bottom: 2rem;">Enter your credentials to access the system
+                </p>
+            </div>
+
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="username" data-key="username">Username</label>
+                    <div style="position: relative;">
+                        <i class="ri-user-line"
+                            style="position: absolute; top: 50%; transform: translateY(-50%); left: 1rem; color: var(--text-muted);"></i>
+                        <input type="text" id="username" class="form-control" style="padding-left: 2.8rem;" required
+                            placeholder="admin / user1">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="password" data-key="password">Password</label>
+                    <div style="position: relative;">
+                        <i class="ri-lock-line"
+                            style="position: absolute; top: 50%; transform: translateY(-50%); left: 1rem; color: var(--text-muted);"></i>
+                        <input type="password" id="password" class="form-control" style="padding-left: 2.8rem;" required
+                            placeholder="••••••••">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="role" data-key="role">Role</label>
+                    <div style="position: relative;">
+                        <i class="ri-briefcase-line"
+                            style="position: absolute; top: 50%; transform: translateY(-50%); left: 1rem; color: var(--text-muted);"></i>
+                        <select id="role" class="form-control" style="padding-left: 2.8rem;">
+                            <option value="Admin" data-key="admin">Admin</option>
+                            <option value="User" data-key="user">User</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn" style="width: 100%; margin-top: 1rem;" data-key="login_btn">
+                    <span>Login</span> <i class="ri-arrow-right-line"></i>
+                </button>
+
+                <!-- Demo Buttons -->
+                <div class="demo-buttons">
+                    <button type="button" class="btn btn-outline demo-btn"
+                        onclick="demoLogin('Admin').then(ok => { if(ok) window.location.href='dashboard.html'; })">
+                        Demo Admin
+                    </button>
+                    <button type="button" class="btn btn-outline demo-btn"
+                        onclick="demoLogin('User').then(ok => { if(ok) window.location.href='dashboard.html'; })">
+                        Demo User
+                    </button>
+                </div>
+
+                <p id="authError" class="text-danger" style="text-align: center; margin-top: 1rem; font-size: 0.9rem;">
+                </p>
+            </form>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/lang.js"></script>
+    <script src="js/api.js"></script>
+    <script>
+        // RTL Support Helper
+        function updateRTL() {
+            const lang = localStorage.getItem('lang') || 'en';
+            if (lang === 'ar') {
+                document.body.dir = 'rtl';
+                document.querySelectorAll('input[style*="padding-left"]').forEach(el => {
+                    el.style.paddingLeft = '';
+                    el.style.paddingRight = '2.8rem';
+                });
+                document.querySelectorAll('.ri-user-line, .ri-lock-line, .ri-briefcase-line').forEach(el => {
+                    el.style.left = 'auto';
+                    el.style.right = '1rem';
+                });
+            } else {
+                document.body.dir = 'ltr';
+                // Reset styles if toggled back without reload (though lang.js reloads usually)
+            }
+        }
+        // Hook into existing lang logic if possible, or just run on load
+        document.addEventListener('DOMContentLoaded', updateRTL);
+
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const role = document.getElementById('role').value;
+
+            const success = await login(username, password, role);
+            if (success) {
+                window.location.href = 'dashboard.html';
+            } else {
+                document.getElementById('authError').innerText = 'Login Failed. Check credentials.';
+            }
+        });
+    </script>
+</body>
+
+</html>

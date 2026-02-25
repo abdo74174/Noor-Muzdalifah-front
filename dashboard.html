@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Data Entry System</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css">
+</head>
+
+<body>
+    <div class="container">
+        <!-- Navbar -->
+        <nav class="navbar glass" style="margin-top: 2rem;">
+            <div style="display: flex; alignItems: center; gap: 0.5rem;">
+                <i class="ri-dashboard-line" style="font-size: 1.5rem; color: var(--primary);"></i>
+                <h2 id="welcomeMsg" style="margin:0; font-size: 1.25rem;">Welcome</h2>
+            </div>
+
+            <div style="display: flex; gap: 1rem; align-items: center;">
+                <div class="lang-switcher">
+                    <button class="lang-btn" onclick="setLang('en')">EN</button>
+                    <button class="lang-btn" onclick="setLang('ar')">AR</button>
+                </div>
+                <button class="btn btn-outline" style="padding: 0.5rem 1rem; font-size: 0.85rem;" data-key="logout"
+                    onclick="logout()">
+                    <i class="ri-logout-box-r-line"></i> <span>Logout</span>
+                </button>
+            </div>
+        </nav>
+
+        <!-- Dashboard Tabs -->
+        <div class="tabs glass">
+            <div class="tab active" data-key="revenues" id="revTab" onclick="switchTab('revenues')">
+                <i class="ri-money-dollar-circle-line"></i> Revenues
+            </div>
+            <div class="tab" data-key="expenses" id="expTab" onclick="switchTab('expenses')">
+                <i class="ri-shopping-cart-line"></i> Expenses
+            </div>
+            <div class="tab admin-only d-none" data-key="summary" id="sumTab" onclick="switchTab('summary')">
+                <i class="ri-bar-chart-groupped-line"></i> Summary
+            </div>
+        </div>
+
+        <!-- REVENUE SECTION -->
+        <section id="revenuesSection">
+            <!-- User Form -->
+            <div id="revenueFormContainer" class="card glass">
+                <h3 data-key="revenues" style="display: flex; align-items: center; gap: 0.5rem;">
+                    <i class="ri-add-circle-line text-success"></i> New Revenue
+                </h3>
+                <form id="revenueForm"
+                    style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem;">
+
+                    <div class="form-group">
+                        <label data-key="client_name">Client Name</label>
+                        <input type="text" id="clientName" class="form-control" placeholder="e.g. John Doe" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label data-key="operation_type">Operation Type</label>
+                        <select id="opType" class="form-control">
+                            <option value="Visa" data-key="visa">Visa</option>
+                            <option value="Work Contract" data-key="work_contract">Work Contract</option>
+                            <option value="Umrah" data-key="umrah">Umrah</option>
+                            <option value="Hajj" data-key="hajj">Hajj</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label data-key="contract_price">Contract Price ($)</label>
+                        <input type="number" id="contractPrice" class="form-control" step="0.01" placeholder="0.00"
+                            required>
+                    </div>
+
+                    <div class="form-group">
+                        <label data-key="offer_price">Offer Price ($)</label>
+                        <input type="number" id="offerPrice" class="form-control" step="0.01" placeholder="0.00"
+                            required>
+                    </div>
+
+                    <div class="form-group">
+                        <label data-key="paid_amount">Paid Amount ($)</label>
+                        <input type="number" id="paidAmount" class="form-control" step="0.01" placeholder="0.00"
+                            required>
+                    </div>
+
+                    <div class="form-group" style="display: flex; align-items: flex-end;">
+                        <button type="submit" class="btn" data-key="add_btn" style="width: 100%;">
+                            <i class="ri-save-line"></i> Add Record
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Admin View (Grouping, Reports, Search) -->
+            <div class="admin-only d-none">
+                <div class="card glass"
+                    style="margin-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: center; border-left: 5px solid var(--secondary);">
+                    <div>
+                        <h4 data-key="january_report" style="margin:0;">January 2026 Report</h4>
+                        <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.25rem;">View detailed
+                            records for the start of the year.</p>
+                    </div>
+                    <a href="january-2026.html" class="btn" style="background: var(--secondary);">
+                        <i class="ri-external-link-line"></i> <span data-key="view_january">View Report</span>
+                    </a>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- EXPENSES SECTION -->
+        <section id="expensesSection" class="d-none">
+            <!-- User Form -->
+            <div id="expenseFormContainer" class="card glass">
+                <h3 data-key="expenses" style="display: flex; align-items: center; gap: 0.5rem;">
+                    <i class="ri-subtract-line text-danger"></i> New Expense
+                </h3>
+                <form id="expenseForm"
+                    style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem;">
+
+                    <div class="form-group">
+                        <label data-key="expense_type">Expense Type</label>
+                        <select id="expType" class="form-control">
+                            <option value="Salaries" data-key="salaries">Salaries</option>
+                            <option value="Water" data-key="water">Water</option>
+                            <option value="Electricity" data-key="electricity">Electricity</option>
+                            <option value="Procedures" data-key="procedures">Procedures</option>
+                            <option value="Other" data-key="other">Other</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label data-key="amount">Amount ($)</label>
+                        <input type="number" id="expAmount" class="form-control" step="0.01" placeholder="0.00"
+                            required>
+                    </div>
+
+                    <div class="form-group" style="grid-column: span 2;">
+                        <label data-key="notes">Notes</label>
+                        <input type="text" id="expNotes" class="form-control" placeholder="Optional details...">
+                    </div>
+
+                    <div class="form-group" style="display: flex; align-items: flex-end;">
+                        <button type="submit" class="btn" data-key="add_btn" style="width: 100%;">
+                            <i class="ri-save-line"></i> Add Record
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Admin View -->
+            <div class="admin-only d-none">
+                <!-- Expenses reports removed as per request -->
+            </div>
+        </section>
+
+        <!-- SUMMARY SECTION -->
+        <section id="summarySection" class="d-none">
+            <h3 data-key="summary" style="margin-bottom: 2rem;">Financial Overview</h3>
+
+            <div class="summary-grid" id="summaryStats">
+                <div class="glass summary-item">
+                    <span class="label" data-key="total_revenue">Total Revenue</span>
+                    <span class="value" id="statTotalRev">$0.00</span>
+                </div>
+                <div class="glass summary-item">
+                    <span class="label" data-key="total_paid">Total Paid</span>
+                    <span class="value text-success" id="statTotalPaid">$0.00</span>
+                </div>
+                <div class="glass summary-item">
+                    <span class="label" data-key="total_remaining">Total Remaining</span>
+                    <span class="value text-danger" id="statTotalRem">$0.00</span>
+                </div>
+                <div class="glass summary-item">
+                    <span class="label" data-key="total_expenses">Total Expenses</span>
+                    <span class="value" id="statTotalExp">$0.00</span>
+                </div>
+
+                <!-- Net Profit Big Card -->
+                <div class="glass summary-item">
+                    <div style="display: flex; flex-direction: column;">
+                        <span class="label" data-key="net_profit">Net Profit</span>
+                        <span style="font-size: 0.9rem; color: var(--text-muted);">Total Paid - Total Expenses</span>
+                    </div>
+                    <span class="value" id="statNetProfit">$0.00</span>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Success Message Toast -->
+    <div id="successMsg" class="glass"
+        style="position: fixed; top: 20px; right: 20px; padding: 1rem 2rem; background: var(--success); color: white; display: none; z-index: 1000; border: none; box-shadow: var(--shadow-lg); font-weight: 600; border-radius: var(--radius-md);">
+        <i class="ri-check-double-line"></i> <span data-key="added_success">Added Successfully</span>
+    </div>
+
+    <script src="js/lang.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/dashboard.js"></script>
+    <script>
+        // RTL Hook for Dashboard
+        function updateRTL() {
+            const lang = localStorage.getItem('lang') || 'en';
+            if (lang === 'ar') {
+                document.body.dir = 'rtl';
+                document.querySelectorAll('input[style*="padding-left"]').forEach(el => {
+                    el.style.paddingLeft = '';
+                    el.style.paddingRight = '2.8rem';
+                });
+                document.querySelectorAll('.ri-search-line').forEach(el => {
+                    el.style.left = 'auto';
+                    el.style.right = '1rem';
+                });
+            } else {
+                document.body.dir = 'ltr';
+            }
+        }
+        document.addEventListener('DOMContentLoaded', updateRTL);
+    </script>
+</body>
+
+</html>

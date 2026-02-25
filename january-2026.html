@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>January 2026 Report - Admin</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css">
+</head>
+
+<body>
+    <div class="container">
+        <!-- Navbar -->
+        <nav class="navbar glass" style="margin-top: 2rem;">
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                <i class="ri-calendar-event-line" style="font-size: 1.5rem; color: var(--primary);"></i>
+                <h2 data-key="january_report" style="margin:0; font-size: 1.25rem;">January 2026 Report</h2>
+            </div>
+
+            <div style="display: flex; gap: 1rem; align-items: center;">
+                <a href="dashboard.html" class="btn btn-outline" style="padding: 0.5rem 1rem; font-size: 0.85rem;">
+                    <i class="ri-arrow-left-line"></i> Back to Dashboard
+                </a>
+                <div class="lang-switcher">
+                    <button class="lang-btn" onclick="setLang('en')">EN</button>
+                    <button class="lang-btn" onclick="setLang('ar')">AR</button>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Report Table -->
+        <div class="card glass">
+            <h3 style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1.5rem;">
+                <i class="ri-file-list-3-line text-primary"></i>
+                <span data-key="monthly_reports">Monthly Reports</span> - January 2026
+            </h3>
+
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th data-key="client_name">Client Name</th>
+                            <th data-key="operation_type">Process Type</th>
+                            <th data-key="offer_price">Offer Price</th>
+                            <th data-key="paid_amount">Paid Amount</th>
+                            <th data-key="remaining">Remaining</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Mock Client A (Visa)</td>
+                            <td data-key="visa">Visa</td>
+                            <td>1500.00</td>
+                            <td class="text-success">1000.00</td>
+                            <td class="text-danger">500.00</td>
+                        </tr>
+                        <tr>
+                            <td>Mock Client B (Umrah)</td>
+                            <td data-key="umrah">Umrah</td>
+                            <td>2200.00</td>
+                            <td class="text-success">2200.00</td>
+                            <td>0.00</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/lang.js"></script>
+</body>
+
+</html>
