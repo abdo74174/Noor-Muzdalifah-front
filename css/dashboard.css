@@ -55,25 +55,43 @@ body[dir="rtl"] .sidebar {
     gap: 0.75rem;
 }
 
-.logo-icon {
-    width: 40px;
-    height: 40px;
-    border-radius: 12px;
-    background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+.sidebar-logo-img-wrap {
+    width: 44px;
+    height: 44px;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: white;
-    font-size: 1.25rem;
-    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
     flex-shrink: 0;
 }
 
-.logo-text {
-    font-size: 1.15rem;
-    font-weight: 700;
+.sidebar-logo-img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    border-radius: 6px;
+}
+
+.sidebar-logo-text {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.logo-name-ar {
+    font-size: 1.25rem;
+    font-weight: 800;
     color: var(--text-main);
-    letter-spacing: -0.02em;
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+}
+
+.logo-name-en {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--primary);
+    line-height: 1.2;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
 }
 
 .sidebar-toggle {

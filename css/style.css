@@ -421,19 +421,19 @@ body[dir="rtl"] .auth-brand-content {
 }
 
 .auth-brand-logo {
-    width: 64px;
-    height: 64px;
-    border-radius: 18px;
-    background: rgba(255, 255, 255, 0.2);
-    backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.35);
+    width: 80px;
+    height: 80px;
     display: flex;
     align-items: center;
-    justify-content: center;
-    font-size: 1.8rem;
-    color: white;
-    margin-bottom: 1.75rem;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    justify-content: flex-start;
+    margin-bottom: 1.5rem;
+}
+
+.brand-logo-img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    border-radius: 8px;
 }
 
 .auth-brand-title {
@@ -443,6 +443,12 @@ body[dir="rtl"] .auth-brand-content {
     letter-spacing: -0.03em;
     margin-bottom: 1rem;
     color: white;
+}
+
+.auth-brand-subtitle {
+    font-size: 1.2rem;
+    font-weight: 500;
+    opacity: 0.9;
 }
 
 .auth-brand-desc {
@@ -523,30 +529,38 @@ body[dir="rtl"] .auth-heading {
     text-align: right;
 }
 
-.auth-avatar-icon {
-    width: 60px;
-    height: 60px;
-    border-radius: 16px;
-    background: linear-gradient(135deg, var(--primary), var(--accent));
+.auth-form-logo {
+    width: 72px;
+    height: 72px;
+    margin: 0 auto 1rem;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: white;
+}
+
+body[dir="rtl"] .auth-form-logo {
+    margin: 0 0 1rem;
+}
+
+.auth-form-logo-img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+.auth-company-name {
     font-size: 1.6rem;
-    margin: 0 auto 1.25rem;
-    box-shadow: 0 6px 20px rgba(99, 102, 241, 0.35);
-}
-
-body[dir="rtl"] .auth-avatar-icon {
-    margin: 0 0 1.25rem;
-}
-
-.auth-heading h2 {
-    font-size: 1.75rem;
     font-weight: 800;
-    letter-spacing: -0.025em;
     color: var(--text);
-    margin-bottom: 0.35rem;
+    margin-bottom: 0px;
+    letter-spacing: -0.01em;
+}
+
+.auth-company-sub {
+    font-size: 0.95rem;
+    color: var(--primary);
+    font-weight: 600;
+    margin-bottom: 0.75rem;
 }
 
 .auth-subheading {
