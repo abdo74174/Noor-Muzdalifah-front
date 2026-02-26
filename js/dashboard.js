@@ -28,7 +28,8 @@ function switchTab(tab) {
             customerProfile: 'customer_profile',
             summary: 'summary',
             profile: 'profile',
-            userManagement: 'user_management'
+            userManagement: 'user_management',
+            settings: 'settings'
         };
         titleEl.setAttribute('data-key', titleKeys[tab] || tab);
         applyTranslations();
@@ -38,7 +39,7 @@ function switchTab(tab) {
     const allSections = [
         'revenuesSection', 'expensesSection', 'revenueListSection',
         'expenseListSection', 'summarySection', 'profileSection',
-        'customerProfileSection', 'userManagementSection'
+        'customerProfileSection', 'userManagementSection', 'settingsSection'
     ];
     allSections.forEach(id => {
         const el = document.getElementById(id);
@@ -57,6 +58,7 @@ function switchTab(tab) {
     if (tab === 'revenueList') loadRevenues();
     if (tab === 'expenseList') loadExpenses();
     if (tab === 'profile') loadProfile();
+    if (tab === 'settings') syncSettingsUI();
 
     // Close sidebar on mobile
     if (window.innerWidth <= 1024) {
@@ -533,4 +535,26 @@ window.addEventListener('langChanged', () => {
     if (!summarySection.classList.contains('d-none')) {
         loadSummary();
     }
+    syncSettingsUI();
 });
+
+// =============================================
+// SETTINGS
+// =============================================
+function syncSettingsUI() {
+    const lang = localStorage.getItem('lang') || 'ar';
+    const theme = localStorage.getItem('theme') || 'light';
+
+    // Sync language buttons
+    document.querySelectorAll('.settings-option-btn[data-lang]').forEach(btn => {
+        const active = btn.dataset.lang === lang;
+        btn.classList.toggle('settings-option-active', active);
+    });
+
+    // Sync theme buttons
+    document.querySelectorAll('.settings-option-btn.theme-btn').forEach(btn => {
+        const active = btn.dataset.theme === theme;
+        btn.classList.toggle('settings-option-active', active);
+    });
+}
+

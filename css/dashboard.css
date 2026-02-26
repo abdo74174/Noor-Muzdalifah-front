@@ -1316,3 +1316,167 @@ body[dir="rtl"] .customer-result-item:hover {
         grid-template-columns: 1fr;
     }
 }
+
+/* ============================================
+   Settings Section
+   ============================================ */
+.settings-card {
+    max-width: 640px;
+}
+
+.settings-option-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.settings-option-btn {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 1.25rem;
+    border-radius: 12px;
+    border: 2px solid var(--border-color);
+    background: transparent;
+    cursor: pointer;
+    font-family: inherit;
+    text-align: start;
+    transition: all 0.2s ease;
+    position: relative;
+    width: 100%;
+}
+
+.settings-option-btn:hover {
+    border-color: var(--primary);
+    background: rgba(99, 102, 241, 0.04);
+    transform: translateX(2px);
+}
+
+body[dir="rtl"] .settings-option-btn:hover {
+    transform: translateX(-2px);
+}
+
+.settings-option-active {
+    border-color: var(--primary) !important;
+    background: rgba(99, 102, 241, 0.06) !important;
+    box-shadow: 0 0 0 1px rgba(99, 102, 241, 0.2);
+}
+
+.settings-option-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.6rem;
+    flex-shrink: 0;
+    background: var(--surface-alt, rgba(99, 102, 241, 0.06));
+    border: 1px solid var(--border-color);
+}
+
+.settings-theme-icon {
+    font-size: 1.3rem;
+}
+
+.settings-light-icon {
+    background: rgba(245, 158, 11, 0.1);
+    color: #f59e0b;
+    border-color: rgba(245, 158, 11, 0.2);
+}
+
+.settings-dark-icon {
+    background: rgba(99, 102, 241, 0.1);
+    color: var(--primary);
+    border-color: rgba(99, 102, 241, 0.2);
+}
+
+.settings-system-icon {
+    background: rgba(16, 185, 129, 0.1);
+    color: var(--success);
+    border-color: rgba(16, 185, 129, 0.2);
+}
+
+.settings-option-info {
+    flex: 1;
+}
+
+.settings-option-info strong {
+    display: block;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--text-main);
+    margin-bottom: 0.15rem;
+}
+
+.settings-option-info span {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+.settings-option-check {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: 2px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: transparent;
+    flex-shrink: 0;
+    transition: all 0.2s ease;
+    font-size: 0.875rem;
+}
+
+.settings-option-active .settings-option-check {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: white;
+}
+
+/* Info Grid (About section) */
+.settings-info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+.settings-info-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    padding: 1rem;
+    border-radius: 10px;
+    background: rgba(99, 102, 241, 0.04);
+    border: 1px solid var(--border-color);
+}
+
+.settings-info-label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+
+.settings-info-value {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text-main);
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+    .settings-card {
+        max-width: 100%;
+    }
+
+    .settings-option-btn {
+        flex-wrap: wrap;
+    }
+
+    .settings-option-icon {
+        width: 40px;
+        height: 40px;
+    }
+}

@@ -1,13 +1,22 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ar">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - Data Entry System</title>
+    <title>لوحة التحكم - نظام إدخال البيانات</title>
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/dashboard.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css">
+    <!-- Apply theme immediately to prevent flash -->
+    <script>
+        (function () {
+            const t = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', t === 'system'
+                ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
+                : t);
+        })();
+    </script>
 </head>
 
 <body>
@@ -55,25 +64,25 @@
                     <span data-key="summary">Summary</span>
                 </a>
 
-                <div class="nav-section-label">ACCOUNT</div>
+                <div class="nav-section-label" data-key="nav_account">ACCOUNT</div>
                 <a class="nav-item" id="navProfile" onclick="switchTab('profile')">
-                    <i class="ri-user-settings-line"></i>
+                    <i class="ri-user-3-line"></i>
                     <span data-key="profile">My Profile</span>
                 </a>
                 <a class="nav-item admin-only d-none" id="navUserManagement" onclick="switchTab('userManagement')">
                     <i class="ri-user-add-line"></i>
                     <span data-key="user_management">User Management</span>
                 </a>
+                <a class="nav-item" id="navSettings" onclick="switchTab('settings')">
+                    <i class="ri-settings-3-line"></i>
+                    <span data-key="settings">Settings</span>
+                </a>
             </nav>
 
             <div class="sidebar-footer">
-                <div class="lang-switcher">
-                    <button class="lang-btn" onclick="setLang('en')">EN</button>
-                    <button class="lang-btn" onclick="setLang('ar')">AR</button>
-                </div>
-                <button class="nav-item logout-item" data-key="logout" onclick="logout()">
+                <button class="nav-item logout-item" onclick="logout()">
                     <i class="ri-logout-box-r-line"></i>
-                    <span data-key="logout">Logout</span>
+                    <span data-key="logout">تسجيل خروج</span>
                 </button>
             </div>
         </aside>
@@ -569,6 +578,120 @@
                                 </button>
                             </div>
                         </form>
+                    </div>
+                </section>
+
+                <!-- ==================== SETTINGS SECTION ==================== -->
+                <section id="settingsSection" class="d-none section-animate">
+
+                    <!-- Language Card -->
+                    <div class="content-card settings-card">
+                        <div class="card-header">
+                            <div class="card-header-icon"
+                                style="background:rgba(99,102,241,0.12);color:var(--primary);">
+                                <i class="ri-translate-2"></i>
+                            </div>
+                            <div>
+                                <h3 data-key="language_setting">Language</h3>
+                                <p class="card-subtitle" data-key="language_desc">Choose your preferred display language
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="settings-option-group">
+                            <button class="settings-option-btn" data-lang="ar" data-theme-btn="false"
+                                onclick="setLang('ar'); syncSettingsUI();">
+                                <div class="settings-option-icon">🇸🇦</div>
+                                <div class="settings-option-info">
+                                    <strong data-key="arabic">العربية</strong>
+                                    <span>Arabic — RTL layout</span>
+                                </div>
+                                <div class="settings-option-check"><i class="ri-check-line"></i></div>
+                            </button>
+                            <button class="settings-option-btn" data-lang="en" data-theme-btn="false"
+                                onclick="setLang('en'); syncSettingsUI();">
+                                <div class="settings-option-icon">🇬🇧</div>
+                                <div class="settings-option-info">
+                                    <strong data-key="english">English</strong>
+                                    <span>English — LTR layout</span>
+                                </div>
+                                <div class="settings-option-check"><i class="ri-check-line"></i></div>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Theme Card -->
+                    <div class="content-card settings-card">
+                        <div class="card-header">
+                            <div class="card-header-icon"
+                                style="background:rgba(245,158,11,0.12);color:var(--warning);">
+                                <i class="ri-palette-line"></i>
+                            </div>
+                            <div>
+                                <h3 data-key="theme_setting">Appearance</h3>
+                                <p class="card-subtitle" data-key="theme_desc">Select light or dark mode</p>
+                            </div>
+                        </div>
+
+                        <div class="settings-option-group">
+                            <button class="settings-option-btn theme-btn" data-theme="light"
+                                onclick="setTheme('light'); syncSettingsUI();">
+                                <div class="settings-option-icon settings-theme-icon settings-light-icon">
+                                    <i class="ri-sun-line"></i>
+                                </div>
+                                <div class="settings-option-info">
+                                    <strong data-key="light_mode">Light Mode</strong>
+                                    <span data-key="light_mode_desc">Clean white interface</span>
+                                </div>
+                                <div class="settings-option-check"><i class="ri-check-line"></i></div>
+                            </button>
+                            <button class="settings-option-btn theme-btn" data-theme="dark"
+                                onclick="setTheme('dark'); syncSettingsUI();">
+                                <div class="settings-option-icon settings-theme-icon settings-dark-icon">
+                                    <i class="ri-moon-line"></i>
+                                </div>
+                                <div class="settings-option-info">
+                                    <strong data-key="dark_mode">Dark Mode</strong>
+                                    <span data-key="dark_mode_desc">Easy on the eyes</span>
+                                </div>
+                                <div class="settings-option-check"><i class="ri-check-line"></i></div>
+                            </button>
+                            <button class="settings-option-btn theme-btn" data-theme="system"
+                                onclick="setTheme('system'); syncSettingsUI();">
+                                <div class="settings-option-icon settings-theme-icon settings-system-icon">
+                                    <i class="ri-computer-line"></i>
+                                </div>
+                                <div class="settings-option-info">
+                                    <strong data-key="system_mode">System Default</strong>
+                                    <span data-key="system_mode_desc">Follow device setting</span>
+                                </div>
+                                <div class="settings-option-check"><i class="ri-check-line"></i></div>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- App Info Card -->
+                    <div class="content-card settings-card">
+                        <div class="card-header">
+                            <div class="card-header-icon"
+                                style="background:rgba(16,185,129,0.12);color:var(--success);">
+                                <i class="ri-information-line"></i>
+                            </div>
+                            <div>
+                                <h3 data-key="about_setting">About</h3>
+                                <p class="card-subtitle" data-key="about_desc">Application information</p>
+                            </div>
+                        </div>
+                        <div class="settings-info-grid">
+                            <div class="settings-info-item">
+                                <span class="settings-info-label" data-key="app_name">Application</span>
+                                <span class="settings-info-value">Data Entry System</span>
+                            </div>
+                            <div class="settings-info-item">
+                                <span class="settings-info-label" data-key="version">Version</span>
+                                <span class="settings-info-value">2.0.0</span>
+                            </div>
+                        </div>
                     </div>
                 </section>
             </div>

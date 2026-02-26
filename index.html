@@ -4,122 +4,198 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Data Entry System - Secure login portal for managing business operations">
-    <title>Login - Data Entry System</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <meta name="description" content="Login to Data Entry System - Manage revenues and expenses efficiently.">
+    <title>Sign In — Data Entry System</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
 
 <body>
-    <div class="auth-wrapper" role="main" aria-label="Authentication">
-        <!-- Animated Background Shapes -->
-        <div class="auth-bg-shape shape-1" aria-hidden="true"></div>
-        <div class="auth-bg-shape shape-2" aria-hidden="true"></div>
-        <div class="auth-bg-shape shape-3" aria-hidden="true"></div>
+    <div class="auth-page">
 
-        <div class="auth-card glass" role="dialog" aria-labelledby="loginTitle">
-            <!-- Language Switcher -->
-            <div class="auth-lang-wrapper" role="toolbar" aria-label="Language selection">
-                <div class="lang-switcher">
-                    <button class="lang-btn" onclick="setLang('en')" aria-label="Switch to English">EN</button>
-                    <button class="lang-btn" onclick="setLang('ar')" aria-label="Switch to Arabic">AR</button>
+        <!-- ===== LEFT BRAND PANEL ===== -->
+        <aside class="auth-brand" aria-hidden="true">
+            <div class="auth-brand-inner">
+                <!-- Decorative blobs -->
+                <div class="auth-blob blob-1"></div>
+                <div class="auth-blob blob-2"></div>
+                <div class="auth-blob blob-3"></div>
+
+                <div class="auth-brand-content">
+                    <div class="auth-brand-logo">
+                        <i class="ri-bar-chart-grouped-fill" aria-hidden="true"></i>
+                    </div>
+                    <h1 class="auth-brand-title">Data Entry<br>System</h1>
+                    <p class="auth-brand-desc">Manage revenues, expenses and client records from one powerful,
+                        streamlined dashboard.</p>
+
+                    <div class="auth-features">
+                        <div class="auth-feature-item">
+                            <div class="auth-feature-icon"><i class="ri-line-chart-line"></i></div>
+                            <span>Real-time financial tracking</span>
+                        </div>
+                        <div class="auth-feature-item">
+                            <div class="auth-feature-icon"><i class="ri-user-search-line"></i></div>
+                            <span>Full client profile management</span>
+                        </div>
+                        <div class="auth-feature-item">
+                            <div class="auth-feature-icon"><i class="ri-shield-check-line"></i></div>
+                            <span>Role-based secure access</span>
+                        </div>
+                    </div>
                 </div>
             </div>
+        </aside>
 
-            <div class="auth-brand">
-                <div class="auth-logo" aria-hidden="true">
-                    <i class="ri-database-2-line"></i>
+        <!-- ===== RIGHT FORM PANEL ===== -->
+        <main class="auth-form-panel" role="main">
+            <div class="auth-form-inner">
+
+                <!-- Language Switcher -->
+                <div class="auth-lang-wrapper" role="navigation" aria-label="Language selection">
+                    <div class="lang-switcher">
+                        <button class="lang-btn" onclick="setLang('en')" aria-label="Switch to English">EN</button>
+                        <button class="lang-btn" onclick="setLang('ar')" aria-label="Switch to Arabic">AR</button>
+                    </div>
                 </div>
-                <h1 id="loginTitle" data-key="login_title">Welcome Back</h1>
-                <p class="auth-subtitle">Enter your credentials to access the system</p>
+
+                <!-- Heading -->
+                <div class="auth-heading">
+                    <div class="auth-avatar-icon">
+                        <i class="ri-user-3-fill" aria-hidden="true"></i>
+                    </div>
+                    <h2 data-key="login_title">Welcome Back</h2>
+                    <p class="auth-subheading">Enter your credentials to access your account</p>
+                </div>
+
+                <!-- Login Form -->
+                <form id="loginForm" class="auth-form" novalidate aria-label="Login form">
+
+                    <div class="field-group">
+                        <label for="username" data-key="username">Username</label>
+                        <div class="field-wrapper">
+                            <i class="ri-user-line field-icon" aria-hidden="true"></i>
+                            <input type="text" id="username" name="username" class="field-input"
+                                placeholder="Enter your username" autocomplete="username" required aria-required="true">
+                        </div>
+                    </div>
+
+                    <div class="field-group">
+                        <label for="password" data-key="password">Password</label>
+                        <div class="field-wrapper">
+                            <i class="ri-lock-line field-icon" aria-hidden="true"></i>
+                            <input type="password" id="password" name="password" class="field-input"
+                                placeholder="••••••••" autocomplete="current-password" required aria-required="true">
+                            <button type="button" class="field-toggle-pw" id="togglePw"
+                                aria-label="Toggle password visibility" onclick="togglePassword()">
+                                <i class="ri-eye-off-line" id="togglePwIcon" aria-hidden="true"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="field-group">
+                        <label for="role" data-key="role">Account Type</label>
+                        <div class="field-wrapper">
+                            <i class="ri-shield-user-line field-icon" aria-hidden="true"></i>
+                            <select id="role" name="role" class="field-input" required aria-required="true">
+                                <option value="Admin" data-key="admin">Administrator</option>
+                                <option value="User" data-key="user">Employee</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Error message -->
+                    <div id="authError" class="auth-error" role="alert" aria-live="polite" style="display:none;"></div>
+
+                    <!-- Submit -->
+                    <button type="submit" class="btn-signin" id="submitBtn" aria-label="Sign in">
+                        <span data-key="login_btn">Sign In</span>
+                        <i class="ri-arrow-right-line btn-signin-icon" aria-hidden="true"></i>
+                        <div class="btn-signin-ripple"></div>
+                    </button>
+
+                    <!-- Divider -->
+                    <div class="auth-divider" aria-hidden="true">
+                        <span>or try a demo</span>
+                    </div>
+
+                    <!-- Demo Buttons -->
+                    <div class="demo-row">
+                        <button type="button" class="btn-demo btn-demo-admin"
+                            onclick="demoLogin('Admin').then(ok => { if(ok) window.location.href='dashboard.html'; })"
+                            aria-label="Login as Demo Admin">
+                            <i class="ri-shield-user-fill" aria-hidden="true"></i>
+                            Demo Admin
+                        </button>
+                        <button type="button" class="btn-demo btn-demo-user"
+                            onclick="demoLogin('User').then(ok => { if(ok) window.location.href='dashboard.html'; })"
+                            aria-label="Login as Demo User">
+                            <i class="ri-user-2-fill" aria-hidden="true"></i>
+                            Demo User
+                        </button>
+                    </div>
+                </form>
+
+                <p class="auth-footer-note">Secure login · Role-based access control</p>
             </div>
-
-            <form id="loginForm" aria-label="Login form">
-                <div class="form-group">
-                    <label for="username" data-key="username">Username</label>
-                    <div class="input-wrapper">
-                        <i class="ri-user-line input-icon" aria-hidden="true"></i>
-                        <input type="text" id="username" class="form-control" required placeholder="admin / user1"
-                            autocomplete="username">
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label for="password" data-key="password">Password</label>
-                    <div class="input-wrapper">
-                        <i class="ri-lock-line input-icon" aria-hidden="true"></i>
-                        <input type="password" id="password" class="form-control" required placeholder="••••••••"
-                            autocomplete="current-password">
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label for="role" data-key="role">Role</label>
-                    <div class="input-wrapper">
-                        <i class="ri-briefcase-line input-icon" aria-hidden="true"></i>
-                        <select id="role" class="form-control" aria-label="Select account type">
-                            <option value="Admin" data-key="admin">Administrator</option>
-                            <option value="User" data-key="user">Employee</option>
-                        </select>
-                    </div>
-                </div>
-
-                <button type="submit" class="btn btn-login" data-key="login_btn" aria-label="Sign in">
-                    <span>Sign In</span> <i class="ri-arrow-right-line" aria-hidden="true"></i>
-                </button>
-
-                <!-- Demo Buttons -->
-                <div class="demo-divider">
-                    <span>or try a demo</span>
-                </div>
-                <div class="demo-buttons">
-                    <button type="button" class="btn btn-outline demo-btn"
-                        onclick="demoLogin('Admin').then(ok => { if(ok) window.location.href='dashboard.html'; })"
-                        aria-label="Login as demo admin">
-                        <i class="ri-shield-user-line" aria-hidden="true"></i> Demo Admin
-                    </button>
-                    <button type="button" class="btn btn-outline demo-btn"
-                        onclick="demoLogin('User').then(ok => { if(ok) window.location.href='dashboard.html'; })"
-                        aria-label="Login as demo user">
-                        <i class="ri-user-line" aria-hidden="true"></i> Demo User
-                    </button>
-                </div>
-
-                <p id="authError" class="text-danger auth-error" role="alert" aria-live="polite"></p>
-            </form>
-        </div>
+        </main>
     </div>
 
     <!-- Scripts -->
     <script src="js/lang.js"></script>
     <script src="js/api.js"></script>
     <script>
-        // RTL Support
-        function updateRTL() {
-            const lang = localStorage.getItem('lang') || 'en';
-            document.body.dir = lang === 'ar' ? 'rtl' : 'ltr';
-        }
-        document.addEventListener('DOMContentLoaded', updateRTL);
+        // Apply theme before first paint to prevent flash
+        (function () {
+            const theme = localStorage.getItem('theme') || 'light';
+            if (theme === 'dark') document.documentElement.setAttribute('data-theme', 'dark');
+            else document.documentElement.setAttribute('data-theme', 'light');
+        })();
 
+        // RTL - applied by lang.js on DOMContentLoaded
+
+        // Toggle Password Visibility
+        function togglePassword() {
+            const pw = document.getElementById('password');
+            const icon = document.getElementById('togglePwIcon');
+            if (pw.type === 'password') {
+                pw.type = 'text';
+                icon.className = 'ri-eye-line';
+            } else {
+                pw.type = 'password';
+                icon.className = 'ri-eye-off-line';
+            }
+        }
+
+        // Login Submit
         document.getElementById('loginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const btn = e.target.querySelector('.btn-login');
-            btn.classList.add('btn-loading');
+            const btn = document.getElementById('submitBtn');
+            const errorEl = document.getElementById('authError');
+
+            btn.classList.add('loading');
+            btn.disabled = true;
+            errorEl.style.display = 'none';
 
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
             const role = document.getElementById('role').value;
 
             const success = await login(username, password, role);
-            btn.classList.remove('btn-loading');
+
             if (success) {
-                window.location.href = 'dashboard.html';
+                btn.classList.remove('loading');
+                btn.classList.add('success');
+                btn.querySelector('span').textContent = currentLang === 'ar' ? 'جارٍ التوجيه...' : 'Redirecting...';
+                setTimeout(() => window.location.href = 'dashboard.html', 600);
             } else {
-                const errEl = document.getElementById('authError');
-                errEl.innerText = 'Login Failed. Check credentials.';
-                errEl.classList.add('shake');
-                setTimeout(() => errEl.classList.remove('shake'), 500);
+                btn.classList.remove('loading');
+                btn.disabled = false;
+                errorEl.textContent = currentLang === 'ar'
+                    ? 'بيانات الدخول غير صحيحة. حاول مجدداً.'
+                    : 'Invalid credentials. Please try again.';
+                errorEl.style.display = 'flex';
+                document.getElementById('loginForm').classList.add('shake');
+                setTimeout(() => document.getElementById('loginForm').classList.remove('shake'), 600);
             }
         });
     </script>
