@@ -552,6 +552,61 @@ tr:hover td {
     font-size: 0.85rem;
 }
 
+/* Dashboard Navigation */
+.nav-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+}
+
+.nav-logo {
+    font-size: 1.5rem;
+    color: var(--primary);
+}
+
+.nav-title {
+    margin: 0;
+    font-size: 1.25rem;
+}
+
+.nav-actions {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.nav-logout-btn {
+    padding: 0.5rem 1rem;
+    font-size: 0.85rem;
+}
+
+/* Grid & Form Helpers */
+.grid-form {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.5rem;
+}
+
+.form-action {
+    display: flex;
+    align-items: flex-end;
+}
+
+.btn-block {
+    width: 100%;
+}
+
+.span-2 {
+    grid-column: span 2;
+}
+
+.card-header-with-icon {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+}
+
 /* --- Responsive Design --- */
 
 /* Tablets and below (max-width: 1024px) */
@@ -706,4 +761,40 @@ body[dir="rtl"] .summary-item:nth-child(5) {
         opacity: 1;
         transform: translateY(0);
     }
+}
+
+/* --- Badges --- */
+.badge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    background: rgba(99, 102, 241, 0.1);
+    color: var(--primary);
+    letter-spacing: 0.02em;
+}
+
+.badge-expense {
+    background: rgba(239, 68, 68, 0.1);
+    color: var(--danger);
+}
+
+/* --- Empty State --- */
+.empty-state {
+    text-align: center;
+    padding: 3rem 1.5rem;
+    color: var(--text-muted);
+}
+
+.empty-state i {
+    font-size: 3rem;
+    margin-bottom: 0.75rem;
+    opacity: 0.4;
+    display: block;
+}
+
+.empty-state p {
+    font-size: 0.95rem;
+    font-weight: 500;
 }

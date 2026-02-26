@@ -18,12 +18,28 @@ const MOCK_DATA = {
         {
             monthName: 'January 2026',
             revenues: [
-                { clientName: 'Mock Client A (Visa)', operationType: 'Visa', contractPrice: 1500, offerPrice: 1500, paidAmount: 1000, remaining: 500 },
-                { clientName: 'Mock Client B (Umrah)', operationType: 'Umrah', contractPrice: 2000, offerPrice: 2200, paidAmount: 2200, remaining: 0 }
+                { id: 1, clientName: 'Ahmed Ali', operationType: 'Visa', contractPrice: 1200, offerPrice: 1500, paidAmount: 1000, remaining: 500, revenue: 300, rest: 500 },
+                { id: 2, clientName: 'Mohammed Hassan', operationType: 'Umrah', contractPrice: 1800, offerPrice: 2200, paidAmount: 2200, remaining: 0, revenue: 400, rest: 0 },
+                { id: 3, clientName: 'Abdullah Omar', operationType: 'Work Contract', contractPrice: 3000, offerPrice: 3500, paidAmount: 2000, remaining: 1500, revenue: 500, rest: 1500 },
+                { id: 4, clientName: 'Ahmed Ali', operationType: 'Hajj', contractPrice: 4000, offerPrice: 4800, paidAmount: 3000, remaining: 1800, revenue: 800, rest: 1800 }
             ],
             expenses: [
-                { expenseType: 'Salaries', amount: 5000, notes: 'Staff Salaries' },
-                { expenseType: 'Electricity', amount: 200, notes: 'Office Light' }
+                { id: 1, expenseType: 'Salaries', amount: 5000, notes: 'Staff Salaries for January' },
+                { id: 2, expenseType: 'Electricity', amount: 200, notes: 'Office Electricity Bill' },
+                { id: 3, expenseType: 'Water', amount: 80, notes: 'Water Supply' }
+            ]
+        },
+        {
+            monthName: 'February 2026',
+            revenues: [
+                { id: 5, clientName: 'Khaled Ibrahim', operationType: 'Visa', contractPrice: 1000, offerPrice: 1300, paidAmount: 1300, remaining: 0, revenue: 300, rest: 0 },
+                { id: 6, clientName: 'Ahmed Ali', operationType: 'Umrah', contractPrice: 2500, offerPrice: 3000, paidAmount: 1500, remaining: 1500, revenue: 500, rest: 1500 },
+                { id: 7, clientName: 'Sami Youssef', operationType: 'Work Contract', contractPrice: 2200, offerPrice: 2800, paidAmount: 2800, remaining: 0, revenue: 600, rest: 0 }
+            ],
+            expenses: [
+                { id: 4, expenseType: 'Salaries', amount: 5000, notes: 'Staff Salaries for February' },
+                { id: 5, expenseType: 'Procedures', amount: 350, notes: 'Government Fees' },
+                { id: 6, expenseType: 'Other', amount: 120, notes: 'Office Supplies' }
             ]
         }
     ]
@@ -74,18 +90,62 @@ async function apiFetch(endpoint, method = 'GET', body = null) {
 }
 
 function getMockResponse(endpoint, method, body) {
-    // Simulate network delay
     return new Promise(resolve => {
         setTimeout(() => {
             if (endpoint.includes('/Auth/login')) resolve(MOCK_DATA.user);
+            else if (endpoint.includes('/Auth/register')) resolve({ message: 'User created successfully' });
             else if (endpoint.includes('/Dashboard/summary')) resolve(MOCK_DATA.summary);
-            else if (endpoint.includes('/Dashboard/reports')) resolve(MOCK_DATA.reports);
+            else if (endpoint.includes('/Dashboard/reports')) {
+                // Client-side search filtering for mock data
+                const urlParams = new URLSearchParams(endpoint.split('?')[1] || '');
+                const search = (urlParams.get('search') || '').toLowerCase();
 
-            // For POST requests (Add Revenue/Expense), just return success
+                let filtered = MOCK_DATA.reports.map(report => ({
+                    ...report,
+                    revenues: report.revenues.filter(r =>
+                        !search ||
+                        r.clientName.toLowerCase().includes(search) ||
+                        r.operationType.toLowerCase().includes(search)
+                    ),
+                    expenses: report.expenses.filter(e =>
+                        !search ||
+                        e.expenseType.toLowerCase().includes(search) ||
+                        (e.notes || '').toLowerCase().includes(search)
+                    )
+                }));
+
+                resolve(filtered);
+            }
+            else if (endpoint.includes('/Revenues') && method === 'GET') {
+                // Flat list of all revenues
+                const allRevs = MOCK_DATA.reports.flatMap(r => r.revenues);
+                resolve(allRevs);
+            }
+            // For POST/PUT requests, return success
             else if (method === 'POST') resolve({ message: 'Mock Success' });
-
+            else if (method === 'PUT') {
+                // Simulate updating a record
+                if (body && body.clientName) {
+                    const id = parseInt(endpoint.split('/').pop());
+                    MOCK_DATA.reports.forEach(report => {
+                        report.revenues.forEach((r, i) => {
+                            if (r.id === id) {
+                                report.revenues[i] = {
+                                    ...r,
+                                    ...body,
+                                    remaining: body.offerPrice - body.paidAmount,
+                                    revenue: body.offerPrice - body.contractPrice,
+                                    rest: body.offerPrice - body.paidAmount
+                                };
+                            }
+                        });
+                    });
+                }
+                resolve({ message: 'Updated Successfully' });
+            }
+            else if (method === 'DELETE') resolve({ message: 'Deleted Successfully' });
             else resolve(null);
-        }, 500);
+        }, 300);
     });
 }
 

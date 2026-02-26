@@ -13,13 +13,13 @@
     <div class="container">
         <!-- Navbar -->
         <nav class="navbar glass" style="margin-top: 2rem;">
-            <div style="display: flex; align-items: center; gap: 0.5rem;">
-                <i class="ri-calendar-event-line" style="font-size: 1.5rem; color: var(--primary);"></i>
-                <h2 data-key="january_report" style="margin:0; font-size: 1.25rem;">January 2026 Report</h2>
+            <div class="nav-brand">
+                <i class="ri-calendar-event-line nav-logo"></i>
+                <h2 data-key="january_report" class="nav-title">January 2026 Report</h2>
             </div>
 
-            <div style="display: flex; gap: 1rem; align-items: center;">
-                <a href="dashboard.html" class="btn btn-outline" style="padding: 0.5rem 1rem; font-size: 0.85rem;">
+            <div class="nav-actions">
+                <a href="dashboard.html" class="btn btn-outline nav-logout-btn">
                     <i class="ri-arrow-left-line"></i> Back to Dashboard
                 </a>
                 <div class="lang-switcher">
@@ -31,7 +31,7 @@
 
         <!-- Report Table -->
         <div class="card glass">
-            <h3 style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1.5rem;">
+            <h3 class="card-header-with-icon">
                 <i class="ri-file-list-3-line text-primary"></i>
                 <span data-key="monthly_reports">Monthly Reports</span> - January 2026
             </h3>
@@ -45,6 +45,8 @@
                             <th data-key="offer_price">Offer Price</th>
                             <th data-key="paid_amount">Paid Amount</th>
                             <th data-key="remaining">Remaining</th>
+                            <th data-key="revenue">Revenue</th>
+                            <th data-key="rest">Rest</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -54,6 +56,8 @@
                             <td>1500.00</td>
                             <td class="text-success">1000.00</td>
                             <td class="text-danger">500.00</td>
+                            <td class="text-success">200.00</td>
+                            <td class="text-success">200.00</td>
                         </tr>
                         <tr>
                             <td>Mock Client B (Umrah)</td>
@@ -61,6 +65,8 @@
                             <td>2200.00</td>
                             <td class="text-success">2200.00</td>
                             <td>0.00</td>
+                            <td class="text-success">300.00</td>
+                            <td class="text-success">300.00</td>
                         </tr>
                     </tbody>
                 </table>
