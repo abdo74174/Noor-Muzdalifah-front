@@ -632,6 +632,14 @@ body[dir="rtl"] .input-wrapper .form-control {
     flex: 2;
 }
 
+/* --- Filter Separator (between search and date rows) --- */
+.filter-separator {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border-color) 20%, var(--border-color) 80%, transparent);
+    margin: 0 -0.25rem;
+    opacity: 0.8;
+}
+
 /* --- Report Highlight Card --- */
 .report-highlight-card {
     display: flex;

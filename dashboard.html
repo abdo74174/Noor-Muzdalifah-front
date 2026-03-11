@@ -204,8 +204,19 @@
                 <!-- ==================== REVENUE LIST SECTION (Admin) ==================== -->
                 <section id="revenueListSection" class="d-none section-animate">
                     <div class="content-card filter-card">
-                        <!-- Date mode toggle -->
-                        <div class="date-mode-toggle" style="margin-bottom:1rem;">
+                        <!-- Search Row -->
+                        <div class="filter-row" style="margin-bottom:1rem;">
+                            <div class="filter-item search-filter" style="flex:1;">
+                                <div class="input-wrapper">
+                                    <i class="ri-search-line input-icon"></i>
+                                    <input type="text" id="revSearch" class="form-control" data-key="search"
+                                        placeholder="Search customer..." oninput="loadRevenues()">
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Date Filter Row -->
+                        <div class="filter-separator"></div>
+                        <div class="date-mode-toggle" style="margin-bottom:0.75rem; margin-top:1rem;">
                             <button id="revModeDay" class="date-mode-btn active" onclick="setRevMode('day')">
                                 <i class="ri-calendar-event-line"></i>
                                 <span data-key="single_date">يوم محدد</span>
@@ -216,13 +227,6 @@
                             </button>
                         </div>
                         <div class="filter-row">
-                            <div class="filter-item search-filter">
-                                <div class="input-wrapper">
-                                    <i class="ri-search-line input-icon"></i>
-                                    <input type="text" id="revSearch" class="form-control" data-key="search"
-                                        placeholder="Search customer..." oninput="loadRevenues()">
-                                </div>
-                            </div>
                             <!-- Single date mode -->
                             <div class="filter-item" id="revDayPicker">
                                 <div class="input-wrapper">
@@ -329,8 +333,19 @@
                 <!-- ==================== EXPENSE LIST SECTION (Admin) ==================== -->
                 <section id="expenseListSection" class="d-none section-animate">
                     <div class="content-card filter-card">
-                        <!-- Date mode toggle -->
-                        <div class="date-mode-toggle" style="margin-bottom:1rem;">
+                        <!-- Search Row -->
+                        <div class="filter-row" style="margin-bottom:1rem;">
+                            <div class="filter-item search-filter" style="flex:1;">
+                                <div class="input-wrapper">
+                                    <i class="ri-search-line input-icon"></i>
+                                    <input type="text" id="expSearch" class="form-control" data-key="search"
+                                        placeholder="Search expenses..." oninput="loadExpenses()">
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Date Filter Row -->
+                        <div class="filter-separator"></div>
+                        <div class="date-mode-toggle" style="margin-bottom:0.75rem; margin-top:1rem;">
                             <button id="expModeDay" class="date-mode-btn active" onclick="setExpMode('day')">
                                 <i class="ri-calendar-event-line"></i>
                                 <span data-key="single_date">يوم محدد</span>
@@ -341,13 +356,6 @@
                             </button>
                         </div>
                         <div class="filter-row">
-                            <div class="filter-item search-filter">
-                                <div class="input-wrapper">
-                                    <i class="ri-search-line input-icon"></i>
-                                    <input type="text" id="expSearch" class="form-control" data-key="search"
-                                        placeholder="Search expenses..." oninput="loadExpenses()">
-                                </div>
-                            </div>
                             <!-- Single date mode -->
                             <div class="filter-item" id="expDayPicker">
                                 <div class="input-wrapper">
