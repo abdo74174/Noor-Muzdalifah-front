@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>التقرير الكامل - نظام إدخال البيانات</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css">
+    <script>
+        (function () {
+            const t = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', t === 'system'
+                ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
+                : t);
+        })();
+    </script>
+    <style>
+        .report-section { margin-bottom: 2rem; }
+        .report-grid { display: grid; grid-template-columns: 1fr; gap: 2rem; }
+        @media print {
+            .sidebar, .topbar, .btn-submit, .btn-report, .no-print { display: none !important; }
+            .dashboard-layout { display: block !important; }
+            .main-content { margin: 0 !important; border: 0 !important; }
+            .glass { background: none !important; backdrop-filter: none !important; border: none !important; box-shadow: none !important; }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar glass" id="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">
+                    <div class="sidebar-logo-img-wrap">
+                        <img src="images/logo.png" alt="Noor Mozdalifah" class="sidebar-logo-img">
+                    </div>
+                    <div class="sidebar-logo-text">
+                        <span class="logo-name-ar">نور مزدلفة</span>
+                        <span class="logo-name-en">Noor Mozdalifah</span>
+                    </div>
+                </div>
+                <button class="sidebar-toggle" onclick="toggleSidebar()"><i class="ri-menu-line"></i></button>
+            </div>
+            <nav class="sidebar-nav">
+                <div class="nav-section-label">DATA ENTRY</div>
+                <a class="nav-item" href="dashboard.html" onclick="localStorage.setItem('activeTab','revenues')">
+                    <i class="ri-add-circle-line"></i>
+                    <span data-key="revenues">Add Revenue</span>
+                </a>
+                <a class="nav-item" href="dashboard.html" onclick="localStorage.setItem('activeTab','expenses')">
+                    <i class="ri-add-circle-line"></i>
+                    <span data-key="expenses">Add Expense</span>
+                </a>
+                <div class="nav-section-label" data-key="nav_reports">REPORTS</div>
+                <a class="nav-item" href="reports.html"><i class="ri-bar-chart-grouped-line"></i><span data-key="reports_nav">التقارير</span></a>
+                <a class="nav-item active" href="full-report.html"><i class="ri-file-list-line"></i><span data-key="full_report">التقرير الكامل</span></a>
+                <div class="nav-section-label" data-key="nav_account">ACCOUNT</div>
+                <a class="nav-item" href="dashboard.html" onclick="localStorage.setItem('activeTab','profile')"><i class="ri-user-3-line"></i><span data-key="profile">My Profile</span></a>
+                <a class="nav-item" href="dashboard.html" onclick="localStorage.setItem('activeTab','settings')"><i class="ri-settings-3-line"></i><span data-key="settings">Settings</span></a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="topbar glass">
+                <div class="topbar-left">
+                    <button class="mobile-menu-btn" onclick="toggleSidebar()"><i class="ri-menu-line"></i></button>
+                    <div class="page-title-area">
+                        <h1 class="page-title" data-key="full_report">التقرير الكامل</h1>
+                        <p id="welcomeMsg" class="page-subtitle">Welcome</p>
+                    </div>
+                </div>
+                <div class="topbar-right">
+                    <button class="btn-submit no-print" onclick="window.print()" style="width: auto; height: 40px; padding: 0 1.25rem;">
+                        <i class="ri-printer-line"></i>
+                        <span data-key="print">طباعة</span>
+                    </button>
+                </div>
+            </header>
+
+            <div class="content-area">
+                <!-- Summary Stats (Top Level) -->
+                <section class="report-section">
+                    <div class="summary-stats-grid">
+                        <div class="stat-card stat-revenue">
+                            <div class="stat-icon-wrap"><i class="ri-line-chart-line"></i></div>
+                            <div class="stat-info">
+                                <span class="stat-label" data-key="total_revenue">Total Revenue</span>
+                                <span class="stat-value" id="statTotalRev">$0.00</span>
+                            </div>
+                        </div>
+                        <div class="stat-card stat-paid">
+                            <div class="stat-icon-wrap"><i class="ri-checkbox-circle-line"></i></div>
+                            <div class="stat-info">
+                                <span class="stat-label" data-key="total_paid">Total Paid</span>
+                                <span class="stat-value" id="statTotalPaid">$0.00</span>
+                            </div>
+                        </div>
+                        <div class="stat-card stat-remaining">
+                            <div class="stat-icon-wrap"><i class="ri-time-line"></i></div>
+                            <div class="stat-info">
+                                <span class="stat-label" data-key="total_remaining">Total Remaining</span>
+                                <span class="stat-value" id="statTotalRem">$0.00</span>
+                            </div>
+                        </div>
+                        <div class="stat-card stat-expenses">
+                            <div class="stat-icon-wrap"><i class="ri-shopping-bag-line"></i></div>
+                            <div class="stat-info">
+                                <span class="stat-label" data-key="total_expenses">Total Expenses</span>
+                                <span class="stat-value" id="statTotalExp">$0.00</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Detailed Tables -->
+                <div class="report-grid">
+                    <section class="report-section">
+                        <h3 class="month-group-header" data-key="revenue_list">Revenues</h3>
+                        <div id="revenueListContainer"></div>
+                    </section>
+                    <section class="report-section">
+                        <h3 class="month-group-header" data-key="expense_list">Expenses</h3>
+                        <div id="expenseListContainer"></div>
+                    </section>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script src="js/lang.js"></script>
+    <script>
+        const user = getUser();
+        if(!user || user.role !== 'Admin') window.location.href = 'index.html';
+        document.getElementById('welcomeMsg').innerText = `${user.username} (${user.role})`;
+
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('open');
+        }
+
+        async function loadAllData() {
+            try {
+                // Summary
+                const summary = await apiFetch('/Dashboard/summary');
+                document.getElementById('statTotalRev').innerText = `$${summary.totalRevenue.toLocaleString()}`;
+                document.getElementById('statTotalPaid').innerText = `$${summary.totalPaid.toLocaleString()}`;
+                document.getElementById('statTotalRem').innerText = `$${summary.totalRemaining.toLocaleString()}`;
+                document.getElementById('statTotalExp').innerText = `$${summary.totalExpenses.toLocaleString()}`;
+
+                // Revenues
+                const revs = await apiFetch('/Dashboard/reports');
+                renderGroupedRevenues(revs);
+
+                // Expenses
+                const exps = await apiFetch('/Dashboard/expenses');
+                renderGroupedExpenses(exps);
+
+            } catch(e) { console.error(e); }
+        }
+
+        function renderGroupedRevenues(reports) {
+            const container = document.getElementById('revenueListContainer');
+            container.innerHTML = reports.map(m => m.revenues.length > 0 ? `
+                <div class="content-card" style="margin-bottom:1rem">
+                    <h4 style="margin-bottom:0.5rem">${m.monthName}</h4>
+                    <div class="table-container">
+                        <table>
+                            <thead><tr>
+                                <th>Client</th><th>Type</th><th>Contract</th><th>Offer</th><th>Paid</th><th>Rest</th><th>Rev</th>
+                            </tr></thead>
+                            <tbody>${m.revenues.map(r => `
+                                <tr>
+                                    <td>${r.clientName}</td>
+                                    <td><span class="badge">${t(r.operationType.toLowerCase().replace(' ','_'))}</span></td>
+                                    <td>${r.contractPrice.toFixed(2)}</td>
+                                    <td>${r.offerPrice.toFixed(2)}</td>
+                                    <td class="text-success">${r.paidAmount.toFixed(2)}</td>
+                                    <td class="text-danger">${r.rest.toFixed(2)}</td>
+                                    <td class="text-success">${r.revenue.toFixed(2)}</td>
+                                </tr>
+                            `).join('')}</tbody>
+                        </table>
+                    </div>
+                </div>
+            ` : '').join('');
+            applyTranslations();
+        }
+
+        function renderGroupedExpenses(reports) {
+            const container = document.getElementById('expenseListContainer');
+            container.innerHTML = reports.map(m => m.expenses.length > 0 ? `
+                <div class="content-card" style="margin-bottom:1rem">
+                    <h4 style="margin-bottom:0.5rem">${m.monthName}</h4>
+                    <div class="table-container">
+                        <table>
+                            <thead><tr><th>Type</th><th>Amount</th><th>Notes</th></tr></thead>
+                            <tbody>${m.expenses.map(e => `
+                                <tr>
+                                    <td><span class="badge badge-expense">${t(e.expenseType.toLowerCase())}</span></td>
+                                    <td class="text-danger">${e.amount.toFixed(2)}</td>
+                                    <td>${e.notes || '—'}</td>
+                                </tr>
+                            `).join('')}</tbody>
+                        </table>
+                    </div>
+                </div>
+            ` : '').join('');
+            applyTranslations();
+        }
+
+        loadAllData();
+    </script>
+</body>
+</html>
