@@ -10,8 +10,8 @@
     "expenses": "المصروفات",
     "client_name": "اسم العميل",
     "operation_type": "الخدمة",
-    "contract_price": "سعر العقد",
-    "offer_price": "سعر العرض",
+    "contract_price": "سعر التكلفه",
+    "offer_price": "سعر النهائي",
     "paid_amount": "المبلغ المدفوع",
     "remaining": "المتبقي",
     "revenue": "الربح",
@@ -71,5 +71,11 @@
     "about_setting": "حول التطبيق",
     "about_desc": "معلومات التطبيق",
     "app_name": "التطبيق",
-    "version": "الإصدار"
+    "version": "الإصدار",
+    "ticket": "تذكرة",
+    "edit_profile": "تعديل ملف المشرف",
+    "new_name": "اسم مدير جديد",
+    "new_password": "كلمة مرور جديدة",
+    "update_profile_btn": "تحديث الملف",
+    "edit_profile_btn": "تعديل معلومات الملف الشخصي"
 }

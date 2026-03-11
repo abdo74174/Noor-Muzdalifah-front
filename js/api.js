@@ -143,6 +143,9 @@ function getMockResponse(endpoint, method, body) {
                 }
                 resolve({ message: 'Updated Successfully' });
             }
+            else if (endpoint.includes('/Auth/update-profile')) {
+                resolve({ message: 'Profile updated successfully' });
+            }
             else if (method === 'DELETE') resolve({ message: 'Deleted Successfully' });
             else resolve(null);
         }, 300);

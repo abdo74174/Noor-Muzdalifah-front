@@ -552,6 +552,70 @@ body[dir="rtl"] .input-wrapper .form-control {
     display: none;
 }
 
+/* --- Date mode toggle --- */
+.date-mode-toggle {
+    display: inline-flex;
+    background: var(--surface-alt, rgba(99,102,241,0.05));
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 3px;
+    gap: 3px;
+}
+
+.date-mode-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.45rem 1rem;
+    border: none;
+    border-radius: 8px;
+    background: transparent;
+    color: var(--text-muted);
+    font-family: inherit;
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.date-mode-btn i { font-size: 0.95rem; }
+
+.date-mode-btn:hover {
+    color: var(--primary);
+    background: rgba(99,102,241,0.06);
+}
+
+.date-mode-btn.active {
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    color: white;
+    box-shadow: 0 2px 8px rgba(99,102,241,0.25);
+}
+
+/* --- Clear date button --- */
+.btn-clear-date {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    border: 1.5px solid var(--border-color);
+    background: transparent;
+    color: var(--text-muted);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+    transition: all 0.2s ease;
+}
+
+.btn-clear-date:hover {
+    background: rgba(239,68,68,0.08);
+    border-color: var(--danger);
+    color: var(--danger);
+    transform: rotate(90deg);
+}
+
 .filter-row {
     display: flex;
     gap: 1rem;

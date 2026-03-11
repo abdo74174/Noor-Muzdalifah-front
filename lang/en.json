@@ -71,5 +71,13 @@
     "about_setting": "About",
     "about_desc": "Application information",
     "app_name": "Application",
-    "version": "Version"
+    "version": "Version",
+    "ticket": "Ticket",
+    "edit_profile": "Edit Admin Profile",
+    "new_name": "New Admin Name",
+    "new_password": "New Password",
+    "update_profile_btn": "Update Profile",
+    "edit_profile_btn": "Edit Profile Information",
+    "single_date": "Single Day",
+    "date_range": "Date Range"
 }

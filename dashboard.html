@@ -146,6 +146,7 @@
                                     <select id="opType" class="form-control">
                                         <option value="Visa" data-key="visa">Visa</option>
                                         <option value="Work Contract" data-key="work_contract">Work Contract</option>
+                                        <option value="Ticket" data-key="ticket">Ticket</option>
                                         <option value="Umrah" data-key="umrah">Umrah</option>
                                         <option value="Hajj" data-key="hajj">Hajj</option>
                                     </select>
@@ -167,7 +168,7 @@
                                         placeholder="0.00" required>
                                 </div>
                             </div>
-                            <div class="form-group">
+                            <div class="form-group" id="paidAmountGroup">
                                 <label data-key="paid_amount">Paid Amount ($)</label>
                                 <div class="input-wrapper">
                                     <i class="ri-wallet-3-line input-icon"></i>
@@ -183,7 +184,7 @@
                                         readonly>
                                 </div>
                             </div>
-                            <div class="form-group">
+                            <div class="form-group" id="restGroup">
                                 <label data-key="rest">Rest</label>
                                 <div class="input-wrapper readonly-field">
                                     <i class="ri-arrow-down-circle-line input-icon"></i>
@@ -203,6 +204,17 @@
                 <!-- ==================== REVENUE LIST SECTION (Admin) ==================== -->
                 <section id="revenueListSection" class="d-none section-animate">
                     <div class="content-card filter-card">
+                        <!-- Date mode toggle -->
+                        <div class="date-mode-toggle" style="margin-bottom:1rem;">
+                            <button id="revModeDay" class="date-mode-btn active" onclick="setRevMode('day')">
+                                <i class="ri-calendar-event-line"></i>
+                                <span data-key="single_date">يوم محدد</span>
+                            </button>
+                            <button id="revModeRange" class="date-mode-btn" onclick="setRevMode('range')">
+                                <i class="ri-calendar-2-line"></i>
+                                <span data-key="date_range">نطاق تاريخ</span>
+                            </button>
+                        </div>
                         <div class="filter-row">
                             <div class="filter-item search-filter">
                                 <div class="input-wrapper">
@@ -211,17 +223,31 @@
                                         placeholder="Search customer..." oninput="loadRevenues()">
                                 </div>
                             </div>
-                            <div class="filter-item">
+                            <!-- Single date mode -->
+                            <div class="filter-item" id="revDayPicker">
+                                <div class="input-wrapper">
+                                    <i class="ri-calendar-event-line input-icon"></i>
+                                    <input type="date" id="revDay" class="form-control" onchange="loadRevenues()">
+                                </div>
+                            </div>
+                            <!-- Range mode -->
+                            <div class="filter-item d-none" id="revRangeFrom">
                                 <div class="input-wrapper">
                                     <i class="ri-calendar-line input-icon"></i>
                                     <input type="date" id="revFrom" class="form-control" onchange="loadRevenues()">
                                 </div>
                             </div>
-                            <div class="filter-item">
+                            <div class="filter-item d-none" id="revRangeTo">
                                 <div class="input-wrapper">
                                     <i class="ri-calendar-check-line input-icon"></i>
                                     <input type="date" id="revTo" class="form-control" onchange="loadRevenues()">
                                 </div>
+                            </div>
+                            <!-- Clear button -->
+                            <div class="filter-item" style="flex:0;">
+                                <button class="btn-clear-date" onclick="clearRevDates()" title="Clear dates">
+                                    <i class="ri-close-circle-line"></i>
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -303,6 +329,17 @@
                 <!-- ==================== EXPENSE LIST SECTION (Admin) ==================== -->
                 <section id="expenseListSection" class="d-none section-animate">
                     <div class="content-card filter-card">
+                        <!-- Date mode toggle -->
+                        <div class="date-mode-toggle" style="margin-bottom:1rem;">
+                            <button id="expModeDay" class="date-mode-btn active" onclick="setExpMode('day')">
+                                <i class="ri-calendar-event-line"></i>
+                                <span data-key="single_date">يوم محدد</span>
+                            </button>
+                            <button id="expModeRange" class="date-mode-btn" onclick="setExpMode('range')">
+                                <i class="ri-calendar-2-line"></i>
+                                <span data-key="date_range">نطاق تاريخ</span>
+                            </button>
+                        </div>
                         <div class="filter-row">
                             <div class="filter-item search-filter">
                                 <div class="input-wrapper">
@@ -311,17 +348,31 @@
                                         placeholder="Search expenses..." oninput="loadExpenses()">
                                 </div>
                             </div>
-                            <div class="filter-item">
+                            <!-- Single date mode -->
+                            <div class="filter-item" id="expDayPicker">
+                                <div class="input-wrapper">
+                                    <i class="ri-calendar-event-line input-icon"></i>
+                                    <input type="date" id="expDay" class="form-control" onchange="loadExpenses()">
+                                </div>
+                            </div>
+                            <!-- Range mode -->
+                            <div class="filter-item d-none" id="expRangeFrom">
                                 <div class="input-wrapper">
                                     <i class="ri-calendar-line input-icon"></i>
                                     <input type="date" id="expFrom" class="form-control" onchange="loadExpenses()">
                                 </div>
                             </div>
-                            <div class="filter-item">
+                            <div class="filter-item d-none" id="expRangeTo">
                                 <div class="input-wrapper">
                                     <i class="ri-calendar-check-line input-icon"></i>
                                     <input type="date" id="expTo" class="form-control" onchange="loadExpenses()">
                                 </div>
+                            </div>
+                            <!-- Clear button -->
+                            <div class="filter-item" style="flex:0;">
+                                <button class="btn-clear-date" onclick="clearExpDates()" title="Clear dates">
+                                    <i class="ri-close-circle-line"></i>
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -400,6 +451,13 @@
                                 <h2 id="profileUsername">Username</h2>
                                 <span class="profile-role-badge" id="profileRole">Admin</span>
                             </div>
+                            <div class="admin-only d-none" style="margin-inline-start: auto;">
+                                <button class="btn-submit" onclick="window.location.href='edit-profile.html'"
+                                    style="width: auto; height: 40px; padding: 0 1.25rem; font-size: 0.85rem;">
+                                    <i class="ri-edit-line"></i>
+                                    <span data-key="edit_profile_btn">Edit Profile</span>
+                                </button>
+                            </div>
                         </div>
                         <div class="profile-details-grid">
                             <div class="profile-detail-item">
@@ -424,6 +482,44 @@
                                 </div>
                             </div>
                         </div>
+                    </div>
+
+                    <!-- Edit Profile Card (Admin Only — hidden until button clicked) -->
+                    <div id="adminEditCard" class="content-card profile-edit-panel d-none" style="margin-top: 2rem;">
+                        <div class="card-header">
+                            <div class="card-header-icon"
+                                style="background:rgba(99,102,241,0.12);color:var(--primary);">
+                                <i class="ri-user-settings-line"></i>
+                            </div>
+                            <div>
+                                <h3 data-key="edit_profile">Edit Admin Profile</h3>
+                                <p class="card-subtitle">Update your profile information</p>
+                            </div>
+                        </div>
+                        <form id="editProfileForm" class="form-grid" onsubmit="updateAdminProfile(event)">
+                            <div class="form-group">
+                                <label data-key="new_name">New Admin Name</label>
+                                <div class="input-wrapper">
+                                    <i class="ri-user-line input-icon"></i>
+                                    <input type="text" id="newAdminName" class="form-control"
+                                        placeholder="Enter new name" required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label data-key="new_password">New Password</label>
+                                <div class="input-wrapper">
+                                    <i class="ri-lock-line input-icon"></i>
+                                    <input type="password" id="newAdminPassword" class="form-control"
+                                        placeholder="Enter new password" required>
+                                </div>
+                            </div>
+                            <div class="form-group form-action-group">
+                                <button type="submit" class="btn-submit">
+                                    <i class="ri-save-line"></i>
+                                    <span data-key="update_profile_btn">Update Profile</span>
+                                </button>
+                            </div>
+                        </form>
                     </div>
                 </section>
 
@@ -494,6 +590,7 @@
                                             <option value="Visa" data-key="visa">Visa</option>
                                             <option value="Work Contract" data-key="work_contract">Work Contract
                                             </option>
+                                            <option value="Ticket" data-key="ticket">Ticket</option>
                                             <option value="Umrah" data-key="umrah">Umrah</option>
                                             <option value="Hajj" data-key="hajj">Hajj</option>
                                         </select>
@@ -515,7 +612,7 @@
                                             required>
                                     </div>
                                 </div>
-                                <div class="form-group">
+                                <div class="form-group" id="editPaidAmountGroup">
                                     <label data-key="paid_amount">Paid Amount ($)</label>
                                     <div class="input-wrapper">
                                         <i class="ri-wallet-3-line input-icon"></i>

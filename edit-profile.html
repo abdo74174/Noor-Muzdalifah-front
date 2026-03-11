@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="ar">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تعديل الملف الشخصي</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css">
+    <script>
+        (function () {
+            const t = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', t === 'system'
+                ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
+                : t);
+        })();
+    </script>
+    <style>
+        body {
+            min-height: 100vh;
+            background: var(--bg);
+            background-image: var(--bg-gradient);
+            background-attachment: fixed;
+            padding: 2rem 1.5rem;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
+        .ep-wrapper {
+            width: 100%;
+            max-width: 540px;
+        }
+
+        /* ── Back button ── */
+        .ep-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.88rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0.4rem 0;
+            margin-bottom: 1.5rem;
+            transition: color 0.2s;
+            font-family: inherit;
+        }
+
+        .ep-back:hover {
+            color: var(--primary);
+        }
+
+        .ep-back i {
+            font-size: 1.1rem;
+        }
+
+        /* ── Page title ── */
+        .ep-page-title {
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: var(--text-main);
+            letter-spacing: -0.02em;
+            margin-bottom: 0.25rem;
+        }
+
+        .ep-page-sub {
+            font-size: 0.88rem;
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+        }
+
+        /* ── Profile card header ── */
+        .ep-profile-row {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1.25rem 1.5rem;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+        }
+
+        .ep-avatar {
+            width: 52px;
+            height: 52px;
+            border-radius: 14px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.4rem;
+            box-shadow: 0 4px 14px rgba(99, 102, 241, 0.3);
+            flex-shrink: 0;
+        }
+
+        .ep-profile-info h3 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-main);
+            margin: 0 0 0.15rem;
+        }
+
+        .ep-role-badge {
+            display: inline-block;
+            padding: 0.15rem 0.65rem;
+            border-radius: 20px;
+            font-size: 0.68rem;
+            font-weight: 700;
+            color: white;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        /* ── Section card ── */
+        .ep-section {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 1.75rem;
+            margin-bottom: 1.25rem;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+            position: relative;
+            overflow: hidden;
+            transition: box-shadow 0.3s;
+            animation: slideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1) both;
+        }
+
+        .ep-section:nth-child(2) {
+            animation-delay: 0.05s;
+        }
+
+        .ep-section:nth-child(3) {
+            animation-delay: 0.10s;
+        }
+
+        .ep-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .ep-section:hover::before {
+            opacity: 1;
+        }
+
+        .ep-section-name::before {
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+        }
+
+        .ep-section-pw::before {
+            background: linear-gradient(90deg, var(--danger), #f97316);
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(16px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .ep-section-header {
+            display: flex;
+            align-items: center;
+            gap: 0.85rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1.1rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .ep-section-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            flex-shrink: 0;
+        }
+
+        .ep-section-name .ep-section-icon {
+            background: rgba(99, 102, 241, 0.1);
+            color: var(--primary);
+        }
+
+        .ep-section-pw .ep-section-icon {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+        }
+
+        .ep-section-header h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text-main);
+            margin: 0 0 0.1rem;
+        }
+
+        .ep-section-header p {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            margin: 0;
+        }
+
+        /* ── Field ── */
+        .ep-field {
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .ep-field:last-of-type {
+            margin-bottom: 0;
+        }
+
+        .ep-field label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+        }
+
+        .ep-input-wrap {
+            position: relative;
+        }
+
+        .ep-input-wrap i.ep-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: 1rem;
+            pointer-events: none;
+            transition: color 0.2s;
+            z-index: 1;
+        }
+
+        body[dir="rtl"] .ep-input-wrap i.ep-icon {
+            left: auto;
+            right: 1rem;
+        }
+
+        .ep-input-wrap input {
+            width: 100%;
+            height: 48px;
+            padding: 0 1rem 0 2.8rem;
+            font-size: 0.95rem;
+            font-family: inherit;
+            color: var(--text-main);
+            background: rgba(255, 255, 255, 0.03);
+            border: 2px solid var(--border-color);
+            border-radius: 10px;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        body[dir="rtl"] .ep-input-wrap input {
+            padding: 0 2.8rem 0 1rem;
+        }
+
+        .ep-input-wrap input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .ep-input-wrap input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+
+        .ep-input-wrap:focus-within i.ep-icon {
+            color: var(--primary);
+        }
+
+        /* password toggle */
+        .ep-pw-toggle {
+            position: absolute;
+            right: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 1rem;
+            padding: 4px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            transition: color 0.2s;
+        }
+
+        body[dir="rtl"] .ep-pw-toggle {
+            right: auto;
+            left: 0.75rem;
+        }
+
+        .ep-pw-toggle:hover {
+            color: var(--primary);
+        }
+
+        /* password strength bar */
+        .ep-pw-strength {
+            height: 4px;
+            border-radius: 4px;
+            background: var(--border-color);
+            margin-top: 0.5rem;
+            overflow: hidden;
+        }
+
+        .ep-pw-strength-bar {
+            height: 100%;
+            width: 0%;
+            border-radius: 4px;
+            transition: width 0.4s ease, background 0.4s ease;
+        }
+
+        .ep-pw-hint {
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            margin-top: 0.25rem;
+        }
+
+        /* ── Submit button ── */
+        .ep-submit {
+            width: 100%;
+            height: 48px;
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-family: inherit;
+            font-size: 0.95rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            transition: transform 0.2s, box-shadow 0.2s, opacity 0.2s;
+            margin-top: 1.5rem;
+        }
+
+        .ep-submit-name {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            box-shadow: 0 4px 14px rgba(99, 102, 241, 0.25);
+        }
+
+        .ep-submit-pw {
+            background: linear-gradient(135deg, var(--danger), #f97316);
+            box-shadow: 0 4px 14px rgba(239, 68, 68, 0.25);
+        }
+
+        .ep-submit:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .ep-submit:active:not(:disabled) {
+            transform: translateY(0);
+        }
+
+        .ep-submit:disabled {
+            opacity: 0.65;
+            cursor: not-allowed;
+        }
+
+        .ep-submit.success {
+            background: linear-gradient(135deg, var(--success), #059669) !important;
+            box-shadow: 0 4px 14px rgba(16, 185, 129, 0.25) !important;
+        }
+
+        /* ── Toast ── */
+        .ep-toast {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%) translateY(80px);
+            background: linear-gradient(135deg, var(--success), #059669);
+            color: white;
+            padding: 0.85rem 1.5rem;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            box-shadow: 0 8px 28px rgba(16, 185, 129, 0.35);
+            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s;
+            opacity: 0;
+            z-index: 9999;
+            white-space: nowrap;
+        }
+
+        .ep-toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+        @media (max-width: 540px) {
+            .ep-section {
+                padding: 1.25rem;
+            }
+
+            .ep-profile-row {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="ep-wrapper">
+
+        <!-- Back -->
+        <button class="ep-back" onclick="goBack()">
+            <i class="ri-arrow-left-line" id="backIcon"></i>
+            <span id="backText">العودة للوحة التحكم</span>
+        </button>
+
+        <!-- Page heading -->
+        <h1 class="ep-page-title" id="epPageTitle">تعديل الملف الشخصي</h1>
+        <p class="ep-page-sub" id="epPageSub">يمكنك تعديل الاسم وكلمة المرور بشكل مستقل</p>
+
+        <!-- Current profile info -->
+        <div class="ep-profile-row">
+            <div class="ep-avatar"><i class="ri-user-3-fill"></i></div>
+            <div class="ep-profile-info">
+                <h3 id="epCurrentName">—</h3>
+                <span class="ep-role-badge" id="epRoleBadge">Admin</span>
+            </div>
+        </div>
+
+        <!-- ══ Section 1: Update Name ══ -->
+        <div class="ep-section ep-section-name">
+            <div class="ep-section-header">
+                <div class="ep-section-icon"><i class="ri-user-line"></i></div>
+                <div>
+                    <h4 id="titleName">تعديل اسم المدير</h4>
+                    <p id="subName">تغيير اسم عرض الحساب</p>
+                </div>
+            </div>
+
+            <div class="ep-field">
+                <label id="labelName">الاسم الجديد</label>
+                <div class="ep-input-wrap">
+                    <i class="ri-user-line ep-icon"></i>
+                    <input type="text" id="epName" placeholder="أدخل الاسم الجديد" autocomplete="username">
+                </div>
+            </div>
+
+            <button type="button" class="ep-submit ep-submit-name" id="btnSaveName" onclick="saveName()">
+                <i class="ri-save-line"></i>
+                <span id="saveName_text">حفظ الاسم</span>
+            </button>
+        </div>
+
+        <!-- ══ Section 2: Update Password ══ -->
+        <div class="ep-section ep-section-pw">
+            <div class="ep-section-header">
+                <div class="ep-section-icon"><i class="ri-lock-line"></i></div>
+                <div>
+                    <h4 id="titlePw">تغيير كلمة المرور</h4>
+                    <p id="subPw">اختر كلمة مرور قوية وآمنة</p>
+                </div>
+            </div>
+
+            <div class="ep-field">
+                <label id="labelNewPw">كلمة المرور الجديدة</label>
+                <div class="ep-input-wrap">
+                    <i class="ri-lock-line ep-icon"></i>
+                    <input type="password" id="epPw" placeholder="أدخل كلمة مرور جديدة" autocomplete="new-password"
+                        oninput="checkStrength()">
+                    <button type="button" class="ep-pw-toggle" onclick="togglePw('epPw','pwIcon')">
+                        <i class="ri-eye-line" id="pwIcon"></i>
+                    </button>
+                </div>
+                <!-- Strength bar -->
+                <div class="ep-pw-strength">
+                    <div class="ep-pw-strength-bar" id="pwStrBar"></div>
+                </div>
+                <span class="ep-pw-hint" id="pwStrHint"></span>
+            </div>
+
+            <div class="ep-field">
+                <label id="labelConfirmPw">تأكيد كلمة المرور</label>
+                <div class="ep-input-wrap">
+                    <i class="ri-lock-2-line ep-icon"></i>
+                    <input type="password" id="epPwConfirm" placeholder="أعد إدخال كلمة المرور"
+                        autocomplete="new-password">
+                    <button type="button" class="ep-pw-toggle" onclick="togglePw('epPwConfirm','pwCIcon')">
+                        <i class="ri-eye-line" id="pwCIcon"></i>
+                    </button>
+                </div>
+            </div>
+
+            <button type="button" class="ep-submit ep-submit-pw" id="btnSavePw" onclick="savePassword()">
+                <i class="ri-key-line"></i>
+                <span id="savePw_text">تغيير كلمة المرور</span>
+            </button>
+        </div>
+
+    </div>
+
+    <!-- Toast -->
+    <div class="ep-toast" id="epToast">
+        <i class="ri-check-double-line"></i>
+        <span id="epToastMsg">تم التحديث بنجاح</span>
+    </div>
+
+    <script src="js/lang.js"></script>
+    <script src="js/api.js"></script>
+    <script>
+        // ── Auth guard ──
+        const user = getUser();
+        if (!user || user.role !== 'Admin') window.location.href = 'index.html';
+
+        // ── Language & Direction ──
+        const lang = localStorage.getItem('lang') || 'ar';
+        document.documentElement.lang = lang;
+        document.body.dir = lang === 'ar' ? 'rtl' : 'ltr';
+
+        if (lang === 'ar') {
+            document.getElementById('backIcon').className = 'ri-arrow-right-line';
+        }
+
+        // ── Populate ──
+        document.getElementById('epCurrentName').innerText = user.username || '—';
+        document.getElementById('epName').value = user.username || '';
+        document.getElementById('epRoleBadge').innerText = user.role || 'Admin';
+
+        // ── English labels ──
+        if (lang === 'en') {
+            document.getElementById('backText').innerText = 'Back to Dashboard';
+            document.getElementById('epPageTitle').innerText = 'Edit Profile';
+            document.getElementById('epPageSub').innerText = 'Update your name and password independently';
+            document.getElementById('titleName').innerText = 'Update Admin Name';
+            document.getElementById('subName').innerText = 'Change your display name';
+            document.getElementById('labelName').innerText = 'New Name';
+            document.getElementById('epName').placeholder = 'Enter new name';
+            document.getElementById('saveName_text').innerText = 'Save Name';
+            document.getElementById('titlePw').innerText = 'Change Password';
+            document.getElementById('subPw').innerText = 'Choose a strong, secure password';
+            document.getElementById('labelNewPw').innerText = 'New Password';
+            document.getElementById('epPw').placeholder = 'Enter new password';
+            document.getElementById('labelConfirmPw').innerText = 'Confirm Password';
+            document.getElementById('epPwConfirm').placeholder = 'Re-enter new password';
+            document.getElementById('savePw_text').innerText = 'Change Password';
+        }
+
+        // ── Helpers ──
+        function goBack() { window.location.href = 'dashboard.html'; }
+
+        function togglePw(inputId, iconId) {
+            const input = document.getElementById(inputId);
+            const icon = document.getElementById(iconId);
+            const show = input.type === 'password';
+            input.type = show ? 'text' : 'password';
+            icon.className = show ? 'ri-eye-off-line' : 'ri-eye-line';
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('epToast');
+            if (msg) document.getElementById('epToastMsg').innerText = msg;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+
+        function setBtn(btnId, textId, state, text) {
+            const btn = document.getElementById(btnId);
+            btn.disabled = state === 'loading';
+            btn.style.opacity = state === 'loading' ? '0.7' : '';
+            if (state === 'success') {
+                btn.classList.add('success');
+                btn.innerHTML = '<i class="ri-check-double-line"></i><span>' + text + '</span>';
+            } else if (state === 'reset') {
+                btn.classList.remove('success');
+            }
+        }
+
+        // ── Password strength ──
+        function checkStrength() {
+            const pw = document.getElementById('epPw').value;
+            const bar = document.getElementById('pwStrBar');
+            const hint = document.getElementById('pwStrHint');
+            let score = 0;
+            if (pw.length >= 8) score++;
+            if (/[A-Z]/.test(pw)) score++;
+            if (/[0-9]/.test(pw)) score++;
+            if (/[^A-Za-z0-9]/.test(pw)) score++;
+
+            const levels = [
+                { w: '0%', bg: '', txt: '' },
+                { w: '25%', bg: 'var(--danger)', txt: lang === 'ar' ? 'ضعيفة جداً' : 'Very weak' },
+                { w: '50%', bg: 'var(--warning)', txt: lang === 'ar' ? 'متوسطة' : 'Fair' },
+                { w: '75%', bg: 'var(--info)', txt: lang === 'ar' ? 'جيدة' : 'Good' },
+                { w: '100%', bg: 'var(--success)', txt: lang === 'ar' ? 'قوية' : 'Strong' },
+            ];
+            const lvl = pw.length === 0 ? levels[0] : levels[score] || levels[1];
+            bar.style.width = lvl.w;
+            bar.style.background = lvl.bg;
+            hint.innerText = lvl.txt;
+        }
+
+        // ── Save name ──
+        async function saveName() {
+            const newName = document.getElementById('epName').value.trim();
+            if (!newName) {
+                const inp = document.getElementById('epName');
+                inp.style.borderColor = 'var(--danger)';
+                inp.focus();
+                setTimeout(() => inp.style.borderColor = '', 1500);
+                return;
+            }
+
+            setBtn('btnSaveName', 'saveName_text', 'loading');
+            try {
+                await apiFetch('/Auth/update-profile', 'PUT', { username: newName, password: null });
+                user.username = newName;
+                localStorage.setItem('user', JSON.stringify(user));
+                document.getElementById('epCurrentName').innerText = newName;
+                setBtn('btnSaveName', 'saveName_text', 'success', lang === 'ar' ? '✓ تم الحفظ' : '✓ Saved');
+                showToast(lang === 'ar' ? 'تم تحديث الاسم بنجاح' : 'Name updated successfully');
+                setTimeout(() => {
+                    setBtn('btnSaveName', 'saveName_text', 'reset');
+                    document.getElementById('btnSaveName').innerHTML =
+                        '<i class="ri-save-line"></i><span>' + (lang === 'ar' ? 'حفظ الاسم' : 'Save Name') + '</span>';
+                }, 3000);
+            } catch (err) {
+                alert(err.message || (lang === 'ar' ? 'حدث خطأ' : 'Error'));
+            } finally {
+                document.getElementById('btnSaveName').disabled = false;
+                document.getElementById('btnSaveName').style.opacity = '';
+            }
+        }
+
+        // ── Save password ──
+        async function savePassword() {
+            const pw = document.getElementById('epPw').value;
+            const pwConf = document.getElementById('epPwConfirm').value;
+
+            if (!pw) {
+                const inp = document.getElementById('epPw');
+                inp.style.borderColor = 'var(--danger)';
+                inp.focus();
+                setTimeout(() => inp.style.borderColor = '', 1500);
+                return;
+            }
+            if (pw !== pwConf) {
+                const inp = document.getElementById('epPwConfirm');
+                inp.style.borderColor = 'var(--danger)';
+                inp.focus();
+                inp.placeholder = lang === 'ar' ? 'كلمتا المرور غير متطابقتين!' : 'Passwords do not match!';
+                setTimeout(() => {
+                    inp.style.borderColor = '';
+                    inp.placeholder = lang === 'ar' ? 'أعد إدخال كلمة المرور' : 'Re-enter new password';
+                }, 2000);
+                return;
+            }
+
+            setBtn('btnSavePw', 'savePw_text', 'loading');
+            try {
+                await apiFetch('/Auth/update-profile', 'PUT', { username: user.username, password: pw });
+                document.getElementById('epPw').value = '';
+                document.getElementById('epPwConfirm').value = '';
+                document.getElementById('pwStrBar').style.width = '0%';
+                document.getElementById('pwStrHint').innerText = '';
+
+                setBtn('btnSavePw', 'savePw_text', 'success', lang === 'ar' ? '✓ تم التغيير' : '✓ Changed');
+                showToast(lang === 'ar' ? 'تم تغيير كلمة المرور بنجاح' : 'Password changed successfully');
+                setTimeout(() => {
+                    setBtn('btnSavePw', 'savePw_text', 'reset');
+                    document.getElementById('btnSavePw').innerHTML =
+                        '<i class="ri-key-line"></i><span>' + (lang === 'ar' ? 'تغيير كلمة المرور' : 'Change Password') + '</span>';
+                }, 3000);
+            } catch (err) {
+                alert(err.message || (lang === 'ar' ? 'حدث خطأ' : 'Error'));
+            } finally {
+                document.getElementById('btnSavePw').disabled = false;
+                document.getElementById('btnSavePw').style.opacity = '';
+            }
+        }
+    </script>
+</body>
+
+</html>

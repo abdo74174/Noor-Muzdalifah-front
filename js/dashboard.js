@@ -127,20 +127,130 @@ document.getElementById('contractPrice')?.addEventListener('input', updateRevenu
 document.getElementById('offerPrice')?.addEventListener('input', updateRevenueAutoCalculations);
 document.getElementById('paidAmount')?.addEventListener('input', updateRevenueAutoCalculations);
 
+// Toggle fields for "Ticket" type
+function toggleTicketFields() {
+    const opType = document.getElementById('opType').value;
+    const paidGroup = document.getElementById('paidAmountGroup');
+    const restGroup = document.getElementById('restGroup');
+    const paidInput = document.getElementById('paidAmount');
+
+    if (opType === 'Ticket') {
+        paidGroup?.classList.add('d-none');
+        restGroup?.classList.add('d-none');
+        // Auto-fill paid amount to match offer price for tickets
+        const offerPrice = parseFloat(document.getElementById('offerPrice').value || 0);
+        if (paidInput) paidInput.value = offerPrice;
+        paidInput.removeAttribute('required');
+    } else {
+        paidGroup?.classList.remove('d-none');
+        restGroup?.classList.remove('d-none');
+        paidInput.setAttribute('required', '');
+    }
+    updateRevenueAutoCalculations();
+}
+
+document.getElementById('opType')?.addEventListener('change', toggleTicketFields);
+document.getElementById('offerPrice')?.addEventListener('input', () => {
+    if (document.getElementById('opType').value === 'Ticket') {
+        document.getElementById('paidAmount').value = document.getElementById('offerPrice').value;
+    }
+});
+
+// ── Date mode state ──────────────────────────
+let revDateMode = 'day';   // 'day' | 'range'
+let expDateMode = 'day';
+
+function setRevMode(mode) {
+    revDateMode = mode;
+    const dayBtn = document.getElementById('revModeDay');
+    const rangeBtn = document.getElementById('revModeRange');
+    const dayPic = document.getElementById('revDayPicker');
+    const rFrom = document.getElementById('revRangeFrom');
+    const rTo = document.getElementById('revRangeTo');
+
+    if (mode === 'day') {
+        dayBtn?.classList.add('active');
+        rangeBtn?.classList.remove('active');
+        dayPic?.classList.remove('d-none');
+        rFrom?.classList.add('d-none');
+        rTo?.classList.add('d-none');
+        // clear range inputs
+        if (document.getElementById('revFrom')) document.getElementById('revFrom').value = '';
+        if (document.getElementById('revTo')) document.getElementById('revTo').value = '';
+    } else {
+        rangeBtn?.classList.add('active');
+        dayBtn?.classList.remove('active');
+        dayPic?.classList.add('d-none');
+        rFrom?.classList.remove('d-none');
+        rTo?.classList.remove('d-none');
+        // clear single-day input
+        if (document.getElementById('revDay')) document.getElementById('revDay').value = '';
+    }
+    loadRevenues();
+}
+
+function clearRevDates() {
+    ['revDay', 'revFrom', 'revTo'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = '';
+    });
+    loadRevenues();
+}
+
+function setExpMode(mode) {
+    expDateMode = mode;
+    const dayBtn = document.getElementById('expModeDay');
+    const rangeBtn = document.getElementById('expModeRange');
+    const dayPic = document.getElementById('expDayPicker');
+    const rFrom = document.getElementById('expRangeFrom');
+    const rTo = document.getElementById('expRangeTo');
+
+    if (mode === 'day') {
+        dayBtn?.classList.add('active');
+        rangeBtn?.classList.remove('active');
+        dayPic?.classList.remove('d-none');
+        rFrom?.classList.add('d-none');
+        rTo?.classList.add('d-none');
+        if (document.getElementById('expFrom')) document.getElementById('expFrom').value = '';
+        if (document.getElementById('expTo')) document.getElementById('expTo').value = '';
+    } else {
+        rangeBtn?.classList.add('active');
+        dayBtn?.classList.remove('active');
+        dayPic?.classList.add('d-none');
+        rFrom?.classList.remove('d-none');
+        rTo?.classList.remove('d-none');
+        if (document.getElementById('expDay')) document.getElementById('expDay').value = '';
+    }
+    loadExpenses();
+}
+
+function clearExpDates() {
+    ['expDay', 'expFrom', 'expTo'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = '';
+    });
+    loadExpenses();
+}
+// ─────────────────────────────────────────────
+
 async function loadRevenues() {
     if (user.role !== 'Admin') return;
-    const searchEl = document.getElementById('revSearch');
-    const fromEl = document.getElementById('revFrom');
-    const toEl = document.getElementById('revTo');
+    const search = document.getElementById('revSearch')?.value || '';
 
-    const search = searchEl ? searchEl.value : '';
-    const from = fromEl ? fromEl.value : '';
-    const to = toEl ? toEl.value : '';
+    let from = '', to = '';
+    if (revDateMode === 'day') {
+        const day = document.getElementById('revDay')?.value || '';
+        from = day;
+        to = day;   // same day = exact date filter
+    } else {
+        from = document.getElementById('revFrom')?.value || '';
+        to = document.getElementById('revTo')?.value || '';
+    }
 
     try {
         const reports = await apiFetch(`/Dashboard/reports?search=${search}&from=${from}&to=${to}`);
         renderGroupedRevenues(reports);
-    } catch (err) { console.error("Error loading revenues:", err); }
+    } catch (err) { console.error('Error loading revenues:', err); }
 }
 
 function renderGroupedRevenues(reports) {
@@ -222,18 +332,22 @@ document.getElementById('expenseForm')?.addEventListener('submit', async (e) => 
 
 async function loadExpenses() {
     if (user.role !== 'Admin') return;
-    const searchEl = document.getElementById('expSearch');
-    const fromEl = document.getElementById('expFrom');
-    const toEl = document.getElementById('expTo');
+    const search = document.getElementById('expSearch')?.value || '';
 
-    const search = searchEl ? searchEl.value : '';
-    const from = fromEl ? fromEl.value : '';
-    const to = toEl ? toEl.value : '';
+    let from = '', to = '';
+    if (expDateMode === 'day') {
+        const day = document.getElementById('expDay')?.value || '';
+        from = day;
+        to = day;
+    } else {
+        from = document.getElementById('expFrom')?.value || '';
+        to = document.getElementById('expTo')?.value || '';
+    }
 
     try {
-        const reports = await apiFetch(`/Dashboard/reports?search=${search}&from=${from}&to=${to}`);
+        const reports = await apiFetch(`/Dashboard/expenses?search=${search}&from=${from}&to=${to}`);
         renderGroupedExpenses(reports);
-    } catch (err) { console.error("Error loading expenses:", err); }
+    } catch (err) { console.error('Error loading expenses:', err); }
 }
 
 function renderGroupedExpenses(reports) {
@@ -312,6 +426,92 @@ function loadProfile() {
         badge.style.background = 'linear-gradient(135deg, var(--primary), var(--accent))';
     } else {
         badge.style.background = 'linear-gradient(135deg, var(--success), #059669)';
+    }
+
+    // Set current values in edit form
+    const nameInput = document.getElementById('newAdminName');
+    if (nameInput) nameInput.value = user.username || '';
+}
+
+function scrollToEditProfile() {
+    const card = document.getElementById('adminEditCard');
+    if (!card) return;
+
+    // If already visible, just scroll & focus
+    if (!card.classList.contains('d-none')) {
+        card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        const nameInput = document.getElementById('newAdminName');
+        if (nameInput) setTimeout(() => nameInput.focus(), 300);
+        return;
+    }
+
+    // Reveal with animation
+    card.classList.remove('d-none');
+    card.style.opacity = '0';
+    card.style.transform = 'translateY(16px)';
+    card.style.transition = 'opacity 0.35s ease, transform 0.35s ease';
+
+    // Trigger animation on next frame
+    requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+            card.style.opacity = '1';
+            card.style.transform = 'translateY(0)';
+        });
+    });
+
+    // Scroll smoothly to it
+    setTimeout(() => {
+        card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 50);
+
+    // Highlight the card border as a pulse
+    setTimeout(() => {
+        card.style.boxShadow = '0 0 0 3px rgba(99,102,241,0.45), 0 8px 30px rgba(99,102,241,0.15)';
+        setTimeout(() => { card.style.boxShadow = ''; }, 1600);
+    }, 350);
+
+    // Focus the name input
+    const nameInput = document.getElementById('newAdminName');
+    if (nameInput) setTimeout(() => nameInput.focus(), 500);
+}
+
+async function updateAdminProfile(e) {
+    e.preventDefault();
+    const newUsername = document.getElementById('newAdminName').value.trim();
+    const newPassword = document.getElementById('newAdminPassword').value;
+
+    if (!newUsername || !newPassword) return;
+
+    const btn = e.target.querySelector('button[type="submit"]');
+    if (btn) {
+        btn.disabled = true;
+        btn.style.opacity = '0.7';
+    }
+
+    try {
+        await apiFetch('/Auth/update-profile', 'PUT', { username: newUsername, password: newPassword });
+
+        // Update local user object in memory and storage
+        user.username = newUsername;
+        localStorage.setItem('user', JSON.stringify(user));
+
+        // Refresh profile display without full reload
+        document.getElementById('profileUsername').innerText = newUsername;
+        document.getElementById('profileUsernameVal').innerText = newUsername;
+        document.getElementById('welcomeMsg').innerText = `${newUsername} (${user.role})`;
+
+        // Clear password field for security
+        document.getElementById('newAdminPassword').value = '';
+
+        showSuccess();
+
+    } catch (err) {
+        alert(err.message || 'Error updating profile');
+    } finally {
+        if (btn) {
+            btn.disabled = false;
+            btn.style.opacity = '';
+        }
     }
 }
 
@@ -468,9 +668,41 @@ function openEditModal(id, clientName, opType, contractPrice, offerPrice, paidAm
     document.getElementById('editContractPrice').value = contractPrice;
     document.getElementById('editOfferPrice').value = offerPrice;
     document.getElementById('editPaidAmount').value = paidAmount;
+
+    // Toggle fields for edit modal if Ticket
+    const paidGroup = document.getElementById('editPaidAmountGroup');
+    const paidInput = document.getElementById('editPaidAmount');
+    if (opType === 'Ticket') {
+        paidGroup?.classList.add('d-none');
+        paidInput.removeAttribute('required');
+    } else {
+        paidGroup?.classList.remove('d-none');
+        paidInput.setAttribute('required', '');
+    }
+
     document.getElementById('editModal').classList.remove('d-none');
     applyTranslations();
 }
+
+// Handler for edit modal type change
+document.getElementById('editOpType')?.addEventListener('change', (e) => {
+    const paidGroup = document.getElementById('editPaidAmountGroup');
+    const paidInput = document.getElementById('editPaidAmount');
+    if (e.target.value === 'Ticket') {
+        paidGroup?.classList.add('d-none');
+        paidInput.value = document.getElementById('editOfferPrice').value;
+        paidInput.removeAttribute('required');
+    } else {
+        paidGroup?.classList.remove('d-none');
+        paidInput.setAttribute('required', '');
+    }
+});
+
+document.getElementById('editOfferPrice')?.addEventListener('input', (e) => {
+    if (document.getElementById('editOpType').value === 'Ticket') {
+        document.getElementById('editPaidAmount').value = e.target.value;
+    }
+});
 
 function closeEditModal(e) {
     if (e && e.target !== e.currentTarget) return;
