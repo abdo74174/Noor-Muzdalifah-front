@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="ar">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>التقارير - نظام إدخال البيانات</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css">
+    <!-- Apply theme immediately to prevent flash -->
+    <script>
+        (function () {
+            const t = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', t === 'system'
+                ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
+                : t);
+        })();
+    </script>
+</head>
+
+<body>
+    <div class="dashboard-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar glass" id="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">
+                    <div class="sidebar-logo-img-wrap">
+                        <img src="images/logo.png" alt="Noor Mozdalifah" class="sidebar-logo-img">
+                    </div>
+                    <div class="sidebar-logo-text">
+                        <span class="logo-name-ar">نور مزدلفة</span>
+                        <span class="logo-name-en">Noor Mozdalifah</span>
+                    </div>
+                </div>
+                <button class="sidebar-toggle" id="sidebarToggle" onclick="toggleSidebar()">
+                    <i class="ri-menu-line"></i>
+                </button>
+            </div>
+
+            <nav class="sidebar-nav">
+                <div class="nav-section-label">DATA ENTRY</div>
+                <a class="nav-item" href="dashboard.html" onclick="localStorage.setItem('activeTab','revenues')">
+                    <i class="ri-add-circle-line"></i>
+                    <span data-key="revenues">Add Revenue</span>
+                </a>
+                <a class="nav-item" href="dashboard.html" onclick="localStorage.setItem('activeTab','expenses')">
+                    <i class="ri-add-circle-line"></i>
+                    <span data-key="expenses">Add Expense</span>
+                </a>
+
+                <div class="nav-section-label" data-key="nav_reports">REPORTS</div>
+                <a class="nav-item active" id="navReports" href="reports.html">
+                    <i class="ri-bar-chart-grouped-line"></i>
+                    <span data-key="reports_nav">التقارير</span>
+                </a>
+
+                <div class="nav-section-label" data-key="nav_account">ACCOUNT</div>
+                <a class="nav-item" href="dashboard.html" onclick="localStorage.setItem('activeTab','profile')">
+                    <i class="ri-user-3-line"></i>
+                    <span data-key="profile">My Profile</span>
+                </a>
+                <a class="nav-item admin-only d-none" href="dashboard.html"
+                    onclick="localStorage.setItem('activeTab','userManagement')">
+                    <i class="ri-user-add-line"></i>
+                    <span data-key="user_management">User Management</span>
+                </a>
+                <a class="nav-item" href="dashboard.html" onclick="localStorage.setItem('activeTab','settings')">
+                    <i class="ri-settings-3-line"></i>
+                    <span data-key="settings">Settings</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <button class="nav-item logout-item" onclick="logout()">
+                    <i class="ri-logout-box-r-line"></i>
+                    <span data-key="logout">تسجيل خروج</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Mobile Overlay -->
+        <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Top Bar -->
+            <header class="topbar glass">
+                <div class="topbar-left">
+                    <button class="mobile-menu-btn" onclick="toggleSidebar()">
+                        <i class="ri-menu-line"></i>
+                    </button>
+                    <div class="page-title-area">
+                        <h1 class="page-title" data-key="reports_nav">التقارير</h1>
+                        <p id="welcomeMsg" class="page-subtitle">Welcome</p>
+                    </div>
+                </div>
+                <div class="topbar-right">
+                    <div class="user-avatar">
+                        <i class="ri-user-3-fill"></i>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Content Area -->
+            <div class="content-area">
+
+                <!-- Tab Navigation -->
+                <div class="reports-tab-nav">
+                    <button class="reports-tab-btn active" id="tabRevenues" onclick="showReportTab('revenues')">
+                        <i class="ri-money-dollar-circle-line"></i>
+                        <span data-key="revenue_list">Revenue List</span>
+                    </button>
+                    <button class="reports-tab-btn" id="tabExpenses" onclick="showReportTab('expenses')">
+                        <i class="ri-shopping-cart-2-line"></i>
+                        <span data-key="expense_list">Expense List</span>
+                    </button>
+                    <button class="reports-tab-btn" id="tabSummary" onclick="showReportTab('summary')">
+                        <i class="ri-bar-chart-grouped-line"></i>
+                        <span data-key="summary">Summary</span>
+                    </button>
+                </div>
+
+                <!-- ==================== REVENUE LIST ==================== -->
+                <section id="revenuesPanel" class="report-panel section-animate">
+                    <div class="content-card filter-card">
+                        <!-- Search Row -->
+                        <div class="filter-row" style="margin-bottom:1rem;">
+                            <div class="filter-item search-filter" style="flex:1;">
+                                <div class="input-wrapper">
+                                    <i class="ri-search-line input-icon"></i>
+                                    <input type="text" id="revSearch" class="form-control" data-key="search"
+                                        placeholder="Search customer..." oninput="loadRevenues()">
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Date Filter Row -->
+                        <div class="filter-separator"></div>
+                        <div class="date-mode-toggle" style="margin-bottom:0.75rem; margin-top:1rem;">
+                            <button id="revModeDay" class="date-mode-btn active" onclick="setRevMode('day')">
+                                <i class="ri-calendar-event-line"></i>
+                                <span data-key="single_date">يوم محدد</span>
+                            </button>
+                            <button id="revModeRange" class="date-mode-btn" onclick="setRevMode('range')">
+                                <i class="ri-calendar-2-line"></i>
+                                <span data-key="date_range">نطاق تاريخ</span>
+                            </button>
+                        </div>
+                        <div class="filter-row">
+                            <!-- Single date mode -->
+                            <div class="filter-item" id="revDayPicker">
+                                <div class="input-wrapper">
+                                    <i class="ri-calendar-event-line input-icon"></i>
+                                    <input type="date" id="revDay" class="form-control" onchange="loadRevenues()">
+                                </div>
+                            </div>
+                            <!-- Range mode -->
+                            <div class="filter-item d-none" id="revRangeFrom">
+                                <div class="input-wrapper">
+                                    <i class="ri-calendar-line input-icon"></i>
+                                    <input type="date" id="revFrom" class="form-control" onchange="loadRevenues()">
+                                </div>
+                            </div>
+                            <div class="filter-item d-none" id="revRangeTo">
+                                <div class="input-wrapper">
+                                    <i class="ri-calendar-check-line input-icon"></i>
+                                    <input type="date" id="revTo" class="form-control" onchange="loadRevenues()">
+                                </div>
+                            </div>
+                            <!-- Clear button -->
+                            <div class="filter-item" style="flex:0;">
+                                <button class="btn-clear-date" onclick="clearRevDates()" title="Clear dates">
+                                    <i class="ri-close-circle-line"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- January Report Card -->
+                    <div class="content-card report-highlight-card">
+                        <div class="report-highlight-info">
+                            <div class="report-highlight-icon">
+                                <i class="ri-calendar-event-fill"></i>
+                            </div>
+                            <div>
+                                <h4 data-key="january_report">January 2026 Report</h4>
+                                <p>View detailed records for the start of the year.</p>
+                            </div>
+                        </div>
+                        <a href="january-2026.html" class="btn-report">
+                            <i class="ri-external-link-line"></i>
+                            <span data-key="view_january">View Report</span>
+                        </a>
+                    </div>
+
+                    <div id="revenueReportsContainer"></div>
+                </section>
+
+                <!-- ==================== EXPENSE LIST ==================== -->
+                <section id="expensesPanel" class="report-panel d-none section-animate">
+                    <div class="content-card filter-card">
+                        <!-- Search Row -->
+                        <div class="filter-row" style="margin-bottom:1rem;">
+                            <div class="filter-item search-filter" style="flex:1;">
+                                <div class="input-wrapper">
+                                    <i class="ri-search-line input-icon"></i>
+                                    <input type="text" id="expSearch" class="form-control" data-key="search"
+                                        placeholder="Search expenses..." oninput="loadExpenses()">
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Date Filter Row -->
+                        <div class="filter-separator"></div>
+                        <div class="date-mode-toggle" style="margin-bottom:0.75rem; margin-top:1rem;">
+                            <button id="expModeDay" class="date-mode-btn active" onclick="setExpMode('day')">
+                                <i class="ri-calendar-event-line"></i>
+                                <span data-key="single_date">يوم محدد</span>
+                            </button>
+                            <button id="expModeRange" class="date-mode-btn" onclick="setExpMode('range')">
+                                <i class="ri-calendar-2-line"></i>
+                                <span data-key="date_range">نطاق تاريخ</span>
+                            </button>
+                        </div>
+                        <div class="filter-row">
+                            <!-- Single date mode -->
+                            <div class="filter-item" id="expDayPicker">
+                                <div class="input-wrapper">
+                                    <i class="ri-calendar-event-line input-icon"></i>
+                                    <input type="date" id="expDay" class="form-control" onchange="loadExpenses()">
+                                </div>
+                            </div>
+                            <!-- Range mode -->
+                            <div class="filter-item d-none" id="expRangeFrom">
+                                <div class="input-wrapper">
+                                    <i class="ri-calendar-line input-icon"></i>
+                                    <input type="date" id="expFrom" class="form-control" onchange="loadExpenses()">
+                                </div>
+                            </div>
+                            <div class="filter-item d-none" id="expRangeTo">
+                                <div class="input-wrapper">
+                                    <i class="ri-calendar-check-line input-icon"></i>
+                                    <input type="date" id="expTo" class="form-control" onchange="loadExpenses()">
+                                </div>
+                            </div>
+                            <!-- Clear button -->
+                            <div class="filter-item" style="flex:0;">
+                                <button class="btn-clear-date" onclick="clearExpDates()" title="Clear dates">
+                                    <i class="ri-close-circle-line"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="expenseReportsContainer"></div>
+                </section>
+
+                <!-- ==================== SUMMARY ==================== -->
+                <section id="summaryPanel" class="report-panel d-none section-animate">
+                    <div class="summary-stats-grid">
+                        <div class="stat-card stat-revenue">
+                            <div class="stat-icon-wrap"><i class="ri-line-chart-line"></i></div>
+                            <div class="stat-info">
+                                <span class="stat-label" data-key="total_revenue">Total Revenue</span>
+                                <span class="stat-value" id="statTotalRev">$0.00</span>
+                            </div>
+                            <div class="stat-decoration"></div>
+                        </div>
+                        <div class="stat-card stat-paid">
+                            <div class="stat-icon-wrap"><i class="ri-checkbox-circle-line"></i></div>
+                            <div class="stat-info">
+                                <span class="stat-label" data-key="total_paid">Total Paid</span>
+                                <span class="stat-value" id="statTotalPaid">$0.00</span>
+                            </div>
+                            <div class="stat-decoration"></div>
+                        </div>
+                        <div class="stat-card stat-remaining">
+                            <div class="stat-icon-wrap"><i class="ri-time-line"></i></div>
+                            <div class="stat-info">
+                                <span class="stat-label" data-key="total_remaining">Total Remaining</span>
+                                <span class="stat-value" id="statTotalRem">$0.00</span>
+                            </div>
+                            <div class="stat-decoration"></div>
+                        </div>
+                        <div class="stat-card stat-expenses">
+                            <div class="stat-icon-wrap"><i class="ri-shopping-bag-line"></i></div>
+                            <div class="stat-info">
+                                <span class="stat-label" data-key="total_expenses">Total Expenses</span>
+                                <span class="stat-value" id="statTotalExp">$0.00</span>
+                            </div>
+                            <div class="stat-decoration"></div>
+                        </div>
+                    </div>
+
+                    <!-- Net Profit Hero -->
+                    <div class="content-card profit-hero-card">
+                        <div class="profit-hero-content">
+                            <div class="profit-hero-icon"><i class="ri-trophy-line"></i></div>
+                            <div class="profit-hero-info">
+                                <span class="profit-hero-label" data-key="net_profit">Net Profit</span>
+                                <span class="profit-hero-desc">Revenue - Total Expenses</span>
+                            </div>
+                        </div>
+                        <span class="profit-hero-value" id="statNetProfit">$0.00</span>
+                        <div class="profit-hero-bg"></div>
+                    </div>
+                </section>
+
+            </div><!-- /content-area -->
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/api.js"></script>
+    <script src="js/lang.js"></script>
+    <script>
+        // ── Auth Guard ─────────────────────────────────────────────
+        const user = getUser();
+        if (!user || user.role !== 'Admin') window.location.href = 'index.html';
+
+        document.getElementById('welcomeMsg').innerText = `${user.username} (${user.role})`;
+
+        // ── Sidebar Toggle ─────────────────────────────────────────
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            sidebar.classList.toggle('open');
+            overlay.classList.toggle('active');
+        }
+
+        // ── Report Tab Navigation ──────────────────────────────────
+        function showReportTab(tab) {
+            // Hide all panels
+            document.querySelectorAll('.report-panel').forEach(p => p.classList.add('d-none'));
+            document.querySelectorAll('.reports-tab-btn').forEach(b => b.classList.remove('active'));
+
+            // Show selected
+            const panel = document.getElementById(tab + 'Panel');
+            const btn = document.getElementById('tab' + tab.charAt(0).toUpperCase() + tab.slice(1));
+            if (panel) { panel.classList.remove('d-none'); panel.classList.remove('section-animate'); void panel.offsetWidth; panel.classList.add('section-animate'); }
+            if (btn) btn.classList.add('active');
+
+            // Load data
+            if (tab === 'revenues') loadRevenues();
+            if (tab === 'expenses') loadExpenses();
+            if (tab === 'summary') loadSummary();
+        }
+
+        // ── Date Mode ──────────────────────────────────────────────
+        let revDateMode = 'day';
+        let expDateMode = 'day';
+
+        function setRevMode(mode) {
+            revDateMode = mode;
+            const dayBtn = document.getElementById('revModeDay');
+            const rangeBtn = document.getElementById('revModeRange');
+            const dayPic = document.getElementById('revDayPicker');
+            const rFrom = document.getElementById('revRangeFrom');
+            const rTo = document.getElementById('revRangeTo');
+            if (mode === 'day') {
+                dayBtn?.classList.add('active'); rangeBtn?.classList.remove('active');
+                dayPic?.classList.remove('d-none'); rFrom?.classList.add('d-none'); rTo?.classList.add('d-none');
+                if (document.getElementById('revFrom')) document.getElementById('revFrom').value = '';
+                if (document.getElementById('revTo')) document.getElementById('revTo').value = '';
+            } else {
+                rangeBtn?.classList.add('active'); dayBtn?.classList.remove('active');
+                dayPic?.classList.add('d-none'); rFrom?.classList.remove('d-none'); rTo?.classList.remove('d-none');
+                if (document.getElementById('revDay')) document.getElementById('revDay').value = '';
+            }
+            loadRevenues();
+        }
+
+        function clearRevDates() {
+            ['revDay', 'revFrom', 'revTo'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+            loadRevenues();
+        }
+
+        function setExpMode(mode) {
+            expDateMode = mode;
+            const dayBtn = document.getElementById('expModeDay');
+            const rangeBtn = document.getElementById('expModeRange');
+            const dayPic = document.getElementById('expDayPicker');
+            const rFrom = document.getElementById('expRangeFrom');
+            const rTo = document.getElementById('expRangeTo');
+            if (mode === 'day') {
+                dayBtn?.classList.add('active'); rangeBtn?.classList.remove('active');
+                dayPic?.classList.remove('d-none'); rFrom?.classList.add('d-none'); rTo?.classList.add('d-none');
+                if (document.getElementById('expFrom')) document.getElementById('expFrom').value = '';
+                if (document.getElementById('expTo')) document.getElementById('expTo').value = '';
+            } else {
+                rangeBtn?.classList.add('active'); dayBtn?.classList.remove('active');
+                dayPic?.classList.add('d-none'); rFrom?.classList.remove('d-none'); rTo?.classList.remove('d-none');
+                if (document.getElementById('expDay')) document.getElementById('expDay').value = '';
+            }
+            loadExpenses();
+        }
+
+        function clearExpDates() {
+            ['expDay', 'expFrom', 'expTo'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+            loadExpenses();
+        }
+
+        // ── Load Revenue List ──────────────────────────────────────
+        async function loadRevenues() {
+            const search = document.getElementById('revSearch')?.value || '';
+            let from = '', to = '';
+            if (revDateMode === 'day') {
+                const day = document.getElementById('revDay')?.value || '';
+                from = day; to = day;
+            } else {
+                from = document.getElementById('revFrom')?.value || '';
+                to = document.getElementById('revTo')?.value || '';
+            }
+            try {
+                const reports = await apiFetch(`/Dashboard/reports?search=${search}&from=${from}&to=${to}`);
+                renderGroupedRevenues(reports);
+            } catch (err) { console.error('Error loading revenues:', err); }
+        }
+
+        function renderGroupedRevenues(reports) {
+            const container = document.getElementById('revenueReportsContainer');
+            if (!container) return;
+            container.innerHTML = '';
+            if (!reports || reports.length === 0 || reports.every(r => r.revenues.length === 0)) {
+                container.innerHTML = '<div class="empty-state"><i class="ri-inbox-line"></i><p>No revenue records found</p></div>';
+                return;
+            }
+            reports.forEach(report => {
+                if (report.revenues.length === 0) return;
+                const section = document.createElement('div');
+                section.innerHTML = `
+                    <div class="month-group-header"><i class="ri-calendar-line"></i> ${report.monthName}</div>
+                    <div class="table-container month-group-table">
+                        <table>
+                            <thead><tr>
+                                <th data-key="client_name">Client</th>
+                                <th data-key="operation_type">Type</th>
+                                <th data-key="contract_price">Contract</th>
+                                <th data-key="offer_price">Offer</th>
+                                <th data-key="paid_amount">Paid</th>
+                                <th data-key="remaining">Remaining</th>
+                                <th data-key="revenue">Revenue</th>
+                                <th data-key="rest">Rest</th>
+                            </tr></thead>
+                            <tbody>
+                                ${report.revenues.map(r => `
+                                    <tr>
+                                        <td><strong>${r.clientName}</strong></td>
+                                        <td><span class="badge">${t(r.operationType.toLowerCase().replace(' ', '_'))}</span></td>
+                                        <td>${r.contractPrice.toFixed(2)}</td>
+                                        <td>${r.offerPrice.toFixed(2)}</td>
+                                        <td class="text-success">${r.paidAmount.toFixed(2)}</td>
+                                        <td class="text-danger">${r.remaining.toFixed(2)}</td>
+                                        <td class="text-success">${r.revenue.toFixed(2)}</td>
+                                        <td>${r.rest.toFixed(2)}</td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>`;
+                container.appendChild(section);
+            });
+            applyTranslations();
+        }
+
+        // ── Load Expense List ──────────────────────────────────────
+        async function loadExpenses() {
+            const search = document.getElementById('expSearch')?.value || '';
+            let from = '', to = '';
+            if (expDateMode === 'day') {
+                const day = document.getElementById('expDay')?.value || '';
+                from = day; to = day;
+            } else {
+                from = document.getElementById('expFrom')?.value || '';
+                to = document.getElementById('expTo')?.value || '';
+            }
+            try {
+                const reports = await apiFetch(`/Dashboard/expenses?search=${search}&from=${from}&to=${to}`);
+                renderGroupedExpenses(reports);
+            } catch (err) { console.error('Error loading expenses:', err); }
+        }
+
+        function renderGroupedExpenses(reports) {
+            const container = document.getElementById('expenseReportsContainer');
+            if (!container) return;
+            container.innerHTML = '';
+            let hasExpenses = false;
+            reports.forEach(report => {
+                if (report.expenses.length === 0) return;
+                hasExpenses = true;
+                const section = document.createElement('div');
+                section.innerHTML = `
+                    <div class="month-group-header"><i class="ri-calendar-line"></i> ${report.monthName}</div>
+                    <div class="table-container month-group-table">
+                        <table>
+                            <thead><tr>
+                                <th data-key="expense_type">Type</th>
+                                <th data-key="amount">Amount</th>
+                                <th data-key="notes">Notes</th>
+                            </tr></thead>
+                            <tbody>
+                                ${report.expenses.map(e => `
+                                    <tr>
+                                        <td><span class="badge badge-expense">${t(e.expenseType.toLowerCase())}</span></td>
+                                        <td class="text-danger">${e.amount.toFixed(2)}</td>
+                                        <td>${e.notes || '—'}</td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>`;
+                container.appendChild(section);
+            });
+            if (!hasExpenses) {
+                container.innerHTML = '<div class="empty-state"><i class="ri-inbox-line"></i><p>No expense records found</p></div>';
+            }
+            applyTranslations();
+        }
+
+        // ── Load Summary ───────────────────────────────────────────
+        async function loadSummary() {
+            const data = await apiFetch('/Dashboard/summary');
+            document.getElementById('statTotalRev').innerText = `$${data.totalRevenue.toLocaleString()}`;
+            document.getElementById('statTotalPaid').innerText = `$${data.totalPaid.toLocaleString()}`;
+            document.getElementById('statTotalRem').innerText = `$${data.totalRemaining.toLocaleString()}`;
+            document.getElementById('statTotalExp').innerText = `$${data.totalExpenses.toLocaleString()}`;
+            document.getElementById('statNetProfit').innerText = `$${data.netProfit.toLocaleString()}`;
+        }
+
+        // ── Lang change ────────────────────────────────────────────
+        window.addEventListener('langChanged', () => {
+            loadRevenues();
+            loadExpenses();
+        });
+
+        // ── Initial Data Load ──────────────────────────────────────
+        document.addEventListener('DOMContentLoaded', () => {
+            loadRevenues(); // load the first active tab
+        });
+    </script>
+</body>
+
+</html>

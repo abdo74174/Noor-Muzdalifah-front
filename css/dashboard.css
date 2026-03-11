@@ -555,7 +555,7 @@ body[dir="rtl"] .input-wrapper .form-control {
 /* --- Date mode toggle --- */
 .date-mode-toggle {
     display: inline-flex;
-    background: var(--surface-alt, rgba(99,102,241,0.05));
+    background: var(--surface-alt, rgba(99, 102, 241, 0.05));
     border: 1px solid var(--border-color);
     border-radius: 10px;
     padding: 3px;
@@ -579,17 +579,19 @@ body[dir="rtl"] .input-wrapper .form-control {
     white-space: nowrap;
 }
 
-.date-mode-btn i { font-size: 0.95rem; }
+.date-mode-btn i {
+    font-size: 0.95rem;
+}
 
 .date-mode-btn:hover {
     color: var(--primary);
-    background: rgba(99,102,241,0.06);
+    background: rgba(99, 102, 241, 0.06);
 }
 
 .date-mode-btn.active {
     background: linear-gradient(135deg, var(--primary), var(--accent));
     color: white;
-    box-shadow: 0 2px 8px rgba(99,102,241,0.25);
+    box-shadow: 0 2px 8px rgba(99, 102, 241, 0.25);
 }
 
 /* --- Clear date button --- */
@@ -610,7 +612,7 @@ body[dir="rtl"] .input-wrapper .form-control {
 }
 
 .btn-clear-date:hover {
-    background: rgba(239,68,68,0.08);
+    background: rgba(239, 68, 68, 0.08);
     border-color: var(--danger);
     color: var(--danger);
     transform: rotate(90deg);
@@ -639,6 +641,55 @@ body[dir="rtl"] .input-wrapper .form-control {
     margin: 0 -0.25rem;
     opacity: 0.8;
 }
+
+/* --- Reports Page: Tab Navigation --- */
+.reports-tab-nav {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 14px;
+    padding: 6px;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+}
+
+.reports-tab-btn {
+    flex: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.65rem 1.25rem;
+    border: none;
+    border-radius: 10px;
+    background: transparent;
+    color: var(--text-muted);
+    font-family: inherit;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    white-space: nowrap;
+}
+
+.reports-tab-btn i {
+    font-size: 1.05rem;
+}
+
+.reports-tab-btn:hover {
+    color: var(--primary);
+    background: rgba(99, 102, 241, 0.07);
+}
+
+.reports-tab-btn.active {
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    color: white;
+    box-shadow: 0 4px 14px rgba(99, 102, 241, 0.28);
+}
+
+
 
 /* --- Report Highlight Card --- */
 .report-highlight-card {
