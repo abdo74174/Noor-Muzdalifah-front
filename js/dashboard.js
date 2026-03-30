@@ -493,7 +493,7 @@ async function updateAdminProfile(e) {
     const newUsername = document.getElementById('newAdminName').value.trim();
     const newPassword = document.getElementById('newAdminPassword').value;
 
-    if (!newUsername || !newPassword) return;
+    if (!newUsername) return;
 
     const btn = e.target.querySelector('button[type="submit"]');
     if (btn) {
@@ -502,7 +502,10 @@ async function updateAdminProfile(e) {
     }
 
     try {
-        await apiFetch('/Auth/update-profile', 'PUT', { username: newUsername, password: newPassword });
+        const payload = { username: newUsername, role: user.role };
+        if (newPassword) payload.password = newPassword;
+
+        await apiFetch('/Auth/update-profile', 'PUT', payload);
 
         // Update local user object in memory and storage
         user.username = newUsername;
