@@ -65,11 +65,10 @@ async function login(username, password, role) {
             const data = await response.json();
             // Data expected: { token, username, role }
             localStorage.setItem('token', data.token);
-            // Ensure the role from the backend matches what the user selected (if you want to enforce it),
-            // but usually we just trust the backend role.
             localStorage.setItem('user', JSON.stringify({
+                id: data.userId,
                 username: data.username || username,
-                role: data.role || role // Priority to backend role
+                role: data.role || role
             }));
             return true;
         }

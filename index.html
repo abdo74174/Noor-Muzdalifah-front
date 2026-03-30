@@ -52,13 +52,7 @@
         <main class="auth-form-panel" role="main">
             <div class="auth-form-inner">
 
-                <!-- Language Switcher -->
-                <div class="auth-lang-wrapper" role="navigation" aria-label="Language selection">
-                    <div class="lang-switcher">
-                        <button class="lang-btn" onclick="setLang('en')" aria-label="Switch to English">EN</button>
-                        <button class="lang-btn" onclick="setLang('ar')" aria-label="Switch to Arabic">AR</button>
-                    </div>
-                </div>
+
 
                 <!-- Heading -->
                 <div class="auth-heading">
@@ -116,27 +110,6 @@
                         <div class="btn-signin-ripple"></div>
                     </button>
 
-                    <!-- Divider -->
-                    <div class="auth-divider" aria-hidden="true">
-                        <span>or try a demo</span>
-                    </div>
-
-                    <!-- Demo Buttons -->
-                    <div class="demo-row">
-                        <button type="button" class="btn-demo btn-demo-admin"
-                            onclick="demoLogin('Admin').then(ok => { if(ok) window.location.href='dashboard.html'; })"
-                            aria-label="Login as Demo Admin">
-                            <i class="ri-shield-user-fill" aria-hidden="true"></i>
-
-                            Demo Admin
-                        </button>
-                        <button type="button" class="btn-demo btn-demo-user"
-                            onclick="demoLogin('User').then(ok => { if(ok) window.location.href='dashboard.html'; })"
-                            aria-label="Login as Demo User">
-                            <i class="ri-user-2-fill" aria-hidden="true"></i>
-                            Demo User
-                        </button>
-                    </div>
                 </form>
 
                 <p class="auth-footer-note">Secure login · Role-based access control</p>
