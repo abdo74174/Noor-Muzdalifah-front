@@ -58,6 +58,7 @@ function switchTab(tab) {
     if (tab === 'revenueList') loadRevenues();
     if (tab === 'expenseList') loadExpenses();
     if (tab === 'profile') loadProfile();
+    if (tab === 'userManagement') loadUsers();
     if (tab === 'settings') syncSettingsUI();
 
     // Close sidebar on mobile
@@ -764,7 +765,124 @@ async function createNewUser(e) {
         await apiFetch('/Auth/register', 'POST', { username, password, role });
         showSuccess();
         document.getElementById('createUserForm').reset();
+        loadUsers(); // Refresh list after creation
     } catch (err) { alert(err.message || 'Error creating user'); }
+}
+
+async function loadUsers() {
+    if (user.role !== 'Admin') return;
+    const container = document.getElementById('usersListContainer');
+    if (!container) return;
+
+    try {
+        const users = await apiFetch('/Auth/all-users');
+        renderUsers(users);
+    } catch (err) {
+        container.innerHTML = `<div class="error-state"><p>${err.message}</p></div>`;
+    }
+}
+
+function renderUsers(users) {
+    const container = document.getElementById('usersListContainer');
+    if (!container) return;
+
+    if (!users || users.length === 0) {
+        container.innerHTML = '<div class="empty-state"><i class="ri-user-unfollow-line"></i><p>No users found</p></div>';
+        return;
+    }
+
+    container.innerHTML = `
+        <div class="table-container">
+            <table class="user-table">
+                <thead>
+                    <tr>
+                        <th data-key="username">Username</th>
+                        <th data-key="role">Role</th>
+                        <th style="text-align:right;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${users.map(u => `
+                        <tr>
+                            <td>
+                                <div style="display:flex;align-items:center;gap:0.75rem;">
+                                    <div class="user-avatar-small"><i class="ri-user-3-line"></i></div>
+                                    <strong>${u.username}</strong>
+                                </div>
+                            </td>
+                            <td><span class="badge ${u.role === 'Admin' ? '' : 'badge-user'}">${u.role}</span></td>
+                            <td style="text-align:right;">
+                                <div style="display:flex;justify-content:flex-end;gap:0.5rem;">
+                                    <button class="btn-edit" onclick="openEditUserModal(${u.id}, '${u.username.replace(/'/g, "\\'")}', '${u.role}')" title="Edit User">
+                                        <i class="ri-edit-line"></i>
+                                    </button>
+                                    ${u.username !== user.username ? `
+                                        <button class="btn-edit" onclick="deleteUser(${u.id}, '${u.username.replace(/'/g, "\\'")}')" style="background:rgba(239,68,68,0.1);color:var(--danger);" title="Delete User">
+                                            <i class="ri-delete-bin-line"></i>
+                                        </button>
+                                    ` : ''}
+                                </div>
+                            </td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>
+        </div>
+    `;
+    applyTranslations();
+}
+
+function openEditUserModal(id, username, role) {
+    document.getElementById('editUserId').value = id;
+    document.getElementById('editUserUsername').value = username;
+    document.getElementById('editUserPassword').value = ''; // Always clear password field
+    document.getElementById('editUserRole').value = role;
+    document.getElementById('editUserModal').classList.remove('d-none');
+}
+
+function closeEditUserModal(e) {
+    if (e && e.target !== e.currentTarget) return;
+    document.getElementById('editUserModal').classList.add('d-none');
+}
+
+async function saveEditedUser(event) {
+    event.preventDefault();
+    const id = document.getElementById('editUserId').value;
+    const username = document.getElementById('editUserUsername').value.trim();
+    const password = document.getElementById('editUserPassword').value;
+
+    const payload = { username };
+    if (password) payload.password = password;
+
+    try {
+        await apiFetch(`/Auth/update-user/${id}`, 'PUT', payload);
+        closeEditUserModal();
+        showSuccess('User updated successfully');
+        loadUsers();
+        
+        // If current logged in user was edited, update local storage
+        if (parseInt(id) === user.id) {
+            user.username = username;
+            localStorage.setItem('user', JSON.stringify(user));
+            document.getElementById('welcomeMsg').innerText = `${username} (${user.role})`;
+            document.getElementById('profileUsername').innerText = username;
+            document.getElementById('profileUsernameVal').innerText = username;
+        }
+    } catch (err) {
+        alert(err.message || 'Error updating user');
+    }
+}
+
+async function deleteUser(id, username) {
+    if (!confirm(`Are you sure you want to delete user "${username}"?`)) return;
+
+    try {
+        await apiFetch(`/Auth/delete-user/${id}`, 'DELETE');
+        showSuccess('User deleted successfully');
+        loadUsers();
+    } catch (err) {
+        alert(err.message || 'Error deleting user');
+    }
 }
 
 // =============================================

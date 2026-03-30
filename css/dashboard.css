@@ -2171,3 +2171,57 @@ body[dir="rtl"] .summary-item:nth-child(5) { border-right-color: var(--primary);
         justify-content: center;
     }
 }
+/* --- User Management Table --- */
+.user-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.user-table th {
+    text-align: left;
+    padding: 1rem;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-bottom: 2px solid var(--border-color);
+}
+
+body[dir="rtl"] .user-table th {
+    text-align: right;
+}
+
+.user-table td {
+    padding: 1.25rem 1rem;
+    border-bottom: 1px solid var(--border-color);
+    vertical-align: middle;
+}
+
+.user-table tr:last-child td {
+    border-bottom: none;
+}
+
+.user-avatar-small {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background: rgba(99, 102, 241, 0.1);
+    color: var(--primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+}
+
+.badge-user {
+    background: rgba(139, 92, 246, 0.1) !important;
+    color: var(--accent) !important;
+}
+
+/* --- User Edit Modal Fixes --- */
+#editUserModal .modal-card {
+    max-width: 500px;
+}
+

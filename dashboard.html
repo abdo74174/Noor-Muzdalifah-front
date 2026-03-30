@@ -568,8 +568,8 @@
           </div>
         </section>
 
-        <!-- ==================== USER MANAGEMENT SECTION (Admin) ==================== -->
         <section id="userManagementSection" class="d-none section-animate">
+          <!-- Create User Card -->
           <div class="content-card">
             <div class="card-header">
               <div class="card-header-icon" style="background:rgba(139,92,246,0.12);color:var(--accent);">
@@ -613,6 +613,70 @@
                 </button>
               </div>
             </form>
+          </div>
+
+          <!-- User List Card -->
+          <div class="content-card" style="margin-top: 2rem;">
+            <div class="card-header">
+              <div class="card-header-icon" style="background:rgba(16,185,129,0.12);color:var(--success);">
+                <i class="ri-group-line"></i>
+              </div>
+              <div>
+                <h3 data-key="registered_users">Registered Users</h3>
+                <p class="card-subtitle">Manage all system users and admins</p>
+              </div>
+            </div>
+            <div id="usersListContainer" style="margin-top: 1.5rem;">
+              <!-- User table populated by JS -->
+              <div class="empty-state">
+                <i class="ri-loader-4-line ri-spin"></i>
+                <p>Loading users...</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Edit User Modal -->
+          <div id="editUserModal" class="modal-overlay d-none" onclick="closeEditUserModal(event)">
+            <div class="modal-card" onclick="event.stopPropagation()">
+              <div class="modal-header">
+                <h3><i class="ri-user-settings-line"></i> <span>Edit User</span></h3>
+                <button class="modal-close" onclick="closeEditUserModal()"><i class="ri-close-line"></i></button>
+              </div>
+              <form id="editUserForm" class="form-grid" onsubmit="saveEditedUser(event)">
+                <input type="hidden" id="editUserId">
+                <div class="form-group">
+                  <label data-key="username">Username</label>
+                  <div class="input-wrapper">
+                    <i class="ri-user-line input-icon"></i>
+                    <input type="text" id="editUserUsername" class="form-control" required>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label data-key="new_password">New Password</label>
+                  <div class="input-wrapper">
+                    <i class="ri-lock-line input-icon"></i>
+                    <input type="password" id="editUserPassword" class="form-control" placeholder="Leave empty to keep current">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label data-key="role">Role</label>
+                  <div class="input-wrapper">
+                    <i class="ri-shield-user-line input-icon"></i>
+                    <select id="editUserRole" class="form-control" disabled>
+                      <option value="User">Employee</option>
+                      <option value="Admin">Administrator</option>
+                    </select>
+                    <small class="form-text text-muted" style="display:block;margin-top:0.25rem;font-size:0.75rem;">Role cannot be changed here for security</small>
+                  </div>
+                </div>
+                <div class="form-group form-action-group">
+                  <button type="submit" class="btn-submit">
+                    <i class="ri-save-line"></i>
+                    <span data-key="save_changes">Save Changes</span>
+                  </button>
+                </div>
+              </form>
+            </div>
           </div>
         </section>
 
