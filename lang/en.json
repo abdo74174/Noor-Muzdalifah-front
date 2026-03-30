@@ -83,5 +83,7 @@
     "no_records_in_date": "No data found for this date",
     "no_revenue_records": "No revenue records found",
     "no_expense_records": "No expense records found",
-    "date": "Date"
+    "date": "Date",
+    "registered_users": "Registered Users",
+    "edit_user": "Edit User"
 }
