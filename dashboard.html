@@ -1,765 +1,752 @@
 <!DOCTYPE html>
-<html lang="ar">
-
+<html lang="en" dir="ltr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>لوحة التحكم - نظام إدخال البيانات</title>
-    <link rel="stylesheet" href="css/base.css">
-    <link rel="stylesheet" href="css/dashboard.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css">
-    <!-- Apply theme immediately to prevent flash -->
-    <script>
-        (function () {
-            const t = localStorage.getItem('theme') || 'light';
-            document.documentElement.setAttribute('data-theme', t === 'system'
-                ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
-                : t);
-        })();
-    </script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Noor Mozdalifah — AI Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&family=Playfair+Display:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.2.0/remixicon.min.css">
+<style>
+  :root {
+    --bg: #f7f6f3;
+    --surface: #ffffff;
+    --surface2: #f0ede8;
+    --border: #e4e0d8;
+    --text: #1a1917;
+    --muted: #7a7670;
+    --accent: #2d6a4f;
+    --accent-light: #e8f5ee;
+    --accent-mid: #52b788;
+    --danger: #c0392b;
+    --danger-light: #fdf0ef;
+    --warn: #d4820a;
+    --warn-light: #fef6e4;
+    --blue: #1e4d8c;
+    --blue-light: #eaf0fb;
+    --sidebar-w: 240px;
+    --radius: 10px;
+    --font: 'DM Sans', sans-serif;
+    --font-display: 'Playfair Display', serif;
+    --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+    --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--font); background: var(--bg); color: var(--text); font-size: 14px; line-height: 1.6; display: flex; min-height: 100vh; }
+
+  /* SIDEBAR */
+  .sidebar {
+    width: var(--sidebar-w); background: var(--surface); border-right: 1px solid var(--border);
+    display: flex; flex-direction: column; position: fixed; top: 0; left: 0; height: 100vh;
+    z-index: 100; transition: transform 0.3s;
+  }
+  .sidebar-logo {
+    padding: 20px 20px 16px; border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 10px;
+  }
+  .logo-mark {
+    width: 32px; height: 32px; background: var(--accent); border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; font-size: 15px; font-weight: 500; flex-shrink: 0;
+  }
+  .logo-text { font-size: 13px; font-weight: 500; }
+  .logo-text span { display: block; font-size: 11px; color: var(--muted); font-weight: 400; }
+  .sidebar-nav { padding: 12px 10px; flex: 1; overflow-y: auto; }
+  .nav-section { font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); padding: 10px 10px 4px; }
+  .nav-item {
+    display: flex; align-items: center; gap: 10px; padding: 9px 10px; border-radius: 7px;
+    color: var(--muted); cursor: pointer; transition: all 0.15s; font-size: 13.5px; user-select: none;
+  }
+  .nav-item:hover { background: var(--surface2); color: var(--text); }
+  .nav-item.active { background: var(--accent-light); color: var(--accent); font-weight: 500; }
+  .nav-item i { font-size: 16px; width: 18px; }
+  .nav-badge { margin-left: auto; background: var(--accent); color: #fff; font-size: 10px; padding: 1px 6px; border-radius: 20px; }
+  .sidebar-footer { padding: 14px 10px; border-top: 1px solid var(--border); }
+  .user-card { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 8px; cursor: pointer; }
+  .user-card:hover { background: var(--surface2); }
+  .user-avatar { width: 30px; height: 30px; border-radius: 50%; background: var(--accent); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 500; flex-shrink: 0; }
+  .user-name { font-size: 13px; font-weight: 500; }
+  .user-role { font-size: 11px; color: var(--muted); }
+
+  /* MAIN */
+  .main { margin-left: var(--sidebar-w); flex: 1; display: flex; flex-direction: column; min-height: 100vh; }
+  .topbar {
+    position: sticky; top: 0; background: rgba(247,246,243,0.92); backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border); padding: 0 28px; height: 56px;
+    display: flex; align-items: center; gap: 12px; z-index: 50;
+  }
+  .topbar-title { font-size: 15px; font-weight: 500; flex: 1; }
+  .topbar-actions { display: flex; align-items: center; gap: 8px; }
+
+  /* AI SEARCH BAR */
+  .ai-search-bar {
+    display: flex; align-items: center; gap: 8px; background: var(--surface);
+    border: 1px solid var(--border); border-radius: 8px; padding: 0 12px;
+    height: 36px; width: 260px; transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .ai-search-bar:focus-within { border-color: var(--accent-mid); box-shadow: 0 0 0 3px rgba(82,183,136,0.15); }
+  .ai-search-bar input { border: none; outline: none; background: transparent; font-size: 13px; flex: 1; color: var(--text); font-family: var(--font); }
+  .ai-search-bar input::placeholder { color: var(--muted); }
+  .ai-badge { font-size: 10px; background: var(--accent-light); color: var(--accent); padding: 2px 6px; border-radius: 4px; font-weight: 500; white-space: nowrap; }
+  .icon-btn {
+    width: 36px; height: 36px; border-radius: 8px; border: 1px solid var(--border);
+    background: var(--surface); display: flex; align-items: center; justify-content: center;
+    cursor: pointer; color: var(--muted); font-size: 16px; transition: all 0.15s;
+  }
+  .icon-btn:hover { background: var(--surface2); color: var(--text); }
+
+  /* CONTENT */
+  .content { padding: 28px; flex: 1; }
+  .page { display: none; }
+  .page.active { display: block; }
+
+  /* STATS GRID */
+  .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 24px; }
+  .stat-card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 18px 20px; position: relative; overflow: hidden;
+  }
+  .stat-label { font-size: 12px; color: var(--muted); margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+  .stat-value { font-size: 24px; font-weight: 500; font-family: var(--font-display); letter-spacing: -0.5px; }
+  .stat-delta { font-size: 11px; margin-top: 4px; }
+  .stat-delta.up { color: var(--accent); }
+  .stat-delta.down { color: var(--danger); }
+  .stat-icon { position: absolute; right: 16px; top: 18px; font-size: 20px; opacity: 0.15; }
+
+  /* GRID 2COL */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-bottom: 24px; }
+  .grid-3col { display: grid; grid-template-columns: 1.6fr 1fr; gap: 18px; margin-bottom: 24px; }
+
+  /* CARDS */
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; }
+  .card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+  .card-title { font-size: 14px; font-weight: 500; }
+  .card-sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+  /* CHART BARS */
+  .chart-bars { display: flex; align-items: flex-end; gap: 6px; height: 120px; }
+  .bar-wrap { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; height: 100%; }
+  .bar-col { width: 100%; border-radius: 4px 4px 0 0; flex-shrink: 0; transition: opacity 0.2s; }
+  .bar-col:hover { opacity: 0.8; }
+  .bar-label { font-size: 10px; color: var(--muted); }
+
+  /* TABLE */
+  .data-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .data-table th { text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); padding: 8px 12px; border-bottom: 1px solid var(--border); font-weight: 500; }
+  .data-table td { padding: 11px 12px; border-bottom: 1px solid var(--border); color: var(--text); }
+  .data-table tr:last-child td { border-bottom: none; }
+  .data-table tr:hover td { background: var(--surface2); }
+  .badge { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; padding: 3px 8px; border-radius: 20px; font-weight: 500; }
+  .badge-green { background: var(--accent-light); color: var(--accent); }
+  .badge-red { background: var(--danger-light); color: var(--danger); }
+  .badge-yellow { background: var(--warn-light); color: var(--warn); }
+
+  /* AI CHAT PANEL */
+  .ai-panel {
+    position: fixed; right: 0; top: 0; height: 100vh; width: 380px; background: var(--surface);
+    border-left: 1px solid var(--border); display: flex; flex-direction: column;
+    z-index: 200; transform: translateX(100%); transition: transform 0.3s cubic-bezier(0.16,1,0.3,1);
+    box-shadow: var(--shadow-md);
+  }
+  .ai-panel.open { transform: translateX(0); }
+  .ai-panel-header {
+    padding: 16px 20px; border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .ai-panel-title { font-size: 14px; font-weight: 500; display: flex; align-items: center; gap: 8px; }
+  .ai-dot { width: 7px; height: 7px; background: var(--accent-mid); border-radius: 50%; animation: pulse 2s infinite; }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+  .ai-messages { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+  .msg { max-width: 88%; }
+  .msg.user { align-self: flex-end; }
+  .msg.bot { align-self: flex-start; }
+  .msg-bubble {
+    padding: 10px 14px; border-radius: 12px; font-size: 13px; line-height: 1.55;
+  }
+  .msg.user .msg-bubble { background: var(--accent); color: #fff; border-radius: 12px 12px 2px 12px; }
+  .msg.bot .msg-bubble { background: var(--surface2); color: var(--text); border-radius: 12px 12px 12px 2px; border: 1px solid var(--border); }
+  .msg-time { font-size: 10px; color: var(--muted); margin-top: 3px; padding: 0 2px; }
+  .msg.user .msg-time { text-align: right; }
+  .typing-indicator { display: flex; gap: 4px; padding: 12px 14px; background: var(--surface2); border-radius: 12px 12px 12px 2px; border: 1px solid var(--border); width: fit-content; }
+  .typing-dot { width: 6px; height: 6px; background: var(--muted); border-radius: 50%; animation: bounce 1.2s infinite; }
+  .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+  .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes bounce { 0%, 60%, 100% { transform: translateY(0); } 30% { transform: translateY(-5px); } }
+  .ai-input-row { padding: 14px 16px; border-top: 1px solid var(--border); display: flex; gap: 8px; }
+  .ai-input {
+    flex: 1; border: 1px solid var(--border); border-radius: 8px; padding: 9px 12px;
+    font-size: 13px; font-family: var(--font); outline: none; resize: none; background: var(--bg);
+    color: var(--text); transition: border-color 0.2s;
+  }
+  .ai-input:focus { border-color: var(--accent-mid); }
+  .send-btn {
+    width: 36px; height: 36px; background: var(--accent); border: none; border-radius: 8px;
+    color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center;
+    font-size: 16px; flex-shrink: 0; transition: background 0.15s;
+  }
+  .send-btn:hover { background: #246040; }
+  .send-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  .quick-chips { display: flex; flex-wrap: wrap; gap: 6px; padding: 0 16px 12px; }
+  .chip {
+    font-size: 11.5px; padding: 5px 10px; border: 1px solid var(--border); border-radius: 20px;
+    background: var(--surface); cursor: pointer; color: var(--text); transition: all 0.15s;
+  }
+  .chip:hover { background: var(--accent-light); border-color: var(--accent-mid); color: var(--accent); }
+
+  /* CONTENT GENERATOR */
+  .gen-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+  .gen-output {
+    background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 16px; min-height: 180px; font-size: 13px; line-height: 1.7; color: var(--text);
+    white-space: pre-wrap;
+  }
+  .gen-output.loading { display: flex; align-items: center; justify-content: center; color: var(--muted); }
+  .gen-type-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 14px; }
+  .gen-type-btn {
+    padding: 10px; border: 1px solid var(--border); border-radius: 8px; background: var(--surface);
+    cursor: pointer; font-size: 12.5px; font-family: var(--font); text-align: center; transition: all 0.15s;
+  }
+  .gen-type-btn:hover, .gen-type-btn.selected { background: var(--accent-light); border-color: var(--accent-mid); color: var(--accent); }
+  .gen-type-btn i { display: block; font-size: 18px; margin-bottom: 4px; }
+
+  /* SEARCH */
+  .search-big {
+    display: flex; align-items: center; gap: 10px; background: var(--surface);
+    border: 1.5px solid var(--border); border-radius: 12px; padding: 0 16px;
+    height: 52px; margin-bottom: 20px; transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .search-big:focus-within { border-color: var(--accent-mid); box-shadow: 0 0 0 3px rgba(82,183,136,0.12); }
+  .search-big input { flex: 1; border: none; outline: none; background: transparent; font-size: 15px; font-family: var(--font); color: var(--text); }
+  .search-big input::placeholder { color: var(--muted); }
+  .search-big i { font-size: 20px; color: var(--muted); }
+  .search-results { display: flex; flex-direction: column; gap: 10px; }
+  .search-result-item {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+    padding: 14px 16px; cursor: pointer; transition: all 0.15s;
+  }
+  .search-result-item:hover { border-color: var(--accent-mid); box-shadow: var(--shadow); }
+  .result-title { font-size: 13.5px; font-weight: 500; margin-bottom: 3px; }
+  .result-snippet { font-size: 12.5px; color: var(--muted); line-height: 1.5; }
+  .result-tags { display: flex; gap: 6px; margin-top: 8px; }
+  .result-tag { font-size: 10.5px; padding: 2px 8px; background: var(--surface2); border-radius: 20px; color: var(--muted); }
+
+  /* ANALYSIS */
+  .analysis-output {
+    background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 18px; min-height: 200px; font-size: 13px; line-height: 1.8; white-space: pre-wrap;
+  }
+  .analysis-filters { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+  .filter-btn {
+    padding: 7px 14px; border-radius: 20px; border: 1px solid var(--border);
+    background: var(--surface); cursor: pointer; font-size: 12.5px; font-family: var(--font);
+    transition: all 0.15s;
+  }
+  .filter-btn:hover, .filter-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+  /* BUTTONS */
+  .btn {
+    display: inline-flex; align-items: center; gap: 6px; padding: 9px 16px;
+    border-radius: 8px; font-size: 13px; font-family: var(--font); cursor: pointer;
+    transition: all 0.15s; border: none;
+  }
+  .btn-primary { background: var(--accent); color: #fff; }
+  .btn-primary:hover { background: #246040; }
+  .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
+  .btn-outline { background: var(--surface); border: 1px solid var(--border); color: var(--text); }
+  .btn-outline:hover { background: var(--surface2); }
+  textarea.field-input {
+    width: 100%; border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px;
+    font-size: 13px; font-family: var(--font); background: var(--bg); color: var(--text);
+    outline: none; resize: vertical; min-height: 90px; transition: border-color 0.2s;
+  }
+  textarea.field-input:focus { border-color: var(--accent-mid); }
+  .field-label { font-size: 12px; color: var(--muted); margin-bottom: 5px; display: block; }
+
+  /* MINI DONUT */
+  .donut-wrap { display: flex; align-items: center; gap: 20px; }
+  .donut-legend { display: flex; flex-direction: column; gap: 8px; }
+  .legend-item { display: flex; align-items: center; gap: 8px; font-size: 12.5px; }
+  .legend-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+
+  /* OVERLAY */
+  .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.3); z-index: 199; display: none; }
+  .overlay.visible { display: block; }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width: 5px; height: 5px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+  /* AI open shift */
+  body.ai-open .main { margin-right: 380px; }
+
+  /* Section heading */
+  .section-head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 20px; }
+  .section-head h2 { font-size: 18px; font-weight: 500; }
+  .section-head p { font-size: 12.5px; color: var(--muted); margin-top: 2px; }
+  .text-link { font-size: 12.5px; color: var(--accent); cursor: pointer; text-decoration: none; }
+  .text-link:hover { text-decoration: underline; }
+  .spinner { display: inline-block; width: 14px; height: 14px; border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff; border-radius: 50%; animation: spin 0.8s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+</style>
 </head>
-
 <body>
-    <div class="dashboard-layout">
-        <!-- Sidebar -->
-        <aside class="sidebar glass" id="sidebar">
-            <div class="sidebar-header">
-                <div class="sidebar-logo">
-                    <div class="sidebar-logo-img-wrap">
-                        <img src="images/logo.png" alt="Noor Mozdalifah" class="sidebar-logo-img">
-                    </div>
-                    <div class="sidebar-logo-text">
-                        <span class="logo-name-ar">نور مزدلفة</span>
-                        <span class="logo-name-en">Noor Mozdalifah</span>
-                    </div>
-                </div>
-                <button class="sidebar-toggle" id="sidebarToggle" onclick="toggleSidebar()">
-                    <i class="ri-menu-line"></i>
-                </button>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-mark">ن</div>
+    <div class="logo-text">نور مزدلفة <span>Noor Mozdalifah</span></div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-section">Main</div>
+    <div class="nav-item active" onclick="showPage('dashboard', this)"><i class="ri-dashboard-3-line"></i> Dashboard</div>
+    <div class="nav-item" onclick="showPage('reports', this)"><i class="ri-bar-chart-line"></i> Reports</div>
+    <div class="nav-item" onclick="showPage('entries', this)"><i class="ri-file-list-3-line"></i> Entries</div>
+    <div class="nav-section">AI Tools</div>
+    <div class="nav-item" onclick="showPage('generator', this)"><i class="ri-quill-pen-line"></i> Content Generator <span class="nav-badge">AI</span></div>
+    <div class="nav-item" onclick="showPage('search', this)"><i class="ri-search-eye-line"></i> Smart Search <span class="nav-badge">AI</span></div>
+    <div class="nav-item" onclick="showPage('analysis', this)"><i class="ri-line-chart-line"></i> Data Analysis <span class="nav-badge">AI</span></div>
+    <div class="nav-section">Settings</div>
+    <div class="nav-item"><i class="ri-user-line"></i> Profile</div>
+    <div class="nav-item"><i class="ri-settings-3-line"></i> Settings</div>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="user-card">
+      <div class="user-avatar">AM</div>
+      <div><div class="user-name">Admin</div><div class="user-role">Administrator</div></div>
+    </div>
+  </div>
+</aside>
+
+<!-- MAIN CONTENT -->
+<div class="main">
+  <header class="topbar">
+    <div class="topbar-title" id="topbar-title">Dashboard</div>
+    <div class="topbar-actions">
+      <div class="ai-search-bar">
+        <i class="ri-search-line" style="color:var(--muted);font-size:15px;"></i>
+        <input type="text" placeholder="Ask AI anything..." id="topSearchInput" onkeydown="handleTopSearch(event)">
+        <span class="ai-badge">AI</span>
+      </div>
+      <div class="icon-btn" onclick="toggleAI()" title="AI Assistant"><i class="ri-robot-2-line"></i></div>
+      <div class="icon-btn"><i class="ri-notification-3-line"></i></div>
+    </div>
+  </header>
+
+  <div class="content">
+
+    <!-- DASHBOARD PAGE -->
+    <div class="page active" id="page-dashboard">
+      <div class="section-head">
+        <div><h2>Overview</h2><p>Financial summary — January 2026</p></div>
+        <button class="btn btn-primary" onclick="openAI()"><i class="ri-robot-2-line"></i> Ask AI</button>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-label"><i class="ri-arrow-up-circle-line" style="color:var(--accent)"></i> Total Revenue</div>
+          <div class="stat-value" style="color:var(--accent)">94,200 SAR</div>
+          <div class="stat-delta up">↑ 12.4% from last month</div>
+          <i class="ri-money-dollar-circle-line stat-icon"></i>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label"><i class="ri-arrow-down-circle-line" style="color:var(--danger)"></i> Total Expenses</div>
+          <div class="stat-value" style="color:var(--danger)">38,750 SAR</div>
+          <div class="stat-delta down">↑ 5.1% from last month</div>
+          <i class="ri-wallet-3-line stat-icon"></i>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label"><i class="ri-scales-line" style="color:var(--blue)"></i> Net Profit</div>
+          <div class="stat-value" style="color:var(--blue)">55,450 SAR</div>
+          <div class="stat-delta up">↑ 18.2% from last month</div>
+          <i class="ri-funds-line stat-icon"></i>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label"><i class="ri-team-line" style="color:var(--warn)"></i> Active Clients</div>
+          <div class="stat-value" style="color:var(--warn)">142</div>
+          <div class="stat-delta up">↑ 8 new this month</div>
+          <i class="ri-user-star-line stat-icon"></i>
+        </div>
+      </div>
+
+      <div class="grid-3col">
+        <!-- Revenue chart -->
+        <div class="card">
+          <div class="card-header">
+            <div><div class="card-title">Revenue vs Expenses</div><div class="card-sub">Last 6 months</div></div>
+          </div>
+          <div class="chart-bars">
+            <div class="bar-wrap"><div class="bar-col" style="height:55%;background:var(--accent-mid);"></div><div class="bar-label">Aug</div></div>
+            <div class="bar-wrap"><div class="bar-col" style="height:72%;background:var(--accent-mid);"></div><div class="bar-label">Sep</div></div>
+            <div class="bar-wrap"><div class="bar-col" style="height:60%;background:var(--accent-mid);"></div><div class="bar-label">Oct</div></div>
+            <div class="bar-wrap"><div class="bar-col" style="height:85%;background:var(--accent-mid);"></div><div class="bar-label">Nov</div></div>
+            <div class="bar-wrap"><div class="bar-col" style="height:78%;background:var(--accent-mid);"></div><div class="bar-label">Dec</div></div>
+            <div class="bar-wrap"><div class="bar-col" style="height:100%;background:var(--accent);"></div><div class="bar-label">Jan</div></div>
+            <div style="width:1px;background:var(--border);height:100%;margin:0 4px;"></div>
+            <div class="bar-wrap"><div class="bar-col" style="height:38%;background:#f0a0a0;"></div><div class="bar-label">Aug</div></div>
+            <div class="bar-wrap"><div class="bar-col" style="height:42%;background:#f0a0a0;"></div><div class="bar-label">Sep</div></div>
+            <div class="bar-wrap"><div class="bar-col" style="height:30%;background:#f0a0a0;"></div><div class="bar-label">Oct</div></div>
+            <div class="bar-wrap"><div class="bar-col" style="height:48%;background:#f0a0a0;"></div><div class="bar-label">Nov</div></div>
+            <div class="bar-wrap"><div class="bar-col" style="height:36%;background:#f0a0a0;"></div><div class="bar-label">Dec</div></div>
+            <div class="bar-wrap"><div class="bar-col" style="height:41%;background:var(--danger);"></div><div class="bar-label">Jan</div></div>
+          </div>
+          <div style="display:flex;gap:16px;margin-top:12px;font-size:11.5px;color:var(--muted);">
+            <span><span style="display:inline-block;width:10px;height:10px;background:var(--accent-mid);border-radius:2px;margin-right:4px;"></span>Revenue</span>
+            <span><span style="display:inline-block;width:10px;height:10px;background:#f0a0a0;border-radius:2px;margin-right:4px;"></span>Expenses</span>
+          </div>
+        </div>
+
+        <!-- Donut -->
+        <div class="card">
+          <div class="card-header"><div class="card-title">Expense breakdown</div></div>
+          <div class="donut-wrap">
+            <svg width="90" height="90" viewBox="0 0 36 36">
+              <circle cx="18" cy="18" r="15.9" fill="none" stroke="var(--border)" stroke-width="3.5"/>
+              <circle cx="18" cy="18" r="15.9" fill="none" stroke="var(--accent-mid)" stroke-width="3.5" stroke-dasharray="45 55" stroke-dashoffset="25" transform="rotate(-90 18 18)"/>
+              <circle cx="18" cy="18" r="15.9" fill="none" stroke="var(--danger)" stroke-width="3.5" stroke-dasharray="25 75" stroke-dashoffset="-20" transform="rotate(-90 18 18)"/>
+              <circle cx="18" cy="18" r="15.9" fill="none" stroke="var(--warn)" stroke-width="3.5" stroke-dasharray="20 80" stroke-dashoffset="-45" transform="rotate(-90 18 18)"/>
+              <circle cx="18" cy="18" r="15.9" fill="none" stroke="var(--blue)" stroke-width="3.5" stroke-dasharray="10 90" stroke-dashoffset="-65" transform="rotate(-90 18 18)"/>
+            </svg>
+            <div class="donut-legend">
+              <div class="legend-item"><div class="legend-dot" style="background:var(--accent-mid)"></div>Staff 45%</div>
+              <div class="legend-item"><div class="legend-dot" style="background:var(--danger)"></div>Utilities 25%</div>
+              <div class="legend-item"><div class="legend-dot" style="background:var(--warn)"></div>Supplies 20%</div>
+              <div class="legend-item"><div class="legend-dot" style="background:var(--blue)"></div>Other 10%</div>
             </div>
+          </div>
+        </div>
+      </div>
 
-            <nav class="sidebar-nav">
-                <div class="nav-section-label">DATA ENTRY</div>
-                <a class="nav-item active" id="navRevenues" onclick="switchTab('revenues')">
-                    <i class="ri-add-circle-line"></i>
-                    <span data-key="revenues">Add Revenue</span>
-                </a>
-                <a class="nav-item" id="navExpenses" onclick="switchTab('expenses')">
-                    <i class="ri-add-circle-line"></i>
-                    <span data-key="expenses">Add Expense</span>
-                </a>
-
-                <div class="nav-section-label admin-only d-none" data-key="nav_reports">REPORTS</div>
-                <a class="nav-item admin-only d-none" id="navReports" href="reports.html">
-                    <i class="ri-bar-chart-grouped-line"></i>
-                    <span data-key="reports_nav">التقارير</span>
-                </a>
-                <a class="nav-item admin-only d-none" id="navCustomerProfile" onclick="switchTab('customerProfile')">
-                    <i class="ri-user-search-line"></i>
-                    <span data-key="customer_profile">Customer Profile</span>
-                </a>
-
-                <div class="nav-section-label" data-key="nav_account">ACCOUNT</div>
-                <a class="nav-item" id="navProfile" onclick="switchTab('profile')">
-                    <i class="ri-user-3-line"></i>
-                    <span data-key="profile">My Profile</span>
-                </a>
-                <a class="nav-item admin-only d-none" id="navUserManagement" onclick="switchTab('userManagement')">
-                    <i class="ri-user-add-line"></i>
-                    <span data-key="user_management">User Management</span>
-                </a>
-                <a class="nav-item" id="navSettings" onclick="switchTab('settings')">
-                    <i class="ri-settings-3-line"></i>
-                    <span data-key="settings">Settings</span>
-                </a>
-            </nav>
-
-            <div class="sidebar-footer">
-                <button class="nav-item logout-item" onclick="logout()">
-                    <i class="ri-logout-box-r-line"></i>
-                    <span data-key="logout">تسجيل خروج</span>
-                </button>
-            </div>
-        </aside>
-
-        <!-- Mobile Overlay -->
-        <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
-
-        <!-- Main Content -->
-        <main class="main-content">
-            <!-- Top Bar -->
-            <header class="topbar glass">
-                <div class="topbar-left">
-                    <button class="mobile-menu-btn" onclick="toggleSidebar()">
-                        <i class="ri-menu-line"></i>
-                    </button>
-                    <div class="page-title-area">
-                        <h1 id="pageTitle" class="page-title" data-key="revenues">Revenues</h1>
-                        <p id="welcomeMsg" class="page-subtitle">Welcome</p>
-                    </div>
-                </div>
-                <div class="topbar-right">
-                    <div class="user-avatar">
-                        <i class="ri-user-3-fill"></i>
-                    </div>
-                </div>
-            </header>
-
-            <!-- Content Area -->
-            <div class="content-area">
-
-                <!-- ==================== REVENUE SECTION ==================== -->
-                <section id="revenuesSection" class="section-animate">
-
-                    <!-- Add Revenue Form -->
-                    <div id="revenueFormContainer" class="content-card">
-                        <div class="card-header">
-                            <div class="card-header-icon revenue-icon">
-                                <i class="ri-add-circle-line"></i>
-                            </div>
-                            <div>
-                                <h3 data-key="revenues">New Revenue</h3>
-                                <p class="card-subtitle" data-key="add_btn">Add a new revenue record</p>
-                            </div>
-                        </div>
-                        <form id="revenueForm" class="form-grid">
-                            <div class="form-group">
-                                <label data-key="client_name">Client Name</label>
-                                <div class="input-wrapper">
-                                    <i class="ri-user-line input-icon"></i>
-                                    <input type="text" id="clientName" class="form-control" placeholder="e.g. John Doe"
-                                        required>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label data-key="operation_type">Operation Type</label>
-                                <div class="input-wrapper">
-                                    <i class="ri-file-list-3-line input-icon"></i>
-                                    <select id="opType" class="form-control">
-                                        <option value="Visa" data-key="visa">Visa</option>
-                                        <option value="Work Contract" data-key="work_contract">Work Contract</option>
-                                        <option value="Ticket" data-key="ticket">Ticket</option>
-                                        <option value="Umrah" data-key="umrah">Umrah</option>
-                                        <option value="Hajj" data-key="hajj">Hajj</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label data-key="contract_price">Contract Price ($)</label>
-                                <div class="input-wrapper">
-                                    <i class="ri-price-tag-3-line input-icon"></i>
-                                    <input type="number" id="contractPrice" class="form-control" step="0.01"
-                                        placeholder="0.00" required>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label data-key="offer_price">Offer Price ($)</label>
-                                <div class="input-wrapper">
-                                    <i class="ri-money-dollar-circle-line input-icon"></i>
-                                    <input type="number" id="offerPrice" class="form-control" step="0.01"
-                                        placeholder="0.00" required>
-                                </div>
-                            </div>
-                            <div class="form-group" id="paidAmountGroup">
-                                <label data-key="paid_amount">Paid Amount ($)</label>
-                                <div class="input-wrapper">
-                                    <i class="ri-wallet-3-line input-icon"></i>
-                                    <input type="number" id="paidAmount" class="form-control" step="0.01"
-                                        placeholder="0.00" required>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label data-key="revenue">Revenue</label>
-                                <div class="input-wrapper readonly-field">
-                                    <i class="ri-arrow-up-circle-line input-icon"></i>
-                                    <input type="number" id="revenueAuto" class="form-control" placeholder="0.00"
-                                        readonly>
-                                </div>
-                            </div>
-                            <div class="form-group" id="restGroup">
-                                <label data-key="rest">Rest</label>
-                                <div class="input-wrapper readonly-field">
-                                    <i class="ri-arrow-down-circle-line input-icon"></i>
-                                    <input type="number" id="restAuto" class="form-control" placeholder="0.00" readonly>
-                                </div>
-                            </div>
-                            <div class="form-group form-action-group">
-                                <button type="submit" class="btn-submit">
-                                    <i class="ri-save-line"></i>
-                                    <span data-key="add_btn">Add Record</span>
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                </section>
-
-                <!-- ==================== REVENUE LIST SECTION (Admin) ==================== -->
-                <section id="revenueListSection" class="d-none section-animate">
-                    <div class="content-card filter-card">
-                        <!-- Search Row -->
-                        <div class="filter-row" style="margin-bottom:1rem;">
-                            <div class="filter-item search-filter" style="flex:1;">
-                                <div class="input-wrapper">
-                                    <i class="ri-search-line input-icon"></i>
-                                    <input type="text" id="revSearch" class="form-control" data-key="search"
-                                        placeholder="Search customer..." oninput="loadRevenues()">
-                                </div>
-                            </div>
-                        </div>
-                        <!-- Date Filter Row -->
-                        <div class="filter-separator"></div>
-                        <div class="date-mode-toggle" style="margin-bottom:0.75rem; margin-top:1rem;">
-                            <button id="revModeDay" class="date-mode-btn active" onclick="setRevMode('day')">
-                                <i class="ri-calendar-event-line"></i>
-                                <span data-key="single_date">يوم محدد</span>
-                            </button>
-                            <button id="revModeRange" class="date-mode-btn" onclick="setRevMode('range')">
-                                <i class="ri-calendar-2-line"></i>
-                                <span data-key="date_range">نطاق تاريخ</span>
-                            </button>
-                        </div>
-                        <div class="filter-row">
-                            <!-- Single date mode -->
-                            <div class="filter-item" id="revDayPicker">
-                                <div class="input-wrapper">
-                                    <i class="ri-calendar-event-line input-icon"></i>
-                                    <input type="date" id="revDay" class="form-control">
-                                </div>
-                            </div>
-                            <!-- Range mode -->
-                            <div class="filter-item d-none" id="revRangeFrom">
-                                <div class="input-wrapper">
-                                    <i class="ri-calendar-line input-icon"></i>
-                                    <input type="date" id="revFrom" class="form-control">
-                                </div>
-                            </div>
-                            <div class="filter-item d-none" id="revRangeTo">
-                                <div class="input-wrapper">
-                                    <i class="ri-calendar-check-line input-icon"></i>
-                                    <input type="date" id="revTo" class="form-control">
-                                </div>
-                            </div>
-                            <!-- Search by date button -->
-                            <div class="filter-item" style="flex:0;">
-                                <button class="btn-search-date" onclick="loadRevenues()" title="Search by date">
-                                    <i class="ri-search-line"></i>
-                                    <span data-key="search_btn">بحث</span>
-                                </button>
-                            </div>
-                            <!-- Clear button -->
-                            <div class="filter-item" style="flex:0;">
-                                <button class="btn-clear-date" onclick="clearRevDates()" title="Clear dates">
-                                    <i class="ri-close-circle-line"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div id="revenueReportsContainer"></div>
-                </section>
-
-                <!-- ==================== EXPENSES SECTION ==================== -->
-                <section id="expensesSection" class="d-none section-animate">
-
-                    <!-- Add Expense Form -->
-                    <div id="expenseFormContainer" class="content-card">
-                        <div class="card-header">
-                            <div class="card-header-icon expense-icon">
-                                <i class="ri-subtract-line"></i>
-                            </div>
-                            <div>
-                                <h3 data-key="expenses">New Expense</h3>
-                                <p class="card-subtitle" data-key="add_btn">Add a new expense record</p>
-                            </div>
-                        </div>
-                        <form id="expenseForm" class="form-grid">
-                            <div class="form-group">
-                                <label data-key="expense_type">Expense Type</label>
-                                <div class="input-wrapper">
-                                    <i class="ri-file-list-3-line input-icon"></i>
-                                    <select id="expType" class="form-control">
-                                        <option value="Salaries" data-key="salaries">Salaries</option>
-                                        <option value="Water" data-key="water">Water</option>
-                                        <option value="Electricity" data-key="electricity">Electricity</option>
-                                        <option value="Procedures" data-key="procedures">Procedures</option>
-                                        <option value="Other" data-key="other">Other</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label data-key="amount">Amount ($)</label>
-                                <div class="input-wrapper">
-                                    <i class="ri-money-dollar-circle-line input-icon"></i>
-                                    <input type="number" id="expAmount" class="form-control" step="0.01"
-                                        placeholder="0.00" required>
-                                </div>
-                            </div>
-                            <div class="form-group form-group-wide">
-                                <label data-key="notes">Notes</label>
-                                <div class="input-wrapper">
-                                    <i class="ri-edit-line input-icon"></i>
-                                    <input type="text" id="expNotes" class="form-control"
-                                        placeholder="Optional details...">
-                                </div>
-                            </div>
-                            <div class="form-group form-action-group">
-                                <button type="submit" class="btn-submit expense-submit">
-                                    <i class="ri-save-line"></i>
-                                    <span data-key="add_btn">Add Record</span>
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                </section>
-
-
-
-                <!-- ==================== SUMMARY SECTION ==================== -->
-                <section id="summarySection" class="d-none section-animate">
-                    <div class="summary-stats-grid">
-                        <div class="stat-card stat-revenue">
-                            <div class="stat-icon-wrap">
-                                <i class="ri-line-chart-line"></i>
-                            </div>
-                            <div class="stat-info">
-                                <span class="stat-label" data-key="total_revenue">Total Revenue</span>
-                                <span class="stat-value" id="statTotalRev">$0.00</span>
-                            </div>
-                            <div class="stat-decoration"></div>
-                        </div>
-                        <div class="stat-card stat-paid">
-                            <div class="stat-icon-wrap">
-                                <i class="ri-checkbox-circle-line"></i>
-                            </div>
-                            <div class="stat-info">
-                                <span class="stat-label" data-key="total_paid">Total Paid</span>
-                                <span class="stat-value" id="statTotalPaid">$0.00</span>
-                            </div>
-                            <div class="stat-decoration"></div>
-                        </div>
-                        <div class="stat-card stat-remaining">
-                            <div class="stat-icon-wrap">
-                                <i class="ri-time-line"></i>
-                            </div>
-                            <div class="stat-info">
-                                <span class="stat-label" data-key="total_remaining">Total Remaining</span>
-                                <span class="stat-value" id="statTotalRem">$0.00</span>
-                            </div>
-                            <div class="stat-decoration"></div>
-                        </div>
-                        <div class="stat-card stat-expenses">
-                            <div class="stat-icon-wrap">
-                                <i class="ri-shopping-bag-line"></i>
-                            </div>
-                            <div class="stat-info">
-                                <span class="stat-label" data-key="total_expenses">Total Expenses</span>
-                                <span class="stat-value" id="statTotalExp">$0.00</span>
-                            </div>
-                            <div class="stat-decoration"></div>
-                        </div>
-                    </div>
-
-                    <!-- Net Profit Hero -->
-                    <div class="content-card profit-hero-card">
-                        <div class="profit-hero-content">
-                            <div class="profit-hero-icon">
-                                <i class="ri-trophy-line"></i>
-                            </div>
-                            <div class="profit-hero-info">
-                                <span class="profit-hero-label" data-key="net_profit">Net Profit</span>
-                                <span class="profit-hero-desc">Revenue - Total Expenses</span>
-                            </div>
-                        </div>
-                        <span class="profit-hero-value" id="statNetProfit">$0.00</span>
-                        <div class="profit-hero-bg"></div>
-                    </div>
-                </section>
-
-                <!-- ==================== PROFILE SECTION ==================== -->
-                <section id="profileSection" class="d-none section-animate">
-                    <div class="content-card">
-                        <div class="profile-header-area">
-                            <div class="profile-avatar-large">
-                                <i class="ri-user-3-fill"></i>
-                            </div>
-                            <div class="profile-user-info">
-                                <h2 id="profileUsername">Username</h2>
-                                <span class="profile-role-badge" id="profileRole">Admin</span>
-                            </div>
-                            <div class="admin-only d-none" style="margin-inline-start: auto;">
-                                <button class="btn-submit" onclick="window.location.href='edit-profile.html'"
-                                    style="width: auto; height: 40px; padding: 0 1.25rem; font-size: 0.85rem;">
-                                    <i class="ri-edit-line"></i>
-                                    <span data-key="edit_profile_btn">Edit Profile</span>
-                                </button>
-                            </div>
-                        </div>
-                        <div class="profile-details-grid">
-                            <div class="profile-detail-item">
-                                <div class="profile-detail-icon"><i class="ri-user-line"></i></div>
-                                <div>
-                                    <span class="profile-detail-label" data-key="username">Username</span>
-                                    <span class="profile-detail-value" id="profileUsernameVal">—</span>
-                                </div>
-                            </div>
-                            <div class="profile-detail-item">
-                                <div class="profile-detail-icon"><i class="ri-shield-user-line"></i></div>
-                                <div>
-                                    <span class="profile-detail-label" data-key="role">Role</span>
-                                    <span class="profile-detail-value" id="profileRoleVal">—</span>
-                                </div>
-                            </div>
-                            <div class="profile-detail-item">
-                                <div class="profile-detail-icon"><i class="ri-time-line"></i></div>
-                                <div>
-                                    <span class="profile-detail-label" data-key="session_expiry">Session Expiry</span>
-                                    <span class="profile-detail-value" id="profileExpiry">—</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Edit Profile Card (Admin Only — hidden until button clicked) -->
-                    <div id="adminEditCard" class="content-card profile-edit-panel d-none" style="margin-top: 2rem;">
-                        <div class="card-header">
-                            <div class="card-header-icon"
-                                style="background:rgba(99,102,241,0.12);color:var(--primary);">
-                                <i class="ri-user-settings-line"></i>
-                            </div>
-                            <div>
-                                <h3 data-key="edit_profile">Edit Admin Profile</h3>
-                                <p class="card-subtitle">Update your profile information</p>
-                            </div>
-                        </div>
-                        <form id="editProfileForm" class="form-grid" onsubmit="updateAdminProfile(event)">
-                            <div class="form-group">
-                                <label data-key="new_name">New Admin Name</label>
-                                <div class="input-wrapper">
-                                    <i class="ri-user-line input-icon"></i>
-                                    <input type="text" id="newAdminName" class="form-control"
-                                        placeholder="Enter new name" required>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label data-key="new_password">New Password</label>
-                                <div class="input-wrapper">
-                                    <i class="ri-lock-line input-icon"></i>
-                                    <input type="password" id="newAdminPassword" class="form-control"
-                                        placeholder="Enter new password" required>
-                                </div>
-                            </div>
-                            <div class="form-group form-action-group">
-                                <button type="submit" class="btn-submit">
-                                    <i class="ri-save-line"></i>
-                                    <span data-key="update_profile_btn">Update Profile</span>
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                </section>
-
-                <!-- ==================== CUSTOMER PROFILE SECTION (Admin) ==================== -->
-                <section id="customerProfileSection" class="d-none section-animate">
-                    <!-- Search Customer -->
-                    <div class="content-card">
-                        <div class="card-header">
-                            <div class="card-header-icon"
-                                style="background:rgba(99,102,241,0.12);color:var(--primary);">
-                                <i class="ri-user-search-line"></i>
-                            </div>
-                            <div>
-                                <h3 data-key="customer_profile">Customer Profile</h3>
-                                <p class="card-subtitle" data-key="search_customer_desc">Search for a customer to view
-                                    and edit their records</p>
-                            </div>
-                        </div>
-                        <div class="filter-row">
-                            <div class="filter-item search-filter" style="flex:1;">
-                                <div class="input-wrapper">
-                                    <i class="ri-search-line input-icon"></i>
-                                    <input type="text" id="customerSearchInput" class="form-control"
-                                        placeholder="Enter client name..." oninput="searchCustomers()">
-                                </div>
-                            </div>
-                        </div>
-                        <!-- Customer Search Results -->
-                        <div id="customerSearchResults" style="margin-top:1rem;"></div>
-                    </div>
-
-                    <!-- Customer Detail Card (hidden until selected) -->
-                    <div id="customerDetailCard" class="content-card d-none">
-                        <div class="customer-profile-header">
-                            <div class="profile-avatar-large" style="width:56px;height:56px;font-size:1.4rem;">
-                                <i class="ri-user-3-fill"></i>
-                            </div>
-                            <div>
-                                <h2 id="customerDetailName">—</h2>
-                                <p id="customerDetailStats" class="card-subtitle">—</p>
-                            </div>
-                        </div>
-                        <div id="customerRecordsTable"></div>
-                    </div>
-
-                    <!-- Edit Modal -->
-                    <div id="editModal" class="modal-overlay d-none" onclick="closeEditModal(event)">
-                        <div class="modal-card" onclick="event.stopPropagation()">
-                            <div class="modal-header">
-                                <h3><i class="ri-edit-line"></i> <span data-key="edit_record">Edit Record</span></h3>
-                                <button class="modal-close" onclick="closeEditModal()"><i
-                                        class="ri-close-line"></i></button>
-                            </div>
-                            <form id="editRevenueForm" class="form-grid" onsubmit="saveEditedRevenue(event)">
-                                <input type="hidden" id="editRevId">
-                                <div class="form-group">
-                                    <label data-key="client_name">Client Name</label>
-                                    <div class="input-wrapper">
-                                        <i class="ri-user-line input-icon"></i>
-                                        <input type="text" id="editClientName" class="form-control" required>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label data-key="operation_type">Operation Type</label>
-                                    <div class="input-wrapper">
-                                        <i class="ri-file-list-3-line input-icon"></i>
-                                        <select id="editOpType" class="form-control">
-                                            <option value="Visa" data-key="visa">Visa</option>
-                                            <option value="Work Contract" data-key="work_contract">Work Contract
-                                            </option>
-                                            <option value="Ticket" data-key="ticket">Ticket</option>
-                                            <option value="Umrah" data-key="umrah">Umrah</option>
-                                            <option value="Hajj" data-key="hajj">Hajj</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label data-key="contract_price">Contract Price ($)</label>
-                                    <div class="input-wrapper">
-                                        <i class="ri-price-tag-3-line input-icon"></i>
-                                        <input type="number" id="editContractPrice" class="form-control" step="0.01"
-                                            required>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label data-key="offer_price">Offer Price ($)</label>
-                                    <div class="input-wrapper">
-                                        <i class="ri-money-dollar-circle-line input-icon"></i>
-                                        <input type="number" id="editOfferPrice" class="form-control" step="0.01"
-                                            required>
-                                    </div>
-                                </div>
-                                <div class="form-group" id="editPaidAmountGroup">
-                                    <label data-key="paid_amount">Paid Amount ($)</label>
-                                    <div class="input-wrapper">
-                                        <i class="ri-wallet-3-line input-icon"></i>
-                                        <input type="number" id="editPaidAmount" class="form-control" step="0.01"
-                                            required>
-                                    </div>
-                                </div>
-                                <div class="form-group form-action-group">
-                                    <button type="submit" class="btn-submit">
-                                        <i class="ri-save-line"></i>
-                                        <span data-key="save_changes">Save Changes</span>
-                                    </button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- ==================== USER MANAGEMENT SECTION (Admin) ==================== -->
-                <section id="userManagementSection" class="d-none section-animate">
-                    <div class="content-card">
-                        <div class="card-header">
-                            <div class="card-header-icon" style="background:rgba(139,92,246,0.12);color:var(--accent);">
-                                <i class="ri-user-add-line"></i>
-                            </div>
-                            <div>
-                                <h3 data-key="user_management">User Management</h3>
-                                <p class="card-subtitle" data-key="create_user_desc">Create a new user account</p>
-                            </div>
-                        </div>
-                        <form id="createUserForm" class="form-grid" onsubmit="createNewUser(event)">
-                            <div class="form-group">
-                                <label data-key="username">Username</label>
-                                <div class="input-wrapper">
-                                    <i class="ri-user-line input-icon"></i>
-                                    <input type="text" id="newUsername" class="form-control"
-                                        placeholder="Enter username" required>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label data-key="password">Password</label>
-                                <div class="input-wrapper">
-                                    <i class="ri-lock-line input-icon"></i>
-                                    <input type="password" id="newPassword" class="form-control"
-                                        placeholder="Enter password" required>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label data-key="role">Role</label>
-                                <div class="input-wrapper">
-                                    <i class="ri-shield-user-line input-icon"></i>
-                                    <select id="newRole" class="form-control">
-                                        <option value="User" data-key="user">Employee</option>
-                                        <option value="Admin" data-key="admin">Administrator</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="form-group form-action-group">
-                                <button type="submit" class="btn-submit"
-                                    style="background:linear-gradient(135deg, var(--accent), var(--primary));">
-                                    <i class="ri-user-add-line"></i>
-                                    <span data-key="create_user_btn">Create User</span>
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                </section>
-
-                <!-- ==================== SETTINGS SECTION ==================== -->
-                <section id="settingsSection" class="d-none section-animate">
-
-                    <!-- Language Card -->
-                    <div class="content-card settings-card">
-                        <div class="card-header">
-                            <div class="card-header-icon"
-                                style="background:rgba(99,102,241,0.12);color:var(--primary);">
-                                <i class="ri-translate-2"></i>
-                            </div>
-                            <div>
-                                <h3 data-key="language_setting">Language</h3>
-                                <p class="card-subtitle" data-key="language_desc">Choose your preferred display language
-                                </p>
-                            </div>
-                        </div>
-
-                        <div class="settings-option-group">
-                            <button class="settings-option-btn" data-lang="ar" data-theme-btn="false"
-                                onclick="setLang('ar'); syncSettingsUI();">
-                                <div class="settings-option-icon">🇸🇦</div>
-                                <div class="settings-option-info">
-                                    <strong data-key="arabic">العربية</strong>
-                                    <span>Arabic — RTL layout</span>
-                                </div>
-                                <div class="settings-option-check"><i class="ri-check-line"></i></div>
-                            </button>
-                            <button class="settings-option-btn" data-lang="en" data-theme-btn="false"
-                                onclick="setLang('en'); syncSettingsUI();">
-                                <div class="settings-option-icon">🇬🇧</div>
-                                <div class="settings-option-info">
-                                    <strong data-key="english">English</strong>
-                                    <span>English — LTR layout</span>
-                                </div>
-                                <div class="settings-option-check"><i class="ri-check-line"></i></div>
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Theme Card -->
-                    <div class="content-card settings-card">
-                        <div class="card-header">
-                            <div class="card-header-icon"
-                                style="background:rgba(245,158,11,0.12);color:var(--warning);">
-                                <i class="ri-palette-line"></i>
-                            </div>
-                            <div>
-                                <h3 data-key="theme_setting">Appearance</h3>
-                                <p class="card-subtitle" data-key="theme_desc">Select light or dark mode</p>
-                            </div>
-                        </div>
-
-                        <div class="settings-option-group">
-                            <button class="settings-option-btn theme-btn" data-theme="light"
-                                onclick="setTheme('light'); syncSettingsUI();">
-                                <div class="settings-option-icon settings-theme-icon settings-light-icon">
-                                    <i class="ri-sun-line"></i>
-                                </div>
-                                <div class="settings-option-info">
-                                    <strong data-key="light_mode">Light Mode</strong>
-                                    <span data-key="light_mode_desc">Clean white interface</span>
-                                </div>
-                                <div class="settings-option-check"><i class="ri-check-line"></i></div>
-                            </button>
-                            <button class="settings-option-btn theme-btn" data-theme="dark"
-                                onclick="setTheme('dark'); syncSettingsUI();">
-                                <div class="settings-option-icon settings-theme-icon settings-dark-icon">
-                                    <i class="ri-moon-line"></i>
-                                </div>
-                                <div class="settings-option-info">
-                                    <strong data-key="dark_mode">Dark Mode</strong>
-                                    <span data-key="dark_mode_desc">Easy on the eyes</span>
-                                </div>
-                                <div class="settings-option-check"><i class="ri-check-line"></i></div>
-                            </button>
-                            <button class="settings-option-btn theme-btn" data-theme="system"
-                                onclick="setTheme('system'); syncSettingsUI();">
-                                <div class="settings-option-icon settings-theme-icon settings-system-icon">
-                                    <i class="ri-computer-line"></i>
-                                </div>
-                                <div class="settings-option-info">
-                                    <strong data-key="system_mode">System Default</strong>
-                                    <span data-key="system_mode_desc">Follow device setting</span>
-                                </div>
-                                <div class="settings-option-check"><i class="ri-check-line"></i></div>
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- App Info Card -->
-                    <div class="content-card settings-card">
-                        <div class="card-header">
-                            <div class="card-header-icon"
-                                style="background:rgba(16,185,129,0.12);color:var(--success);">
-                                <i class="ri-information-line"></i>
-                            </div>
-                            <div>
-                                <h3 data-key="about_setting">About</h3>
-                                <p class="card-subtitle" data-key="about_desc">Application information</p>
-                            </div>
-                        </div>
-                        <div class="settings-info-grid">
-                            <div class="settings-info-item">
-                                <span class="settings-info-label" data-key="app_name">Application</span>
-                                <span class="settings-info-value">Data Entry System</span>
-                            </div>
-                            <div class="settings-info-item">
-                                <span class="settings-info-label" data-key="version">Version</span>
-                                <span class="settings-info-value">2.0.0</span>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-            </div>
-        </main>
+      <!-- Recent transactions -->
+      <div class="card">
+        <div class="card-header">
+          <div><div class="card-title">Recent Transactions</div><div class="card-sub">Latest 5 entries</div></div>
+          <a class="text-link">View all →</a>
+        </div>
+        <table class="data-table">
+          <thead><tr><th>Description</th><th>Client</th><th>Date</th><th>Amount</th><th>Type</th></tr></thead>
+          <tbody>
+            <tr><td>Hajj Package — Group A</td><td>Al-Rashidi Family</td><td>Jan 28</td><td>12,500 SAR</td><td><span class="badge badge-green">Revenue</span></td></tr>
+            <tr><td>Transportation Fee</td><td>Omar Ibrahim</td><td>Jan 27</td><td>3,200 SAR</td><td><span class="badge badge-green">Revenue</span></td></tr>
+            <tr><td>Staff Salaries</td><td>Internal</td><td>Jan 25</td><td>18,000 SAR</td><td><span class="badge badge-red">Expense</span></td></tr>
+            <tr><td>Accommodation Booking</td><td>Siddiqui Group</td><td>Jan 22</td><td>8,700 SAR</td><td><span class="badge badge-green">Revenue</span></td></tr>
+            <tr><td>Utility Bills</td><td>Internal</td><td>Jan 20</td><td>2,400 SAR</td><td><span class="badge badge-red">Expense</span></td></tr>
+          </tbody>
+        </table>
+      </div>
     </div>
 
-    <!-- Success Message Toast -->
-    <div id="successMsg" class="toast-success">
-        <i class="ri-check-double-line"></i>
-        <span data-key="added_success">Added Successfully</span>
+    <!-- CONTENT GENERATOR PAGE -->
+    <div class="page" id="page-generator">
+      <div class="section-head">
+        <div><h2>Content Generator</h2><p>AI-powered reports, summaries & client messages</p></div>
+      </div>
+      <div class="gen-grid">
+        <div class="card">
+          <div class="card-title" style="margin-bottom:14px;">Choose content type</div>
+          <div class="gen-type-grid">
+            <div class="gen-type-btn selected" id="genType-summary" onclick="selectGenType('summary', this)"><i class="ri-file-text-line"></i>Monthly Summary</div>
+            <div class="gen-type-btn" id="genType-client" onclick="selectGenType('client', this)"><i class="ri-mail-send-line"></i>Client Message</div>
+            <div class="gen-type-btn" id="genType-report" onclick="selectGenType('report', this)"><i class="ri-bar-chart-2-line"></i>Financial Report</div>
+            <div class="gen-type-btn" id="genType-invoice" onclick="selectGenType('invoice', this)"><i class="ri-receipt-line"></i>Invoice Note</div>
+          </div>
+          <span class="field-label">Additional context (optional)</span>
+          <textarea class="field-input" id="genContext" placeholder="e.g. Include January 2026 figures, mention new clients..."></textarea>
+          <div style="margin-top:12px;display:flex;gap:8px;">
+            <button class="btn btn-primary" id="genBtn" onclick="generateContent()"><i class="ri-sparkling-line"></i> Generate</button>
+            <button class="btn btn-outline" onclick="clearGen()">Clear</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Generated output</div>
+            <button class="btn btn-outline" style="padding:5px 10px;font-size:12px;" onclick="copyGen()"><i class="ri-file-copy-line"></i> Copy</button>
+          </div>
+          <div class="gen-output" id="genOutput">Your generated content will appear here...</div>
+        </div>
+      </div>
     </div>
 
-    <script src="js/lang.js"></script>
-    <script src="js/api.js"></script>
-    <script src="js/dashboard.js"></script>
-    <script>
-        // Sidebar Toggle
-        function toggleSidebar() {
-            document.getElementById('sidebar').classList.toggle('open');
-            document.getElementById('sidebarOverlay').classList.toggle('active');
-        }
+    <!-- SMART SEARCH PAGE -->
+    <div class="page" id="page-search">
+      <div class="section-head">
+        <div><h2>Smart Search</h2><p>AI-powered search across all records, clients & transactions</p></div>
+      </div>
+      <div class="search-big">
+        <i class="ri-search-line"></i>
+        <input type="text" id="smartSearchInput" placeholder="Search clients, transactions, reports..." onkeydown="handleSmartSearch(event)">
+        <button class="btn btn-primary" style="height:36px;padding:0 14px;" onclick="doSmartSearch()"><i class="ri-sparkling-line"></i> AI Search</button>
+      </div>
+      <div class="analysis-filters">
+        <button class="filter-btn active" onclick="toggleFilter(this)">All</button>
+        <button class="filter-btn" onclick="toggleFilter(this)">Clients</button>
+        <button class="filter-btn" onclick="toggleFilter(this)">Transactions</button>
+        <button class="filter-btn" onclick="toggleFilter(this)">Reports</button>
+        <button class="filter-btn" onclick="toggleFilter(this)">Expenses</button>
+      </div>
+      <div class="search-results" id="searchResults">
+        <div style="color:var(--muted);font-size:13px;text-align:center;padding:40px 0;">Type a query and press Enter or click AI Search</div>
+      </div>
+    </div>
 
-        // RTL Hook for Dashboard
-        function updateRTL() {
-            const lang = localStorage.getItem('lang') || 'en';
-            if (lang === 'ar') {
-                document.body.dir = 'rtl';
-            } else {
-                document.body.dir = 'ltr';
-            }
-        }
-        document.addEventListener('DOMContentLoaded', updateRTL);
-    </script>
+    <!-- DATA ANALYSIS PAGE -->
+    <div class="page" id="page-analysis">
+      <div class="section-head">
+        <div><h2>Data Analysis</h2><p>Ask Claude to analyze your financial data</p></div>
+      </div>
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-title" style="margin-bottom:14px;">Analysis query</div>
+          <div class="analysis-filters" style="margin-bottom:12px;">
+            <button class="filter-btn active" onclick="setAnalysisQuery('What are the top revenue sources this month?')">Top revenue</button>
+            <button class="filter-btn" onclick="setAnalysisQuery('Identify unusual expense spikes and their impact.')">Expense spikes</button>
+            <button class="filter-btn" onclick="setAnalysisQuery('Forecast next month revenue based on trends.')">Forecast</button>
+            <button class="filter-btn" onclick="setAnalysisQuery('Which clients contribute most to total revenue?')">Top clients</button>
+          </div>
+          <span class="field-label">Or type your own question</span>
+          <textarea class="field-input" id="analysisInput" placeholder="e.g. Compare Q4 2025 vs January 2026 performance...">What are the top revenue sources this month?</textarea>
+          <div style="margin-top:12px;">
+            <button class="btn btn-primary" id="analysisBtn" onclick="runAnalysis()"><i class="ri-line-chart-line"></i> Analyze with AI</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title" style="margin-bottom:14px;">AI Analysis result</div>
+          <div class="analysis-output" id="analysisOutput">Click "Analyze with AI" to get insights on your financial data...</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- REPORTS PAGE -->
+    <div class="page" id="page-reports">
+      <div class="section-head"><div><h2>Reports</h2><p>Monthly financial reports</p></div></div>
+      <div class="card"><div style="color:var(--muted);font-size:13px;padding:20px 0;">Reports page — connect to your existing reports.html content here.</div></div>
+    </div>
+
+    <!-- ENTRIES PAGE -->
+    <div class="page" id="page-entries">
+      <div class="section-head"><div><h2>Entries</h2><p>Revenue & expense entries</p></div></div>
+      <div class="card"><div style="color:var(--muted);font-size:13px;padding:20px 0;">Entries page — connect to your existing data entry forms here.</div></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- AI CHAT PANEL -->
+<div class="overlay" id="overlay" onclick="closeAI()"></div>
+<div class="ai-panel" id="aiPanel">
+  <div class="ai-panel-header">
+    <div class="ai-panel-title"><div class="ai-dot"></div> AI Assistant</div>
+    <div class="icon-btn" onclick="closeAI()"><i class="ri-close-line"></i></div>
+  </div>
+  <div class="ai-messages" id="aiMessages">
+    <div class="msg bot">
+      <div class="msg-bubble">مرحباً! I'm your Noor Mozdalifah AI assistant. I can help you with financial analysis, generate reports, answer questions about your data, and more. How can I help?</div>
+      <div class="msg-time">Just now</div>
+    </div>
+  </div>
+  <div class="quick-chips">
+    <div class="chip" onclick="sendChip('Summarize this month\'s performance')">This month's summary</div>
+    <div class="chip" onclick="sendChip('What are the biggest expense categories?')">Top expenses</div>
+    <div class="chip" onclick="sendChip('How can I increase revenue?')">Revenue tips</div>
+    <div class="chip" onclick="sendChip('Generate a client payment reminder message')">Payment reminder</div>
+  </div>
+  <div class="ai-input-row">
+    <textarea class="ai-input" id="aiInput" rows="1" placeholder="Ask anything about your data..." onkeydown="handleAIKey(event)"></textarea>
+    <button class="send-btn" id="sendBtn" onclick="sendMessage()"><i class="ri-send-plane-fill"></i></button>
+  </div>
+</div>
+
+<script>
+const CLAUDE_SYSTEM = `You are the AI assistant for Noor Mozdalifah (نور مزدلفة), a Hajj & Umrah financial management system. 
+You help with: financial analysis, revenue/expense tracking, client management, report generation, and business insights.
+Context: January 2026 data — Revenue: 94,200 SAR, Expenses: 38,750 SAR, Net profit: 55,450 SAR, Active clients: 142.
+Top clients: Al-Rashidi Family (12,500 SAR), Siddiqui Group (8,700 SAR), Omar Ibrahim (3,200 SAR).
+Expense breakdown: Staff 45%, Utilities 25%, Supplies 20%, Other 10%.
+Respond concisely and helpfully. Use Arabic when appropriate. Format numbers with SAR.`;
+
+let chatHistory = [];
+let currentGenType = 'summary';
+let isLoading = false;
+
+function showPage(name, el) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-' + name).classList.add('active');
+  if (el) el.classList.add('active');
+  const titles = { dashboard:'Dashboard', generator:'Content Generator', search:'Smart Search', analysis:'Data Analysis', reports:'Reports', entries:'Entries' };
+  document.getElementById('topbar-title').textContent = titles[name] || name;
+}
+
+function toggleAI() {
+  const panel = document.getElementById('aiPanel');
+  if (panel.classList.contains('open')) closeAI(); else openAI();
+}
+function openAI() {
+  document.getElementById('aiPanel').classList.add('open');
+  document.getElementById('overlay').classList.add('visible');
+  document.body.classList.add('ai-open');
+  setTimeout(() => document.getElementById('aiInput').focus(), 300);
+}
+function closeAI() {
+  document.getElementById('aiPanel').classList.remove('open');
+  document.getElementById('overlay').classList.remove('visible');
+  document.body.classList.remove('ai-open');
+}
+
+async function callClaude(messages, system = CLAUDE_SYSTEM) {
+  const res = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 1000, system, messages })
+  });
+  const data = await res.json();
+  return data.content?.map(c => c.text || '').join('') || 'No response received.';
+}
+
+function getTime() {
+  return new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+}
+
+function appendMsg(role, text) {
+  const msgs = document.getElementById('aiMessages');
+  const div = document.createElement('div');
+  div.className = `msg ${role}`;
+  div.innerHTML = `<div class="msg-bubble">${text.replace(/\n/g,'<br>')}</div><div class="msg-time">${getTime()}</div>`;
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+  return div;
+}
+
+function showTyping() {
+  const msgs = document.getElementById('aiMessages');
+  const div = document.createElement('div');
+  div.className = 'msg bot'; div.id = 'typing';
+  div.innerHTML = `<div class="typing-indicator"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>`;
+  msgs.appendChild(div); msgs.scrollTop = msgs.scrollHeight;
+}
+
+async function sendMessage() {
+  const input = document.getElementById('aiInput');
+  const text = input.value.trim();
+  if (!text || isLoading) return;
+  isLoading = true;
+  input.value = '';
+  const btn = document.getElementById('sendBtn');
+  btn.disabled = true;
+  appendMsg('user', text);
+  chatHistory.push({ role: 'user', content: text });
+  showTyping();
+  try {
+    const reply = await callClaude(chatHistory);
+    document.getElementById('typing')?.remove();
+    appendMsg('bot', reply);
+    chatHistory.push({ role: 'assistant', content: reply });
+  } catch (e) {
+    document.getElementById('typing')?.remove();
+    appendMsg('bot', 'Sorry, I encountered an error. Please try again.');
+  }
+  isLoading = false; btn.disabled = false; input.focus();
+}
+
+function handleAIKey(e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); } }
+
+function sendChip(text) {
+  document.getElementById('aiInput').value = text;
+  openAI();
+  setTimeout(sendMessage, 100);
+}
+
+function handleTopSearch(e) {
+  if (e.key === 'Enter') {
+    const q = e.target.value.trim();
+    if (!q) return;
+    document.getElementById('aiInput').value = q;
+    e.target.value = '';
+    openAI();
+    setTimeout(sendMessage, 200);
+  }
+}
+
+// CONTENT GENERATOR
+function selectGenType(type, el) {
+  currentGenType = type;
+  document.querySelectorAll('.gen-type-btn').forEach(b => b.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+async function generateContent() {
+  const btn = document.getElementById('genBtn');
+  const output = document.getElementById('genOutput');
+  const ctx = document.getElementById('genContext').value;
+  btn.innerHTML = '<span class="spinner"></span> Generating...'; btn.disabled = true;
+  output.textContent = ''; output.classList.add('loading');
+  const typePrompts = {
+    summary: 'Write a professional monthly financial summary for Noor Mozdalifah for January 2026.',
+    client: 'Write a professional client communication message for a Hajj & Umrah services company.',
+    report: 'Write a detailed financial performance report for Noor Mozdalifah for January 2026.',
+    invoice: 'Write a professional invoice note/reminder for a Hajj & Umrah services payment.'
+  };
+  const prompt = typePrompts[currentGenType] + (ctx ? `\n\nAdditional context: ${ctx}` : '');
+  try {
+    const result = await callClaude([{ role: 'user', content: prompt }]);
+    output.classList.remove('loading');
+    output.textContent = result;
+  } catch (e) {
+    output.classList.remove('loading');
+    output.textContent = 'Error generating content. Please try again.';
+  }
+  btn.innerHTML = '<i class="ri-sparkling-line"></i> Generate'; btn.disabled = false;
+}
+
+function clearGen() { document.getElementById('genOutput').textContent = 'Your generated content will appear here...'; document.getElementById('genContext').value = ''; }
+function copyGen() { navigator.clipboard.writeText(document.getElementById('genOutput').textContent); }
+
+// SMART SEARCH
+function handleSmartSearch(e) { if (e.key === 'Enter') doSmartSearch(); }
+function toggleFilter(el) { document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active')); el.classList.add('active'); }
+
+async function doSmartSearch() {
+  const q = document.getElementById('smartSearchInput').value.trim();
+  if (!q) return;
+  const results = document.getElementById('searchResults');
+  results.innerHTML = '<div style="color:var(--muted);text-align:center;padding:30px;">Searching with AI...</div>';
+  const prompt = `Search query: "${q}"\n\nBased on this Noor Mozdalifah financial system data (January 2026, revenue 94,200 SAR, expenses 38,750 SAR, 142 clients, transactions for Hajj & Umrah services), return 4 relevant search results as JSON array with fields: title, snippet, tags (array of strings), type. Respond ONLY with a valid JSON array, no markdown.`;
+  try {
+    const raw = await callClaude([{ role: 'user', content: prompt }]);
+    const clean = raw.replace(/```json|```/g,'').trim();
+    const items = JSON.parse(clean);
+    results.innerHTML = '';
+    items.forEach(item => {
+      const div = document.createElement('div');
+      div.className = 'search-result-item';
+      div.innerHTML = `<div class="result-title">${item.title}</div><div class="result-snippet">${item.snippet}</div><div class="result-tags">${(item.tags||[]).map(t=>`<span class="result-tag">${t}</span>`).join('')}</div>`;
+      results.appendChild(div);
+    });
+  } catch(e) {
+    results.innerHTML = '<div style="color:var(--muted);text-align:center;padding:30px;">Error performing search. Please try again.</div>';
+  }
+}
+
+// DATA ANALYSIS
+function setAnalysisQuery(q) { document.getElementById('analysisInput').value = q; }
+
+async function runAnalysis() {
+  const btn = document.getElementById('analysisBtn');
+  const output = document.getElementById('analysisOutput');
+  const q = document.getElementById('analysisInput').value.trim();
+  if (!q) return;
+  btn.innerHTML = '<span class="spinner" style="border-top-color:#fff;"></span> Analyzing...'; btn.disabled = true;
+  output.textContent = 'Analyzing your data...';
+  const prompt = `Financial data analysis request for Noor Mozdalifah (Hajj & Umrah Services):\n\nData: Revenue 94,200 SAR, Expenses 38,750 SAR, Net Profit 55,450 SAR, 142 active clients. Expense breakdown: Staff 45%, Utilities 25%, Supplies 20%, Other 10%. Top transactions: Hajj Package 12,500 SAR, Accommodation 8,700 SAR, Transport 3,200 SAR.\n\nQuestion: ${q}\n\nProvide a clear, structured analysis with specific numbers, actionable insights, and recommendations.`;
+  try {
+    const result = await callClaude([{ role: 'user', content: prompt }]);
+    output.textContent = result;
+  } catch(e) {
+    output.textContent = 'Error running analysis. Please try again.';
+  }
+  btn.innerHTML = '<i class="ri-line-chart-line"></i> Analyze with AI'; btn.disabled = false;
+}
+</script>
 </body>
-
 </html>
