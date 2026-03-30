@@ -1,4 +1,9 @@
-const API_URL = 'http://localhost:5239/api';
+const API_CONFIG = {
+    URL: window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
+         ? 'http://localhost:5239/api' 
+         : '/api',
+    USE_MOCK: false // Toggle this to true to force mock data even if backend is up
+};
 
 const MOCK_DATA = {
     user: {
@@ -53,9 +58,9 @@ function getAuthHeader() {
 async function apiFetch(endpoint, method = 'GET', body = null) {
     const token = localStorage.getItem('token');
 
-    // DEMO MODE: If we are using the mock token, bypass network entirely
-    if (token === 'mock-token') {
-        console.log('Demo Mode: Using mock data for', endpoint);
+    // DEMO/MOCK MODE: If token is mock-token OR USE_MOCK is forced
+    if (token === 'mock-token' || API_CONFIG.USE_MOCK) {
+        console.log('Demo/Mock Mode: Using mock data for', endpoint);
         return getMockResponse(endpoint, method, body);
     }
 
@@ -63,29 +68,38 @@ async function apiFetch(endpoint, method = 'GET', body = null) {
         method,
         headers: {
             'Content-Type': 'application/json',
-            ...getAuthHeader()
+            ...(token ? { 'Authorization': `Bearer ${token}` } : {})
         }
     };
     if (body) options.body = JSON.stringify(body);
 
     try {
-        const response = await fetch(`${API_URL}${endpoint}`, options);
+        const response = await fetch(`${API_CONFIG.URL}${endpoint}`, options);
 
         if (response.status === 401) {
             logout();
             return null;
         }
 
+        if (response.status === 403) {
+            throw new Error('Access Denied (403): You do not have permission for this action.');
+        }
+
         if (!response.ok) {
-            const error = await response.json();
+            const error = await response.json().catch(() => ({ message: 'API Error: ' + response.statusText }));
             throw new Error(error.message || 'API Error');
         }
 
         return response.status !== 204 ? await response.json() : null;
 
     } catch (error) {
-        console.warn('Backend unavailable or error, using mock data for:', endpoint);
-        return getMockResponse(endpoint, method, body);
+        // If the error is a standard network error (backend down)
+        if (error instanceof TypeError && error.message === 'Failed to fetch') {
+            console.warn('Backend server is down at:', API_CONFIG.URL, ' - Falling back to mock data.');
+            return getMockResponse(endpoint, method, body);
+        }
+        // For logic errors (403, 400), propagate them!
+        throw error;
     }
 }
 
@@ -155,22 +169,29 @@ function getMockResponse(endpoint, method, body) {
 // Auth Actions
 async function login(username, password, role) {
     try {
-        const data = await apiFetch('/Auth/login', 'POST', { username, password, role });
-        if (data) {
+        const response = await fetch(`${API_CONFIG.URL}/Auth/login`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username, password })
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            // Data expected: { token, username, role }
             localStorage.setItem('token', data.token);
-            // Ensure we store the role passed in if the mock doesn't dynamic it, 
-            // but our MOCK_DATA has 'Admin'. Let's override it with the requested role for better demo user exp
-            if (data.token === 'mock-token') {
-                data.role = role || 'Admin';
-                data.username = username || 'DemoUser';
-            }
-            localStorage.setItem('user', JSON.stringify(data));
+            // Ensure the role from the backend matches what the user selected (if you want to enforce it),
+            // but usually we just trust the backend role.
+            localStorage.setItem('user', JSON.stringify({
+                username: data.username || username,
+                role: data.role || role // Priority to backend role
+            }));
             return true;
         }
+        return false;
     } catch (e) {
-        console.error(e);
+        console.error('Login error:', e);
+        return false;
     }
-    return false;
 }
 
 function logout() {

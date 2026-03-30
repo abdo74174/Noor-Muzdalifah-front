@@ -342,16 +342,20 @@ body[dir="rtl"] .nav-item.active::before {
 /* --- Content Cards --- */
 .content-card {
     background: var(--card-bg);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
     border: 1px solid var(--card-border);
-    border-radius: 16px;
-    padding: 1.75rem;
-    margin-bottom: 1.5rem;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 4px 12px rgba(0, 0, 0, 0.03);
-    transition: box-shadow 0.3s ease, transform 0.2s ease;
+    border-radius: 20px;
+    padding: 2rem;
+    margin-bottom: 1.75rem;
+    box-shadow: 0 8px 16px rgba(112, 144, 176, 0.06), 0 2px 6px rgba(112, 144, 176, 0.04);
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
     position: relative;
     overflow: hidden;
+}
+
+.content-card:hover {
+    box-shadow: 0 12px 24px rgba(112, 144, 176, 0.1), 0 4px 10px rgba(112, 144, 176, 0.06);
 }
 
 .content-card::before {
@@ -510,24 +514,25 @@ body[dir="rtl"] .input-wrapper .form-control {
     justify-content: center;
     gap: 0.5rem;
     width: 100%;
-    padding: 0.75rem 1.5rem;
-    font-weight: 600;
-    font-size: 0.95rem;
-    border-radius: 10px;
+    padding: 0.85rem 1.5rem;
+    font-weight: 700;
+    font-size: 1rem;
+    border-radius: 12px;
     border: none;
     cursor: pointer;
     background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
     color: white;
-    box-shadow: 0 4px 14px rgba(99, 102, 241, 0.25);
+    box-shadow: 0 6px 16px rgba(67, 24, 255, 0.25);
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
     overflow: hidden;
-    height: 46px;
+    height: 52px;
 }
 
 .btn-submit:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(99, 102, 241, 0.35);
+    transform: translateY(-3px);
+    box-shadow: 0 10px 24px rgba(67, 24, 255, 0.35);
+    filter: brightness(1.1);
 }
 
 .btn-submit:active {
@@ -773,20 +778,21 @@ body[dir="rtl"] .report-highlight-card {
 .stat-card {
     position: relative;
     background: var(--card-bg);
-    backdrop-filter: blur(12px);
+    backdrop-filter: blur(20px);
     border: 1px solid var(--card-border);
-    border-radius: 16px;
-    padding: 1.5rem;
+    border-radius: 20px;
+    padding: 1.75rem;
     display: flex;
     align-items: center;
-    gap: 1rem;
+    gap: 1.25rem;
     overflow: hidden;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 12px rgba(112, 144, 176, 0.05);
 }
 
 .stat-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+    transform: translateY(-5px);
+    box-shadow: 0 12px 28px rgba(112, 144, 176, 0.12);
 }
 
 .stat-icon-wrap {
@@ -881,11 +887,12 @@ body[dir="rtl"] .stat-decoration {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 2rem 2.5rem;
+    padding: 2.5rem 3rem;
     position: relative;
     overflow: hidden;
-    background: linear-gradient(135deg, rgba(99, 102, 241, 0.08) 0%, rgba(139, 92, 246, 0.05) 100%);
-    border: 1px solid rgba(99, 102, 241, 0.15);
+    background: linear-gradient(135deg, rgba(67, 24, 255, 0.06) 0%, rgba(134, 140, 255, 0.04) 100%);
+    border: 1px solid rgba(67, 24, 255, 0.12);
+    border-radius: 24px;
 }
 
 .profit-hero-card::before {
@@ -894,7 +901,7 @@ body[dir="rtl"] .stat-decoration {
     top: 0;
     left: 0;
     right: 0;
-    height: 3px;
+    height: 4px;
     background: linear-gradient(90deg, var(--primary), var(--secondary), var(--accent));
     opacity: 1;
 }
@@ -906,16 +913,16 @@ body[dir="rtl"] .stat-decoration {
 }
 
 .profit-hero-icon {
-    width: 56px;
-    height: 56px;
-    border-radius: 16px;
+    width: 64px;
+    height: 64px;
+    border-radius: 18px;
     background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
     display: flex;
     align-items: center;
     justify-content: center;
     color: white;
-    font-size: 1.5rem;
-    box-shadow: 0 4px 16px rgba(99, 102, 241, 0.3);
+    font-size: 1.75rem;
+    box-shadow: 0 8px 20px rgba(67, 24, 255, 0.3);
 }
 
 .profit-hero-label {
