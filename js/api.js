@@ -18,28 +18,28 @@ const MOCK_DATA = {
         {
             monthName: 'January 2026',
             revenues: [
-                { id: 1, clientName: 'Ahmed Ali', operationType: 'Visa', contractPrice: 1200, offerPrice: 1500, paidAmount: 1000, remaining: 500, revenue: 300, rest: 500 },
-                { id: 2, clientName: 'Mohammed Hassan', operationType: 'Umrah', contractPrice: 1800, offerPrice: 2200, paidAmount: 2200, remaining: 0, revenue: 400, rest: 0 },
-                { id: 3, clientName: 'Abdullah Omar', operationType: 'Work Contract', contractPrice: 3000, offerPrice: 3500, paidAmount: 2000, remaining: 1500, revenue: 500, rest: 1500 },
-                { id: 4, clientName: 'Ahmed Ali', operationType: 'Hajj', contractPrice: 4000, offerPrice: 4800, paidAmount: 3000, remaining: 1800, revenue: 800, rest: 1800 }
+                { id: 1, clientName: 'Ahmed Ali', operationType: 'Visa', contractPrice: 1200, offerPrice: 1500, paidAmount: 1000, remaining: 500, revenue: 300, rest: 500, date: '2026-01-10' },
+                { id: 2, clientName: 'Mohammed Hassan', operationType: 'Umrah', contractPrice: 1800, offerPrice: 2200, paidAmount: 2200, remaining: 0, revenue: 400, rest: 0, date: '2026-01-15' },
+                { id: 3, clientName: 'Abdullah Omar', operationType: 'Work Contract', contractPrice: 3000, offerPrice: 3500, paidAmount: 2000, remaining: 1500, revenue: 500, rest: 1500, date: '2026-01-20' },
+                { id: 4, clientName: 'Ahmed Ali', operationType: 'Hajj', contractPrice: 4000, offerPrice: 4800, paidAmount: 3000, remaining: 1800, revenue: 800, rest: 1800, date: '2026-01-25' }
             ],
             expenses: [
-                { id: 1, expenseType: 'Salaries', amount: 5000, notes: 'Staff Salaries for January' },
-                { id: 2, expenseType: 'Electricity', amount: 200, notes: 'Office Electricity Bill' },
-                { id: 3, expenseType: 'Water', amount: 80, notes: 'Water Supply' }
+                { id: 1, expenseType: 'Salaries', amount: 5000, notes: 'Staff Salaries for January', date: '2026-01-30' },
+                { id: 2, expenseType: 'Electricity', amount: 200, notes: 'Office Electricity Bill', date: '2026-01-05' },
+                { id: 3, expenseType: 'Water', amount: 80, notes: 'Water Supply', date: '2026-01-06' }
             ]
         },
         {
             monthName: 'February 2026',
             revenues: [
-                { id: 5, clientName: 'Khaled Ibrahim', operationType: 'Visa', contractPrice: 1000, offerPrice: 1300, paidAmount: 1300, remaining: 0, revenue: 300, rest: 0 },
-                { id: 6, clientName: 'Ahmed Ali', operationType: 'Umrah', contractPrice: 2500, offerPrice: 3000, paidAmount: 1500, remaining: 1500, revenue: 500, rest: 1500 },
-                { id: 7, clientName: 'Sami Youssef', operationType: 'Work Contract', contractPrice: 2200, offerPrice: 2800, paidAmount: 2800, remaining: 0, revenue: 600, rest: 0 }
+                { id: 5, clientName: 'Khaled Ibrahim', operationType: 'Visa', contractPrice: 1000, offerPrice: 1300, paidAmount: 1300, remaining: 0, revenue: 300, rest: 0, date: '2026-02-02' },
+                { id: 6, clientName: 'Ahmed Ali', operationType: 'Umrah', contractPrice: 2500, offerPrice: 3000, paidAmount: 1500, remaining: 1500, revenue: 500, rest: 1500, date: '2026-02-12' },
+                { id: 7, clientName: 'Sami Youssef', operationType: 'Work Contract', contractPrice: 2200, offerPrice: 2800, paidAmount: 2800, remaining: 0, revenue: 600, rest: 0, date: '2026-02-25' }
             ],
             expenses: [
-                { id: 4, expenseType: 'Salaries', amount: 5000, notes: 'Staff Salaries for February' },
-                { id: 5, expenseType: 'Procedures', amount: 350, notes: 'Government Fees' },
-                { id: 6, expenseType: 'Other', amount: 120, notes: 'Office Supplies' }
+                { id: 4, expenseType: 'Salaries', amount: 5000, notes: 'Staff Salaries for February', date: '2026-02-28' },
+                { id: 5, expenseType: 'Procedures', amount: 350, notes: 'Government Fees', date: '2026-02-10' },
+                { id: 6, expenseType: 'Other', amount: 120, notes: 'Office Supplies', date: '2026-02-15' }
             ]
         }
     ]
@@ -99,19 +99,33 @@ function getMockResponse(endpoint, method, body) {
                 // Client-side search filtering for mock data
                 const urlParams = new URLSearchParams(endpoint.split('?')[1] || '');
                 const search = (urlParams.get('search') || '').toLowerCase();
+                const startDate = urlParams.get('startDate') || urlParams.get('from');
+                const endDate = urlParams.get('endDate') || urlParams.get('to');
 
                 let filtered = MOCK_DATA.reports.map(report => ({
                     ...report,
-                    revenues: report.revenues.filter(r =>
-                        !search ||
-                        r.clientName.toLowerCase().includes(search) ||
-                        r.operationType.toLowerCase().includes(search)
-                    ),
-                    expenses: report.expenses.filter(e =>
-                        !search ||
-                        e.expenseType.toLowerCase().includes(search) ||
-                        (e.notes || '').toLowerCase().includes(search)
-                    )
+                    revenues: report.revenues.filter(r => {
+                        const matchesSearch = !search ||
+                            r.clientName.toLowerCase().includes(search) ||
+                            r.operationType.toLowerCase().includes(search) ||
+                            (r.date || '').includes(search);
+                        
+                        const inDateRange = (!startDate || r.date >= startDate) &&
+                                            (!endDate || r.date <= endDate);
+                        
+                        return matchesSearch && inDateRange;
+                    }),
+                    expenses: report.expenses.filter(e => {
+                        const matchesSearch = !search ||
+                            e.expenseType.toLowerCase().includes(search) ||
+                            (e.notes || '').toLowerCase().includes(search) ||
+                            (e.date || '').includes(search);
+
+                        const inDateRange = (!startDate || e.date >= startDate) &&
+                                            (!endDate || e.date <= endDate);
+
+                        return matchesSearch && inDateRange;
+                    })
                 }));
 
                 resolve(filtered);

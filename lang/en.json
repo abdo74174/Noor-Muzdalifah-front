@@ -79,5 +79,9 @@
     "update_profile_btn": "Update Profile",
     "edit_profile_btn": "Edit Profile Information",
     "single_date": "Single Day",
-    "date_range": "Date Range"
+    "date_range": "Date Range",
+    "no_records_in_date": "No data found for this date",
+    "no_revenue_records": "No revenue records found",
+    "no_expense_records": "No expense records found",
+    "date": "Date"
 }

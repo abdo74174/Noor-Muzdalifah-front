@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>لوحة التحكم - نظام إدخال البيانات</title>
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/base.css">
     <link rel="stylesheet" href="css/dashboard.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css">
     <!-- Apply theme immediately to prevent flash -->
@@ -223,21 +223,28 @@
                             <div class="filter-item" id="revDayPicker">
                                 <div class="input-wrapper">
                                     <i class="ri-calendar-event-line input-icon"></i>
-                                    <input type="date" id="revDay" class="form-control" onchange="loadRevenues()">
+                                    <input type="date" id="revDay" class="form-control">
                                 </div>
                             </div>
                             <!-- Range mode -->
                             <div class="filter-item d-none" id="revRangeFrom">
                                 <div class="input-wrapper">
                                     <i class="ri-calendar-line input-icon"></i>
-                                    <input type="date" id="revFrom" class="form-control" onchange="loadRevenues()">
+                                    <input type="date" id="revFrom" class="form-control">
                                 </div>
                             </div>
                             <div class="filter-item d-none" id="revRangeTo">
                                 <div class="input-wrapper">
                                     <i class="ri-calendar-check-line input-icon"></i>
-                                    <input type="date" id="revTo" class="form-control" onchange="loadRevenues()">
+                                    <input type="date" id="revTo" class="form-control">
                                 </div>
+                            </div>
+                            <!-- Search by date button -->
+                            <div class="filter-item" style="flex:0;">
+                                <button class="btn-search-date" onclick="loadRevenues()" title="Search by date">
+                                    <i class="ri-search-line"></i>
+                                    <span data-key="search_btn">بحث</span>
+                                </button>
                             </div>
                             <!-- Clear button -->
                             <div class="filter-item" style="flex:0;">
@@ -246,23 +253,6 @@
                                 </button>
                             </div>
                         </div>
-                    </div>
-
-                    <!-- January Report Card -->
-                    <div class="content-card report-highlight-card">
-                        <div class="report-highlight-info">
-                            <div class="report-highlight-icon">
-                                <i class="ri-calendar-event-fill"></i>
-                            </div>
-                            <div>
-                                <h4 data-key="january_report">January 2026 Report</h4>
-                                <p>View detailed records for the start of the year.</p>
-                            </div>
-                        </div>
-                        <a href="january-2026.html" class="btn-report">
-                            <i class="ri-external-link-line"></i>
-                            <span data-key="view_january">View Report</span>
-                        </a>
                     </div>
 
                     <div id="revenueReportsContainer"></div>

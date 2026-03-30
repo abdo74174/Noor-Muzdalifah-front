@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>التقرير الكامل - نظام إدخال البيانات</title>
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/base.css">
     <link rel="stylesheet" href="css/dashboard.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css">
     <script>
@@ -114,6 +114,42 @@
                     </div>
                 </section>
 
+                <!-- Search/Filter Section -->
+                <section class="report-section no-print">
+                    <div class="content-card glass" style="padding: 1.5rem;">
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; align-items: end;">
+                            <div class="form-group">
+                                <label data-key="search">Search</label>
+                                <div class="search-input-wrap">
+                                    <i class="ri-search-line"></i>
+                                    <input type="text" id="searchInput" placeholder="Search by name, type, date..." class="form-input">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label data-key="filter_from">From Date</label>
+                                <input type="date" id="startDate" class="form-input">
+                            </div>
+                            <div class="form-group">
+                                <label data-key="filter_to">To Date</label>
+                                <input type="date" id="endDate" class="form-input">
+                            </div>
+                            <div style="display: flex; gap: 0.5rem;">
+                                <button class="btn-submit" onclick="loadAllData()" style="width: auto; height: 44px; padding: 0 1.5rem;">
+                                    <i class="ri-filter-3-line"></i>
+                                    <span data-key="search">بحث</span>
+                                </button>
+                                <button class="btn-submit no-print" onclick="window.print()" style="width: auto; height: 44px; padding: 0 1.5rem; background: var(--bg-surface);">
+                                    <i class="ri-printer-line"></i>
+                                    <span data-key="print">طباعة</span>
+                                </button>
+                                <button class="btn-submit" onclick="resetFilters()" style="width: auto; height: 44px; padding: 0 1.5rem; background: var(--text-muted); color: white;">
+                                    <i class="ri-restart-line"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
                 <!-- Detailed Tables -->
                 <div class="report-grid">
                     <section class="report-section">
@@ -142,71 +178,97 @@
 
         async function loadAllData() {
             try {
-                // Summary
+                const search = document.getElementById('searchInput').value;
+                const startDate = document.getElementById('startDate').value;
+                const endDate = document.getElementById('endDate').value;
+
+                let endpoint = '/Dashboard/reports?';
+                if (search) endpoint += `search=${encodeURIComponent(search)}&`;
+                if (startDate) endpoint += `startDate=${startDate}&`;
+                if (endDate) endpoint += `endDate=${endDate}&`;
+
+                // Summary (still global or should it be filtered?)
+                // For this demo, let's keep summary global but filter the lists
                 const summary = await apiFetch('/Dashboard/summary');
                 document.getElementById('statTotalRev').innerText = `$${summary.totalRevenue.toLocaleString()}`;
                 document.getElementById('statTotalPaid').innerText = `$${summary.totalPaid.toLocaleString()}`;
                 document.getElementById('statTotalRem').innerText = `$${summary.totalRemaining.toLocaleString()}`;
                 document.getElementById('statTotalExp').innerText = `$${summary.totalExpenses.toLocaleString()}`;
 
-                // Revenues
-                const revs = await apiFetch('/Dashboard/reports');
+                // Reports (Grouped Revenues and Expenses)
+                const revs = await apiFetch(endpoint);
                 renderGroupedRevenues(revs);
-
-                // Expenses
-                const exps = await apiFetch('/Dashboard/expenses');
-                renderGroupedExpenses(exps);
+                renderGroupedExpenses(revs);
 
             } catch(e) { console.error(e); }
         }
 
+        function resetFilters() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('startDate').value = '';
+            document.getElementById('endDate').value = '';
+            loadAllData();
+        }
+
         function renderGroupedRevenues(reports) {
             const container = document.getElementById('revenueListContainer');
-            container.innerHTML = reports.map(m => m.revenues.length > 0 ? `
-                <div class="content-card" style="margin-bottom:1rem">
-                    <h4 style="margin-bottom:0.5rem">${m.monthName}</h4>
-                    <div class="table-container">
-                        <table>
-                            <thead><tr>
-                                <th>Client</th><th>Type</th><th>Contract</th><th>Offer</th><th>Paid</th><th>Rest</th><th>Rev</th>
-                            </tr></thead>
-                            <tbody>${m.revenues.map(r => `
-                                <tr>
-                                    <td>${r.clientName}</td>
-                                    <td><span class="badge">${t(r.operationType.toLowerCase().replace(' ','_'))}</span></td>
-                                    <td>${r.contractPrice.toFixed(2)}</td>
-                                    <td>${r.offerPrice.toFixed(2)}</td>
-                                    <td class="text-success">${r.paidAmount.toFixed(2)}</td>
-                                    <td class="text-danger">${r.rest.toFixed(2)}</td>
-                                    <td class="text-success">${r.revenue.toFixed(2)}</td>
-                                </tr>
-                            `).join('')}</tbody>
-                        </table>
+            const content = reports.map(m => {
+                const hasData = m.revenues && m.revenues.length > 0;
+                return hasData ? `
+                    <div class="content-card" style="margin-bottom:1rem">
+                        <h4 style="margin-bottom:0.5rem">${m.monthName}</h4>
+                        <div class="table-container">
+                            <table>
+                                <thead><tr>
+                                    <th>Date</th><th>Client</th><th>Type</th><th>Contract</th><th>Offer</th><th>Paid</th><th>Rest</th><th>Rev</th>
+                                </tr></thead>
+                                <tbody>${m.revenues.map(r => `
+                                    <tr>
+                                        <td>${r.date || '—'}</td>
+                                        <td>${r.clientName}</td>
+                                        <td><span class="badge">${t(r.operationType.toLowerCase().replace(' ','_'))}</span></td>
+                                        <td>${r.contractPrice.toFixed(2)}</td>
+                                        <td>${r.offerPrice.toFixed(2)}</td>
+                                        <td class="text-success">${r.paidAmount.toFixed(2)}</td>
+                                        <td class="text-danger">${r.rest.toFixed(2)}</td>
+                                        <td class="text-success">${r.revenue.toFixed(2)}</td>
+                                    </tr>
+                                `).join('')}</tbody>
+                            </table>
+                        </div>
                     </div>
-                </div>
-            ` : '').join('');
+                ` : '';
+            }).join('');
+            
+            container.innerHTML = content || `<p style="text-align:center; padding:2rem; color:var(--text-muted);" data-key="no_revenue_records">لا توجد سجلات إيرادات</p>`;
             applyTranslations();
         }
 
         function renderGroupedExpenses(reports) {
             const container = document.getElementById('expenseListContainer');
-            container.innerHTML = reports.map(m => m.expenses.length > 0 ? `
-                <div class="content-card" style="margin-bottom:1rem">
-                    <h4 style="margin-bottom:0.5rem">${m.monthName}</h4>
-                    <div class="table-container">
-                        <table>
-                            <thead><tr><th>Type</th><th>Amount</th><th>Notes</th></tr></thead>
-                            <tbody>${m.expenses.map(e => `
-                                <tr>
-                                    <td><span class="badge badge-expense">${t(e.expenseType.toLowerCase())}</span></td>
-                                    <td class="text-danger">${e.amount.toFixed(2)}</td>
-                                    <td>${e.notes || '—'}</td>
-                                </tr>
-                            `).join('')}</tbody>
-                        </table>
+            const content = reports.map(m => {
+                const hasData = m.expenses && m.expenses.length > 0;
+                return hasData ? `
+                    <div class="content-card" style="margin-bottom:1rem">
+                        <h4 style="margin-bottom:0.5rem">${m.monthName}</h4>
+                        <div class="table-container">
+                            <table>
+                                <thead><tr><th>Date</th><th>Type</th><th>Amount</th><th>Notes</th></tr></thead>
+                                <tbody>${m.expenses.map(e => `
+                                    <tr>
+                                        <td>${e.date || '—'}</td>
+                                        <td><span class="badge badge-expense">${t(e.expenseType.toLowerCase())}</span></td>
+                                        <td class="text-danger">${e.amount.toFixed(2)}</td>
+                                        <td>${e.notes || '—'}</td>
+                                    </tr>
+                                `).join('')}</tbody>
+                            </table>
+                        </div>
                     </div>
-                </div>
-            ` : '').join('');
+                ` : '';
+            }).join('');
+
+            container.innerHTML = content || `<p style="text-align:center; padding:2rem; color:var(--text-muted);" data-key="no_expense_records">لا توجد سجلات مصروفات</p>`;
             applyTranslations();
         }
 

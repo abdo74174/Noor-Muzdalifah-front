@@ -89,7 +89,8 @@ document.getElementById('revenueForm')?.addEventListener('submit', async (e) => 
         operationType: document.getElementById('opType').value,
         contractPrice: parseFloat(document.getElementById('contractPrice').value),
         offerPrice: parseFloat(document.getElementById('offerPrice').value),
-        paidAmount: parseFloat(document.getElementById('paidAmount').value)
+        paidAmount: parseFloat(document.getElementById('paidAmount').value),
+        date: new Date().toISOString()
     };
 
     try {
@@ -249,17 +250,21 @@ async function loadRevenues() {
 
     try {
         const reports = await apiFetch(`/Dashboard/reports?search=${search}&from=${from}&to=${to}`);
-        renderGroupedRevenues(reports);
+        const hasDateFilter = !!(from || to);
+        renderGroupedRevenues(reports, hasDateFilter);
     } catch (err) { console.error('Error loading revenues:', err); }
 }
 
-function renderGroupedRevenues(reports) {
+function renderGroupedRevenues(reports, hasDateFilter = false) {
     const container = document.getElementById('revenueReportsContainer');
     if (!container) return;
     container.innerHTML = '';
 
-    if (!reports || reports.length === 0) {
-        container.innerHTML = '<div class="empty-state"><i class="ri-inbox-line"></i><p>No revenue records found</p></div>';
+    if (!reports || reports.length === 0 || !reports.some(r => r.revenues.length > 0)) {
+        const msgKey = hasDateFilter ? "no_records_in_date" : "no_revenue_records";
+        const msgDefault = hasDateFilter ? "لا يوجد بيانات في هذا التاريخ" : "No revenue records found";
+        container.innerHTML = `<div class="empty-state"><i class="ri-inbox-line"></i><p data-key="${msgKey}">${msgDefault}</p></div>`;
+        applyTranslations();
         return;
     }
 
@@ -274,6 +279,7 @@ function renderGroupedRevenues(reports) {
                 <table>
                     <thead>
                         <tr>
+                            <th data-key="date">Date</th>
                             <th data-key="client_name">Client</th>
                             <th data-key="operation_type">Type</th>
                             <th data-key="contract_price">Contract</th>
@@ -287,6 +293,7 @@ function renderGroupedRevenues(reports) {
                     <tbody>
                         ${report.revenues.map(r => `
                             <tr class="clickable-row" onclick="openCustomerFromList('${r.clientName.replace(/'/g, "\\'")}')">
+                                <td>${r.date || '—'}</td>
                                 <td><strong>${r.clientName}</strong></td>
                                 <td><span class="badge">${t(r.operationType.toLowerCase().replace(' ', '_'))}</span></td>
                                 <td>${r.contractPrice.toFixed(2)}</td>
@@ -314,7 +321,8 @@ document.getElementById('expenseForm')?.addEventListener('submit', async (e) => 
     const payload = {
         expenseType: document.getElementById('expType').value,
         amount: parseFloat(document.getElementById('expAmount').value),
-        notes: document.getElementById('expNotes').value
+        notes: document.getElementById('expNotes').value,
+        date: new Date().toISOString()
     };
 
     try {
@@ -346,11 +354,12 @@ async function loadExpenses() {
 
     try {
         const reports = await apiFetch(`/Dashboard/expenses?search=${search}&from=${from}&to=${to}`);
-        renderGroupedExpenses(reports);
+        const hasDateFilter = !!(from || to);
+        renderGroupedExpenses(reports, hasDateFilter);
     } catch (err) { console.error('Error loading expenses:', err); }
 }
 
-function renderGroupedExpenses(reports) {
+function renderGroupedExpenses(reports, hasDateFilter = false) {
     const container = document.getElementById('expenseReportsContainer');
     if (!container) return;
     container.innerHTML = '';
@@ -368,6 +377,7 @@ function renderGroupedExpenses(reports) {
                 <table>
                     <thead>
                         <tr>
+                            <th data-key="date">Date</th>
                             <th data-key="expense_type">Type</th>
                             <th data-key="amount">Amount</th>
                             <th data-key="notes">Notes</th>
@@ -376,6 +386,7 @@ function renderGroupedExpenses(reports) {
                     <tbody>
                         ${report.expenses.map(e => `
                             <tr>
+                                <td>${e.date || '—'}</td>
                                 <td><span class="badge badge-expense">${t(e.expenseType.toLowerCase())}</span></td>
                                 <td class="text-danger">${e.amount.toFixed(2)}</td>
                                 <td>${e.notes || '—'}</td>
@@ -389,7 +400,9 @@ function renderGroupedExpenses(reports) {
     });
 
     if (!hasExpenses) {
-        container.innerHTML = '<div class="empty-state"><i class="ri-inbox-line"></i><p>No expense records found</p></div>';
+        const msgKey = hasDateFilter ? "no_records_in_date" : "no_expense_records";
+        const msgDefault = hasDateFilter ? "لا يوجد بيانات في هذا التاريخ" : "No expense records found";
+        container.innerHTML = `<div class="empty-state"><i class="ri-inbox-line"></i><p data-key="${msgKey}">${msgDefault}</p></div>`;
     }
     applyTranslations();
 }
@@ -624,6 +637,7 @@ async function loadCustomerProfile(clientName) {
             <table>
                 <thead>
                     <tr>
+                        <th data-key="date">Date</th>
                         <th data-key="operation_type">Type</th>
                         <th data-key="contract_price">Contract</th>
                         <th data-key="offer_price">Offer</th>
@@ -637,6 +651,7 @@ async function loadCustomerProfile(clientName) {
                 <tbody>
                     ${records.map(r => `
                         <tr>
+                            <td>${r.date || '—'}</td>
                             <td><span class="badge">${t(r.operationType.toLowerCase().replace(' ', '_'))}</span></td>
                             <td>${r.contractPrice.toFixed(2)}</td>
                             <td>${r.offerPrice.toFixed(2)}</td>

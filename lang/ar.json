@@ -80,5 +80,9 @@
     "edit_profile_btn": "تعديل معلومات الملف الشخصي",
     "reports_nav": "التقارير",
     "single_date": "يوم محدد",
-    "date_range": "نطاق تاريخ"
+    "date_range": "نطاق تاريخ",
+    "no_records_in_date": "لا يوجد بيانات في هذا التاريخ",
+    "no_revenue_records": "لا توجد سجلات إيرادات",
+    "no_expense_records": "لا توجد سجلات مصروفات",
+    "date": "التاريخ"
 }
