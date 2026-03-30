@@ -2,774 +2,755 @@
 <html lang="ar">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>لوحة التحكم - نظام إدخال البيانات</title>
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/dashboard.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css">
-    <!-- Apply theme immediately to prevent flash -->
-    <script>
-        (function () {
-            const t = localStorage.getItem('theme') || 'light';
-            document.documentElement.setAttribute('data-theme', t === 'system'
-                ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
-                : t);
-        })();
-    </script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>لوحة التحكم - نظام إدخال البيانات</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/dashboard.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css">
+  <!-- Apply theme immediately to prevent flash -->
+  <script>
+    (function () {
+      const t = localStorage.getItem('theme') || 'light';
+      document.documentElement.setAttribute('data-theme', t === 'system'
+        ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
+        : t);
+    })();
+  </script>
 </head>
 
 <body>
-    <div class="dashboard-layout">
-        <!-- Sidebar -->
-        <aside class="sidebar glass" id="sidebar">
-            <div class="sidebar-header">
-                <div class="sidebar-logo">
-                    <div class="sidebar-logo-img-wrap">
-                        <img src="images/logo.png" alt="Noor Mozdalifah" class="sidebar-logo-img">
-                    </div>
-                    <div class="sidebar-logo-text">
-                        <span class="logo-name-ar">نور مزدلفة</span>
-                        <span class="logo-name-en">Noor Mozdalifah</span>
-                    </div>
+  <div class="dashboard-layout">
+    <!-- Sidebar -->
+    <aside class="sidebar glass" id="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-logo">
+          <div class="sidebar-logo-img-wrap">
+            <img src="images/logo.png" alt="Noor Mozdalifah" class="sidebar-logo-img">
+          </div>
+          <div class="sidebar-logo-text">
+            <span class="logo-name-ar">نور مزدلفة</span>
+            <span class="logo-name-en">Noor Mozdalifah</span>
+          </div>
+        </div>
+        <button class="sidebar-toggle" id="sidebarToggle" onclick="toggleSidebar()">
+          <i class="ri-menu-line"></i>
+        </button>
+      </div>
+
+      <nav class="sidebar-nav">
+        <div class="nav-section-label">DATA ENTRY</div>
+        <a class="nav-item active" id="navRevenues" onclick="switchTab('revenues')">
+          <i class="ri-add-circle-line"></i>
+          <span data-key="revenues">Add Revenue</span>
+        </a>
+        <a class="nav-item" id="navExpenses" onclick="switchTab('expenses')">
+          <i class="ri-add-circle-line"></i>
+          <span data-key="expenses">Add Expense</span>
+        </a>
+
+        <div class="nav-section-label admin-only d-none" data-key="nav_reports">REPORTS</div>
+        <a class="nav-item admin-only d-none" id="navReports" href="reports.html">
+          <i class="ri-bar-chart-grouped-line"></i>
+          <span data-key="reports_nav">التقارير</span>
+        </a>
+        <a class="nav-item admin-only d-none" id="navCustomerProfile" onclick="switchTab('customerProfile')">
+          <i class="ri-user-search-line"></i>
+          <span data-key="customer_profile">Customer Profile</span>
+        </a>
+
+        <div class="nav-section-label" data-key="nav_account">ACCOUNT</div>
+        <a class="nav-item" id="navProfile" onclick="switchTab('profile')">
+          <i class="ri-user-3-line"></i>
+          <span data-key="profile">My Profile</span>
+        </a>
+        <a class="nav-item admin-only d-none" id="navUserManagement" onclick="switchTab('userManagement')">
+          <i class="ri-user-add-line"></i>
+          <span data-key="user_management">User Management</span>
+        </a>
+        <a class="nav-item" id="navSettings" onclick="switchTab('settings')">
+          <i class="ri-settings-3-line"></i>
+          <span data-key="settings">Settings</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <button class="nav-item logout-item" onclick="logout()">
+          <i class="ri-logout-box-r-line"></i>
+          <span data-key="logout">تسجيل خروج</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- Mobile Overlay -->
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Top Bar -->
+      <header class="topbar glass">
+        <div class="topbar-left">
+          <button class="mobile-menu-btn" onclick="toggleSidebar()">
+            <i class="ri-menu-line"></i>
+          </button>
+          <div class="page-title-area">
+            <h1 id="pageTitle" class="page-title" data-key="revenues">Revenues</h1>
+            <p id="welcomeMsg" class="page-subtitle">Welcome</p>
+          </div>
+        </div>
+        <div class="topbar-right">
+          <div class="user-avatar">
+            <i class="ri-user-3-fill"></i>
+          </div>
+        </div>
+      </header>
+
+      <!-- Content Area -->
+      <div class="content-area">
+
+        <!-- ==================== REVENUE SECTION ==================== -->
+        <section id="revenuesSection" class="section-animate">
+
+          <!-- Add Revenue Form -->
+          <div id="revenueFormContainer" class="content-card">
+            <div class="card-header">
+              <div class="card-header-icon revenue-icon">
+                <i class="ri-add-circle-line"></i>
+              </div>
+              <div>
+                <h3 data-key="revenues">New Revenue</h3>
+                <p class="card-subtitle" data-key="add_btn">Add a new revenue record</p>
+              </div>
+            </div>
+            <form id="revenueForm" class="form-grid">
+              <div class="form-group">
+                <label data-key="client_name">Client Name</label>
+                <div class="input-wrapper">
+                  <i class="ri-user-line input-icon"></i>
+                  <input type="text" id="clientName" class="form-control" placeholder="e.g. John Doe" required>
                 </div>
-                <button class="sidebar-toggle" id="sidebarToggle" onclick="toggleSidebar()">
-                    <i class="ri-menu-line"></i>
+              </div>
+              <div class="form-group">
+                <label data-key="operation_type">Operation Type</label>
+                <div class="input-wrapper">
+                  <i class="ri-file-list-3-line input-icon"></i>
+                  <select id="opType" class="form-control">
+                    <option value="Visa" data-key="visa">Visa</option>
+                    <option value="Work Contract" data-key="work_contract">Work Contract</option>
+                    <option value="Ticket" data-key="ticket">Ticket</option>
+                    <option value="Umrah" data-key="umrah">Umrah</option>
+                    <option value="Hajj" data-key="hajj">Hajj</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-group">
+                <label data-key="contract_price">Contract Price ($)</label>
+                <div class="input-wrapper">
+                  <i class="ri-price-tag-3-line input-icon"></i>
+                  <input type="number" id="contractPrice" class="form-control" step="0.01" placeholder="0.00" required>
+                </div>
+              </div>
+              <div class="form-group">
+                <label data-key="offer_price">Offer Price ($)</label>
+                <div class="input-wrapper">
+                  <i class="ri-money-dollar-circle-line input-icon"></i>
+                  <input type="number" id="offerPrice" class="form-control" step="0.01" placeholder="0.00" required>
+                </div>
+              </div>
+              <div class="form-group" id="paidAmountGroup">
+                <label data-key="paid_amount">Paid Amount ($)</label>
+                <div class="input-wrapper">
+                  <i class="ri-wallet-3-line input-icon"></i>
+                  <input type="number" id="paidAmount" class="form-control" step="0.01" placeholder="0.00" required>
+                </div>
+              </div>
+              <div class="form-group">
+                <label data-key="revenue">Revenue</label>
+                <div class="input-wrapper readonly-field">
+                  <i class="ri-arrow-up-circle-line input-icon"></i>
+                  <input type="number" id="revenueAuto" class="form-control" placeholder="0.00" readonly>
+                </div>
+              </div>
+              <div class="form-group" id="restGroup">
+                <label data-key="rest">Rest</label>
+                <div class="input-wrapper readonly-field">
+                  <i class="ri-arrow-down-circle-line input-icon"></i>
+                  <input type="number" id="restAuto" class="form-control" placeholder="0.00" readonly>
+                </div>
+              </div>
+              <div class="form-group form-action-group">
+                <button type="submit" class="btn-submit">
+                  <i class="ri-save-line"></i>
+                  <span data-key="add_btn">Add Record</span>
                 </button>
+              </div>
+            </form>
+          </div>
+        </section>
+
+        <!-- ==================== REVENUE LIST SECTION (Admin) ==================== -->
+        <section id="revenueListSection" class="d-none section-animate">
+          <div class="content-card filter-card">
+            <!-- Search Row -->
+            <div class="filter-row" style="margin-bottom:1rem;">
+              <div class="filter-item search-filter" style="flex:1;">
+                <div class="input-wrapper">
+                  <i class="ri-search-line input-icon"></i>
+                  <input type="text" id="revSearch" class="form-control" data-key="search"
+                    placeholder="Search customer..." oninput="loadRevenues()">
+                </div>
+              </div>
             </div>
-
-            <nav class="sidebar-nav">
-                <div class="nav-section-label">DATA ENTRY</div>
-                <a class="nav-item active" id="navRevenues" onclick="switchTab('revenues')">
-                    <i class="ri-add-circle-line"></i>
-                    <span data-key="revenues">Add Revenue</span>
-                </a>
-                <a class="nav-item" id="navExpenses" onclick="switchTab('expenses')">
-                    <i class="ri-add-circle-line"></i>
-                    <span data-key="expenses">Add Expense</span>
-                </a>
-
-                <div class="nav-section-label admin-only d-none" data-key="nav_reports">REPORTS</div>
-                <a class="nav-item admin-only d-none" id="navReports" href="reports.html">
-                    <i class="ri-bar-chart-grouped-line"></i>
-                    <span data-key="reports_nav">التقارير</span>
-                </a>
-                <a class="nav-item admin-only d-none" id="navCustomerProfile" onclick="switchTab('customerProfile')">
-                    <i class="ri-user-search-line"></i>
-                    <span data-key="customer_profile">Customer Profile</span>
-                </a>
-
-                <div class="nav-section-label" data-key="nav_account">ACCOUNT</div>
-                <a class="nav-item" id="navProfile" onclick="switchTab('profile')">
-                    <i class="ri-user-3-line"></i>
-                    <span data-key="profile">My Profile</span>
-                </a>
-                <a class="nav-item admin-only d-none" id="navUserManagement" onclick="switchTab('userManagement')">
-                    <i class="ri-user-add-line"></i>
-                    <span data-key="user_management">User Management</span>
-                </a>
-                <a class="nav-item" id="navSettings" onclick="switchTab('settings')">
-                    <i class="ri-settings-3-line"></i>
-                    <span data-key="settings">Settings</span>
-                </a>
-            </nav>
-
-            <div class="sidebar-footer">
-                <button class="nav-item logout-item" onclick="logout()">
-                    <i class="ri-logout-box-r-line"></i>
-                    <span data-key="logout">تسجيل خروج</span>
+            <!-- Date Filter Row -->
+            <div class="filter-separator"></div>
+            <div class="date-mode-toggle" style="margin-bottom:0.75rem; margin-top:1rem;">
+              <button id="revModeDay" class="date-mode-btn active" onclick="setRevMode('day')">
+                <i class="ri-calendar-event-line"></i>
+                <span data-key="single_date">يوم محدد</span>
+              </button>
+              <button id="revModeRange" class="date-mode-btn" onclick="setRevMode('range')">
+                <i class="ri-calendar-2-line"></i>
+                <span data-key="date_range">نطاق تاريخ</span>
+              </button>
+            </div>
+            <div class="filter-row">
+              <!-- Single date mode -->
+              <div class="filter-item" id="revDayPicker">
+                <div class="input-wrapper">
+                  <i class="ri-calendar-event-line input-icon"></i>
+                  <input type="date" id="revDay" class="form-control" onchange="loadRevenues()">
+                </div>
+              </div>
+              <!-- Range mode -->
+              <div class="filter-item d-none" id="revRangeFrom">
+                <div class="input-wrapper">
+                  <i class="ri-calendar-line input-icon"></i>
+                  <input type="date" id="revFrom" class="form-control" onchange="loadRevenues()">
+                </div>
+              </div>
+              <div class="filter-item d-none" id="revRangeTo">
+                <div class="input-wrapper">
+                  <i class="ri-calendar-check-line input-icon"></i>
+                  <input type="date" id="revTo" class="form-control" onchange="loadRevenues()">
+                </div>
+              </div>
+              <!-- Clear button -->
+              <div class="filter-item" style="flex:0;">
+                <button class="btn-clear-date" onclick="clearRevDates()" title="Clear dates">
+                  <i class="ri-close-circle-line"></i>
                 </button>
+              </div>
             </div>
-        </aside>
+          </div>
 
-        <!-- Mobile Overlay -->
-        <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
-
-        <!-- Main Content -->
-        <main class="main-content">
-            <!-- Top Bar -->
-            <header class="topbar glass">
-                <div class="topbar-left">
-                    <button class="mobile-menu-btn" onclick="toggleSidebar()">
-                        <i class="ri-menu-line"></i>
-                    </button>
-                    <div class="page-title-area">
-                        <h1 id="pageTitle" class="page-title" data-key="revenues">Revenues</h1>
-                        <p id="welcomeMsg" class="page-subtitle">Welcome</p>
-                    </div>
-                </div>
-                <div class="topbar-right">
-                    <div class="user-avatar">
-                        <i class="ri-user-3-fill"></i>
-                    </div>
-                </div>
-            </header>
-
-            <!-- Content Area -->
-            <div class="content-area">
-
-                <!-- ==================== REVENUE SECTION ==================== -->
-                <section id="revenuesSection" class="section-animate">
-
-                    <!-- Add Revenue Form -->
-                    <div id="revenueFormContainer" class="content-card">
-                        <div class="card-header">
-                            <div class="card-header-icon revenue-icon">
-                                <i class="ri-add-circle-line"></i>
-                            </div>
-                            <div>
-                                <h3 data-key="revenues">New Revenue</h3>
-                                <p class="card-subtitle" data-key="add_btn">Add a new revenue record</p>
-                            </div>
-                        </div>
-                        <form id="revenueForm" class="form-grid">
-                            <div class="form-group">
-                                <label data-key="client_name">Client Name</label>
-                                <div class="input-wrapper">
-                                    <i class="ri-user-line input-icon"></i>
-                                    <input type="text" id="clientName" class="form-control" placeholder="e.g. John Doe"
-                                        required>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label data-key="operation_type">Operation Type</label>
-                                <div class="input-wrapper">
-                                    <i class="ri-file-list-3-line input-icon"></i>
-                                    <select id="opType" class="form-control">
-                                        <option value="Visa" data-key="visa">Visa</option>
-                                        <option value="Work Contract" data-key="work_contract">Work Contract</option>
-                                        <option value="Ticket" data-key="ticket">Ticket</option>
-                                        <option value="Umrah" data-key="umrah">Umrah</option>
-                                        <option value="Hajj" data-key="hajj">Hajj</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label data-key="contract_price">Contract Price ($)</label>
-                                <div class="input-wrapper">
-                                    <i class="ri-price-tag-3-line input-icon"></i>
-                                    <input type="number" id="contractPrice" class="form-control" step="0.01"
-                                        placeholder="0.00" required>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label data-key="offer_price">Offer Price ($)</label>
-                                <div class="input-wrapper">
-                                    <i class="ri-money-dollar-circle-line input-icon"></i>
-                                    <input type="number" id="offerPrice" class="form-control" step="0.01"
-                                        placeholder="0.00" required>
-                                </div>
-                            </div>
-                            <div class="form-group" id="paidAmountGroup">
-                                <label data-key="paid_amount">Paid Amount ($)</label>
-                                <div class="input-wrapper">
-                                    <i class="ri-wallet-3-line input-icon"></i>
-                                    <input type="number" id="paidAmount" class="form-control" step="0.01"
-                                        placeholder="0.00" required>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label data-key="revenue">Revenue</label>
-                                <div class="input-wrapper readonly-field">
-                                    <i class="ri-arrow-up-circle-line input-icon"></i>
-                                    <input type="number" id="revenueAuto" class="form-control" placeholder="0.00"
-                                        readonly>
-                                </div>
-                            </div>
-                            <div class="form-group" id="restGroup">
-                                <label data-key="rest">Rest</label>
-                                <div class="input-wrapper readonly-field">
-                                    <i class="ri-arrow-down-circle-line input-icon"></i>
-                                    <input type="number" id="restAuto" class="form-control" placeholder="0.00" readonly>
-                                </div>
-                            </div>
-                            <div class="form-group form-action-group">
-                                <button type="submit" class="btn-submit">
-                                    <i class="ri-save-line"></i>
-                                    <span data-key="add_btn">Add Record</span>
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                </section>
-
-                <!-- ==================== REVENUE LIST SECTION (Admin) ==================== -->
-                <section id="revenueListSection" class="d-none section-animate">
-                    <div class="content-card filter-card">
-                        <!-- Search Row -->
-                        <div class="filter-row" style="margin-bottom:1rem;">
-                            <div class="filter-item search-filter" style="flex:1;">
-                                <div class="input-wrapper">
-                                    <i class="ri-search-line input-icon"></i>
-                                    <input type="text" id="revSearch" class="form-control" data-key="search"
-                                        placeholder="Search customer..." oninput="loadRevenues()">
-                                </div>
-                            </div>
-                        </div>
-                        <!-- Date Filter Row -->
-                        <div class="filter-separator"></div>
-                        <div class="date-mode-toggle" style="margin-bottom:0.75rem; margin-top:1rem;">
-                            <button id="revModeDay" class="date-mode-btn active" onclick="setRevMode('day')">
-                                <i class="ri-calendar-event-line"></i>
-                                <span data-key="single_date">يوم محدد</span>
-                            </button>
-                            <button id="revModeRange" class="date-mode-btn" onclick="setRevMode('range')">
-                                <i class="ri-calendar-2-line"></i>
-                                <span data-key="date_range">نطاق تاريخ</span>
-                            </button>
-                        </div>
-                        <div class="filter-row">
-                            <!-- Single date mode -->
-                            <div class="filter-item" id="revDayPicker">
-                                <div class="input-wrapper">
-                                    <i class="ri-calendar-event-line input-icon"></i>
-                                    <input type="date" id="revDay" class="form-control" onchange="loadRevenues()">
-                                </div>
-                            </div>
-                            <!-- Range mode -->
-                            <div class="filter-item d-none" id="revRangeFrom">
-                                <div class="input-wrapper">
-                                    <i class="ri-calendar-line input-icon"></i>
-                                    <input type="date" id="revFrom" class="form-control" onchange="loadRevenues()">
-                                </div>
-                            </div>
-                            <div class="filter-item d-none" id="revRangeTo">
-                                <div class="input-wrapper">
-                                    <i class="ri-calendar-check-line input-icon"></i>
-                                    <input type="date" id="revTo" class="form-control" onchange="loadRevenues()">
-                                </div>
-                            </div>
-                            <!-- Clear button -->
-                            <div class="filter-item" style="flex:0;">
-                                <button class="btn-clear-date" onclick="clearRevDates()" title="Clear dates">
-                                    <i class="ri-close-circle-line"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- January Report Card -->
-                    <div class="content-card report-highlight-card">
-                        <div class="report-highlight-info">
-                            <div class="report-highlight-icon">
-                                <i class="ri-calendar-event-fill"></i>
-                            </div>
-                            <div>
-                                <h4 data-key="january_report">January 2026 Report</h4>
-                                <p>View detailed records for the start of the year.</p>
-                            </div>
-                        </div>
-                        <a href="january-2026.html" class="btn-report">
-                            <i class="ri-external-link-line"></i>
-                            <span data-key="view_january">View Report</span>
-                        </a>
-                    </div>
-
-                    <div id="revenueReportsContainer"></div>
-                </section>
-
-                <!-- ==================== EXPENSES SECTION ==================== -->
-                <section id="expensesSection" class="d-none section-animate">
-
-                    <!-- Add Expense Form -->
-                    <div id="expenseFormContainer" class="content-card">
-                        <div class="card-header">
-                            <div class="card-header-icon expense-icon">
-                                <i class="ri-subtract-line"></i>
-                            </div>
-                            <div>
-                                <h3 data-key="expenses">New Expense</h3>
-                                <p class="card-subtitle" data-key="add_btn">Add a new expense record</p>
-                            </div>
-                        </div>
-                        <form id="expenseForm" class="form-grid">
-                            <div class="form-group">
-                                <label data-key="expense_type">Expense Type</label>
-                                <div class="input-wrapper">
-                                    <i class="ri-file-list-3-line input-icon"></i>
-                                    <select id="expType" class="form-control">
-                                        <option value="Salaries" data-key="salaries">Salaries</option>
-                                        <option value="Water" data-key="water">Water</option>
-                                        <option value="Electricity" data-key="electricity">Electricity</option>
-                                        <option value="Procedures" data-key="procedures">Procedures</option>
-                                        <option value="Other" data-key="other">Other</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label data-key="amount">Amount ($)</label>
-                                <div class="input-wrapper">
-                                    <i class="ri-money-dollar-circle-line input-icon"></i>
-                                    <input type="number" id="expAmount" class="form-control" step="0.01"
-                                        placeholder="0.00" required>
-                                </div>
-                            </div>
-                            <div class="form-group form-group-wide">
-                                <label data-key="notes">Notes</label>
-                                <div class="input-wrapper">
-                                    <i class="ri-edit-line input-icon"></i>
-                                    <input type="text" id="expNotes" class="form-control"
-                                        placeholder="Optional details...">
-                                </div>
-                            </div>
-                            <div class="form-group form-action-group">
-                                <button type="submit" class="btn-submit expense-submit">
-                                    <i class="ri-save-line"></i>
-                                    <span data-key="add_btn">Add Record</span>
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                </section>
-
-
-
-                <!-- ==================== SUMMARY SECTION ==================== -->
-                <section id="summarySection" class="d-none section-animate">
-                    <div class="summary-stats-grid">
-                        <div class="stat-card stat-revenue">
-                            <div class="stat-icon-wrap">
-                                <i class="ri-line-chart-line"></i>
-                            </div>
-                            <div class="stat-info">
-                                <span class="stat-label" data-key="total_revenue">Total Revenue</span>
-                                <span class="stat-value" id="statTotalRev">$0.00</span>
-                            </div>
-                            <div class="stat-decoration"></div>
-                        </div>
-                        <div class="stat-card stat-paid">
-                            <div class="stat-icon-wrap">
-                                <i class="ri-checkbox-circle-line"></i>
-                            </div>
-                            <div class="stat-info">
-                                <span class="stat-label" data-key="total_paid">Total Paid</span>
-                                <span class="stat-value" id="statTotalPaid">$0.00</span>
-                            </div>
-                            <div class="stat-decoration"></div>
-                        </div>
-                        <div class="stat-card stat-remaining">
-                            <div class="stat-icon-wrap">
-                                <i class="ri-time-line"></i>
-                            </div>
-                            <div class="stat-info">
-                                <span class="stat-label" data-key="total_remaining">Total Remaining</span>
-                                <span class="stat-value" id="statTotalRem">$0.00</span>
-                            </div>
-                            <div class="stat-decoration"></div>
-                        </div>
-                        <div class="stat-card stat-expenses">
-                            <div class="stat-icon-wrap">
-                                <i class="ri-shopping-bag-line"></i>
-                            </div>
-                            <div class="stat-info">
-                                <span class="stat-label" data-key="total_expenses">Total Expenses</span>
-                                <span class="stat-value" id="statTotalExp">$0.00</span>
-                            </div>
-                            <div class="stat-decoration"></div>
-                        </div>
-                    </div>
-
-                    <!-- Net Profit Hero -->
-                    <div class="content-card profit-hero-card">
-                        <div class="profit-hero-content">
-                            <div class="profit-hero-icon">
-                                <i class="ri-trophy-line"></i>
-                            </div>
-                            <div class="profit-hero-info">
-                                <span class="profit-hero-label" data-key="net_profit">Net Profit</span>
-                                <span class="profit-hero-desc">Revenue - Total Expenses</span>
-                            </div>
-                        </div>
-                        <span class="profit-hero-value" id="statNetProfit">$0.00</span>
-                        <div class="profit-hero-bg"></div>
-                    </div>
-                </section>
-
-                <!-- ==================== PROFILE SECTION ==================== -->
-                <section id="profileSection" class="d-none section-animate">
-                    <div class="content-card">
-                        <div class="profile-header-area">
-                            <div class="profile-avatar-large">
-                                <i class="ri-user-3-fill"></i>
-                            </div>
-                            <div class="profile-user-info">
-                                <h2 id="profileUsername">Username</h2>
-                                <span class="profile-role-badge" id="profileRole">Admin</span>
-                            </div>
-                            <div class="admin-only d-none" style="margin-inline-start: auto;">
-                                <button class="btn-submit" onclick="window.location.href='edit-profile.html'"
-                                    style="width: auto; height: 40px; padding: 0 1.25rem; font-size: 0.85rem;">
-                                    <i class="ri-edit-line"></i>
-                                    <span data-key="edit_profile_btn">Edit Profile</span>
-                                </button>
-                            </div>
-                        </div>
-                        <div class="profile-details-grid">
-                            <div class="profile-detail-item">
-                                <div class="profile-detail-icon"><i class="ri-user-line"></i></div>
-                                <div>
-                                    <span class="profile-detail-label" data-key="username">Username</span>
-                                    <span class="profile-detail-value" id="profileUsernameVal">—</span>
-                                </div>
-                            </div>
-                            <div class="profile-detail-item">
-                                <div class="profile-detail-icon"><i class="ri-shield-user-line"></i></div>
-                                <div>
-                                    <span class="profile-detail-label" data-key="role">Role</span>
-                                    <span class="profile-detail-value" id="profileRoleVal">—</span>
-                                </div>
-                            </div>
-                            <div class="profile-detail-item">
-                                <div class="profile-detail-icon"><i class="ri-time-line"></i></div>
-                                <div>
-                                    <span class="profile-detail-label" data-key="session_expiry">Session Expiry</span>
-                                    <span class="profile-detail-value" id="profileExpiry">—</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Edit Profile Card (Admin Only — hidden until button clicked) -->
-                    <div id="adminEditCard" class="content-card profile-edit-panel d-none" style="margin-top: 2rem;">
-                        <div class="card-header">
-                            <div class="card-header-icon"
-                                style="background:rgba(99,102,241,0.12);color:var(--primary);">
-                                <i class="ri-user-settings-line"></i>
-                            </div>
-                            <div>
-                                <h3 data-key="edit_profile">Edit Admin Profile</h3>
-                                <p class="card-subtitle">Update your profile information</p>
-                            </div>
-                        </div>
-                        <form id="editProfileForm" class="form-grid" onsubmit="updateAdminProfile(event)">
-                            <div class="form-group">
-                                <label data-key="new_name">New Admin Name</label>
-                                <div class="input-wrapper">
-                                    <i class="ri-user-line input-icon"></i>
-                                    <input type="text" id="newAdminName" class="form-control"
-                                        placeholder="Enter new name" required>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label data-key="new_password">New Password</label>
-                                <div class="input-wrapper">
-                                    <i class="ri-lock-line input-icon"></i>
-                                    <input type="password" id="newAdminPassword" class="form-control"
-                                        placeholder="Enter new password" required>
-                                </div>
-                            </div>
-                            <div class="form-group form-action-group">
-                                <button type="submit" class="btn-submit">
-                                    <i class="ri-save-line"></i>
-                                    <span data-key="update_profile_btn">Update Profile</span>
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                </section>
-
-                <!-- ==================== CUSTOMER PROFILE SECTION (Admin) ==================== -->
-                <section id="customerProfileSection" class="d-none section-animate">
-                    <!-- Search Customer -->
-                    <div class="content-card">
-                        <div class="card-header">
-                            <div class="card-header-icon"
-                                style="background:rgba(99,102,241,0.12);color:var(--primary);">
-                                <i class="ri-user-search-line"></i>
-                            </div>
-                            <div>
-                                <h3 data-key="customer_profile">Customer Profile</h3>
-                                <p class="card-subtitle" data-key="search_customer_desc">Search for a customer to view
-                                    and edit their records</p>
-                            </div>
-                        </div>
-                        <div class="filter-row">
-                            <div class="filter-item search-filter" style="flex:1;">
-                                <div class="input-wrapper">
-                                    <i class="ri-search-line input-icon"></i>
-                                    <input type="text" id="customerSearchInput" class="form-control"
-                                        placeholder="Enter client name..." oninput="searchCustomers()">
-                                </div>
-                            </div>
-                        </div>
-                        <!-- Customer Search Results -->
-                        <div id="customerSearchResults" style="margin-top:1rem;"></div>
-                    </div>
-
-                    <!-- Customer Detail Card (hidden until selected) -->
-                    <div id="customerDetailCard" class="content-card d-none">
-                        <div class="customer-profile-header">
-                            <div class="profile-avatar-large" style="width:56px;height:56px;font-size:1.4rem;">
-                                <i class="ri-user-3-fill"></i>
-                            </div>
-                            <div>
-                                <h2 id="customerDetailName">—</h2>
-                                <p id="customerDetailStats" class="card-subtitle">—</p>
-                            </div>
-                        </div>
-                        <div id="customerRecordsTable"></div>
-                    </div>
-
-                    <!-- Edit Modal -->
-                    <div id="editModal" class="modal-overlay d-none" onclick="closeEditModal(event)">
-                        <div class="modal-card" onclick="event.stopPropagation()">
-                            <div class="modal-header">
-                                <h3><i class="ri-edit-line"></i> <span data-key="edit_record">Edit Record</span></h3>
-                                <button class="modal-close" onclick="closeEditModal()"><i
-                                        class="ri-close-line"></i></button>
-                            </div>
-                            <form id="editRevenueForm" class="form-grid" onsubmit="saveEditedRevenue(event)">
-                                <input type="hidden" id="editRevId">
-                                <div class="form-group">
-                                    <label data-key="client_name">Client Name</label>
-                                    <div class="input-wrapper">
-                                        <i class="ri-user-line input-icon"></i>
-                                        <input type="text" id="editClientName" class="form-control" required>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label data-key="operation_type">Operation Type</label>
-                                    <div class="input-wrapper">
-                                        <i class="ri-file-list-3-line input-icon"></i>
-                                        <select id="editOpType" class="form-control">
-                                            <option value="Visa" data-key="visa">Visa</option>
-                                            <option value="Work Contract" data-key="work_contract">Work Contract
-                                            </option>
-                                            <option value="Ticket" data-key="ticket">Ticket</option>
-                                            <option value="Umrah" data-key="umrah">Umrah</option>
-                                            <option value="Hajj" data-key="hajj">Hajj</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label data-key="contract_price">Contract Price ($)</label>
-                                    <div class="input-wrapper">
-                                        <i class="ri-price-tag-3-line input-icon"></i>
-                                        <input type="number" id="editContractPrice" class="form-control" step="0.01"
-                                            required>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label data-key="offer_price">Offer Price ($)</label>
-                                    <div class="input-wrapper">
-                                        <i class="ri-money-dollar-circle-line input-icon"></i>
-                                        <input type="number" id="editOfferPrice" class="form-control" step="0.01"
-                                            required>
-                                    </div>
-                                </div>
-                                <div class="form-group" id="editPaidAmountGroup">
-                                    <label data-key="paid_amount">Paid Amount ($)</label>
-                                    <div class="input-wrapper">
-                                        <i class="ri-wallet-3-line input-icon"></i>
-                                        <input type="number" id="editPaidAmount" class="form-control" step="0.01"
-                                            required>
-                                    </div>
-                                </div>
-                                <div class="form-group form-action-group">
-                                    <button type="submit" class="btn-submit">
-                                        <i class="ri-save-line"></i>
-                                        <span data-key="save_changes">Save Changes</span>
-                                    </button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- ==================== USER MANAGEMENT SECTION (Admin) ==================== -->
-                <section id="userManagementSection" class="d-none section-animate">
-                    <div class="content-card">
-                        <div class="card-header">
-                            <div class="card-header-icon" style="background:rgba(139,92,246,0.12);color:var(--accent);">
-                                <i class="ri-user-add-line"></i>
-                            </div>
-                            <div>
-                                <h3 data-key="user_management">User Management</h3>
-                                <p class="card-subtitle" data-key="create_user_desc">Create a new user account</p>
-                            </div>
-                        </div>
-                        <form id="createUserForm" class="form-grid" onsubmit="createNewUser(event)">
-                            <div class="form-group">
-                                <label data-key="username">Username</label>
-                                <div class="input-wrapper">
-                                    <i class="ri-user-line input-icon"></i>
-                                    <input type="text" id="newUsername" class="form-control"
-                                        placeholder="Enter username" required>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label data-key="password">Password</label>
-                                <div class="input-wrapper">
-                                    <i class="ri-lock-line input-icon"></i>
-                                    <input type="password" id="newPassword" class="form-control"
-                                        placeholder="Enter password" required>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label data-key="role">Role</label>
-                                <div class="input-wrapper">
-                                    <i class="ri-shield-user-line input-icon"></i>
-                                    <select id="newRole" class="form-control">
-                                        <option value="User" data-key="user">Employee</option>
-                                        <option value="Admin" data-key="admin">Administrator</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="form-group form-action-group">
-                                <button type="submit" class="btn-submit"
-                                    style="background:linear-gradient(135deg, var(--accent), var(--primary));">
-                                    <i class="ri-user-add-line"></i>
-                                    <span data-key="create_user_btn">Create User</span>
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                </section>
-
-                <!-- ==================== SETTINGS SECTION ==================== -->
-                <section id="settingsSection" class="d-none section-animate">
-
-                    <!-- Language Card -->
-                    <div class="content-card settings-card">
-                        <div class="card-header">
-                            <div class="card-header-icon"
-                                style="background:rgba(99,102,241,0.12);color:var(--primary);">
-                                <i class="ri-translate-2"></i>
-                            </div>
-                            <div>
-                                <h3 data-key="language_setting">Language</h3>
-                                <p class="card-subtitle" data-key="language_desc">Choose your preferred display language
-                                </p>
-                            </div>
-                        </div>
-
-                        <div class="settings-option-group">
-                            <button class="settings-option-btn" data-lang="ar" data-theme-btn="false"
-                                onclick="setLang('ar'); syncSettingsUI();">
-                                <div class="settings-option-icon">🇸🇦</div>
-                                <div class="settings-option-info">
-                                    <strong data-key="arabic">العربية</strong>
-                                    <span>Arabic — RTL layout</span>
-                                </div>
-                                <div class="settings-option-check"><i class="ri-check-line"></i></div>
-                            </button>
-                            <button class="settings-option-btn" data-lang="en" data-theme-btn="false"
-                                onclick="setLang('en'); syncSettingsUI();">
-                                <div class="settings-option-icon">🇬🇧</div>
-                                <div class="settings-option-info">
-                                    <strong data-key="english">English</strong>
-                                    <span>English — LTR layout</span>
-                                </div>
-                                <div class="settings-option-check"><i class="ri-check-line"></i></div>
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Theme Card -->
-                    <div class="content-card settings-card">
-                        <div class="card-header">
-                            <div class="card-header-icon"
-                                style="background:rgba(245,158,11,0.12);color:var(--warning);">
-                                <i class="ri-palette-line"></i>
-                            </div>
-                            <div>
-                                <h3 data-key="theme_setting">Appearance</h3>
-                                <p class="card-subtitle" data-key="theme_desc">Select light or dark mode</p>
-                            </div>
-                        </div>
-
-                        <div class="settings-option-group">
-                            <button class="settings-option-btn theme-btn" data-theme="light"
-                                onclick="setTheme('light'); syncSettingsUI();">
-                                <div class="settings-option-icon settings-theme-icon settings-light-icon">
-                                    <i class="ri-sun-line"></i>
-                                </div>
-                                <div class="settings-option-info">
-                                    <strong data-key="light_mode">Light Mode</strong>
-                                    <span data-key="light_mode_desc">Clean white interface</span>
-                                </div>
-                                <div class="settings-option-check"><i class="ri-check-line"></i></div>
-                            </button>
-                            <button class="settings-option-btn theme-btn" data-theme="dark"
-                                onclick="setTheme('dark'); syncSettingsUI();">
-                                <div class="settings-option-icon settings-theme-icon settings-dark-icon">
-                                    <i class="ri-moon-line"></i>
-                                </div>
-                                <div class="settings-option-info">
-                                    <strong data-key="dark_mode">Dark Mode</strong>
-                                    <span data-key="dark_mode_desc">Easy on the eyes</span>
-                                </div>
-                                <div class="settings-option-check"><i class="ri-check-line"></i></div>
-                            </button>
-                            <button class="settings-option-btn theme-btn" data-theme="system"
-                                onclick="setTheme('system'); syncSettingsUI();">
-                                <div class="settings-option-icon settings-theme-icon settings-system-icon">
-                                    <i class="ri-computer-line"></i>
-                                </div>
-                                <div class="settings-option-info">
-                                    <strong data-key="system_mode">System Default</strong>
-                                    <span data-key="system_mode_desc">Follow device setting</span>
-                                </div>
-                                <div class="settings-option-check"><i class="ri-check-line"></i></div>
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- App Info Card -->
-                    <div class="content-card settings-card">
-                        <div class="card-header">
-                            <div class="card-header-icon"
-                                style="background:rgba(16,185,129,0.12);color:var(--success);">
-                                <i class="ri-information-line"></i>
-                            </div>
-                            <div>
-                                <h3 data-key="about_setting">About</h3>
-                                <p class="card-subtitle" data-key="about_desc">Application information</p>
-                            </div>
-                        </div>
-                        <div class="settings-info-grid">
-                            <div class="settings-info-item">
-                                <span class="settings-info-label" data-key="app_name">Application</span>
-                                <span class="settings-info-value">Data Entry System</span>
-                            </div>
-                            <div class="settings-info-item">
-                                <span class="settings-info-label" data-key="version">Version</span>
-                                <span class="settings-info-value">2.0.0</span>
-                            </div>
-                        </div>
-                    </div>
-                </section>
+          <!-- January Report Card -->
+          <div class="content-card report-highlight-card">
+            <div class="report-highlight-info">
+              <div class="report-highlight-icon">
+                <i class="ri-calendar-event-fill"></i>
+              </div>
+              <div>
+                <h4 data-key="january_report">January 2026 Report</h4>
+                <p>View detailed records for the start of the year.</p>
+              </div>
             </div>
-        </main>
-    </div>
+            <a href="january-2026.html" class="btn-report">
+              <i class="ri-external-link-line"></i>
+              <span data-key="view_january">View Report</span>
+            </a>
+          </div>
 
-    <!-- Success Message Toast -->
-    <div id="successMsg" class="toast-success">
-        <i class="ri-check-double-line"></i>
-        <span data-key="added_success">Added Successfully</span>
-    </div>
+          <div id="revenueReportsContainer"></div>
+        </section>
 
-    <script src="js/lang.js"></script>
-    <script src="js/api.js"></script>
-    <script src="js/dashboard.js"></script>
-    <script>
-        // Sidebar Toggle
-        function toggleSidebar() {
-            document.getElementById('sidebar').classList.toggle('open');
-            document.getElementById('sidebarOverlay').classList.toggle('active');
-        }
+        <!-- ==================== EXPENSES SECTION ==================== -->
+        <section id="expensesSection" class="d-none section-animate">
 
-        // RTL Hook for Dashboard
-        function updateRTL() {
-            const lang = localStorage.getItem('lang') || 'en';
-            if (lang === 'ar') {
-                document.body.dir = 'rtl';
-            } else {
-                document.body.dir = 'ltr';
-            }
-        }
-        document.addEventListener('DOMContentLoaded', updateRTL);
-    </script>
+          <!-- Add Expense Form -->
+          <div id="expenseFormContainer" class="content-card">
+            <div class="card-header">
+              <div class="card-header-icon expense-icon">
+                <i class="ri-subtract-line"></i>
+              </div>
+              <div>
+                <h3 data-key="expenses">New Expense</h3>
+                <p class="card-subtitle" data-key="add_btn">Add a new expense record</p>
+              </div>
+            </div>
+            <form id="expenseForm" class="form-grid">
+              <div class="form-group">
+                <label data-key="expense_type">Expense Type</label>
+                <div class="input-wrapper">
+                  <i class="ri-file-list-3-line input-icon"></i>
+                  <select id="expType" class="form-control">
+                    <option value="Salaries" data-key="salaries">Salaries</option>
+                    <option value="Water" data-key="water">Water</option>
+                    <option value="Electricity" data-key="electricity">Electricity</option>
+                    <option value="Procedures" data-key="procedures">Procedures</option>
+                    <option value="Other" data-key="other">Other</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-group">
+                <label data-key="amount">Amount ($)</label>
+                <div class="input-wrapper">
+                  <i class="ri-money-dollar-circle-line input-icon"></i>
+                  <input type="number" id="expAmount" class="form-control" step="0.01" placeholder="0.00" required>
+                </div>
+              </div>
+              <div class="form-group form-group-wide">
+                <label data-key="notes">Notes</label>
+                <div class="input-wrapper">
+                  <i class="ri-edit-line input-icon"></i>
+                  <input type="text" id="expNotes" class="form-control" placeholder="Optional details...">
+                </div>
+              </div>
+              <div class="form-group form-action-group">
+                <button type="submit" class="btn-submit expense-submit">
+                  <i class="ri-save-line"></i>
+                  <span data-key="add_btn">Add Record</span>
+                </button>
+              </div>
+            </form>
+          </div>
+        </section>
+
+
+
+        <!-- ==================== SUMMARY SECTION ==================== -->
+        <section id="summarySection" class="d-none section-animate">
+          <div class="summary-stats-grid">
+            <div class="stat-card stat-revenue">
+              <div class="stat-icon-wrap">
+                <i class="ri-line-chart-line"></i>
+              </div>
+              <div class="stat-info">
+                <span class="stat-label" data-key="total_revenue">Total Revenue</span>
+                <span class="stat-value" id="statTotalRev">$0.00</span>
+              </div>
+              <div class="stat-decoration"></div>
+            </div>
+            <div class="stat-card stat-paid">
+              <div class="stat-icon-wrap">
+                <i class="ri-checkbox-circle-line"></i>
+              </div>
+              <div class="stat-info">
+                <span class="stat-label" data-key="total_paid">Total Paid</span>
+                <span class="stat-value" id="statTotalPaid">$0.00</span>
+              </div>
+              <div class="stat-decoration"></div>
+            </div>
+            <div class="stat-card stat-remaining">
+              <div class="stat-icon-wrap">
+                <i class="ri-time-line"></i>
+              </div>
+              <div class="stat-info">
+                <span class="stat-label" data-key="total_remaining">Total Remaining</span>
+                <span class="stat-value" id="statTotalRem">$0.00</span>
+              </div>
+              <div class="stat-decoration"></div>
+            </div>
+            <div class="stat-card stat-expenses">
+              <div class="stat-icon-wrap">
+                <i class="ri-shopping-bag-line"></i>
+              </div>
+              <div class="stat-info">
+                <span class="stat-label" data-key="total_expenses">Total Expenses</span>
+                <span class="stat-value" id="statTotalExp">$0.00</span>
+              </div>
+              <div class="stat-decoration"></div>
+            </div>
+          </div>
+
+          <!-- Net Profit Hero -->
+          <div class="content-card profit-hero-card">
+            <div class="profit-hero-content">
+              <div class="profit-hero-icon">
+                <i class="ri-trophy-line"></i>
+              </div>
+              <div class="profit-hero-info">
+                <span class="profit-hero-label" data-key="net_profit">Net Profit</span>
+                <span class="profit-hero-desc">Revenue - Total Expenses</span>
+              </div>
+            </div>
+            <span class="profit-hero-value" id="statNetProfit">$0.00</span>
+            <div class="profit-hero-bg"></div>
+          </div>
+        </section>
+
+        <!-- ==================== PROFILE SECTION ==================== -->
+        <section id="profileSection" class="d-none section-animate">
+          <div class="content-card">
+            <div class="profile-header-area">
+              <div class="profile-avatar-large">
+                <i class="ri-user-3-fill"></i>
+              </div>
+              <div class="profile-user-info">
+                <h2 id="profileUsername">Username</h2>
+                <span class="profile-role-badge" id="profileRole">Admin</span>
+              </div>
+              <div class="admin-only d-none" style="margin-inline-start: auto;">
+                <button class="btn-submit" onclick="window.location.href='edit-profile.html'"
+                  style="width: auto; height: 40px; padding: 0 1.25rem; font-size: 0.85rem;">
+                  <i class="ri-edit-line"></i>
+                  <span data-key="edit_profile_btn">Edit Profile</span>
+                </button>
+              </div>
+            </div>
+            <div class="profile-details-grid">
+              <div class="profile-detail-item">
+                <div class="profile-detail-icon"><i class="ri-user-line"></i></div>
+                <div>
+                  <span class="profile-detail-label" data-key="username">Username</span>
+                  <span class="profile-detail-value" id="profileUsernameVal">—</span>
+                </div>
+              </div>
+              <div class="profile-detail-item">
+                <div class="profile-detail-icon"><i class="ri-shield-user-line"></i></div>
+                <div>
+                  <span class="profile-detail-label" data-key="role">Role</span>
+                  <span class="profile-detail-value" id="profileRoleVal">—</span>
+                </div>
+              </div>
+              <div class="profile-detail-item">
+                <div class="profile-detail-icon"><i class="ri-time-line"></i></div>
+                <div>
+                  <span class="profile-detail-label" data-key="session_expiry">Session Expiry</span>
+                  <span class="profile-detail-value" id="profileExpiry">—</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Edit Profile Card (Admin Only — hidden until button clicked) -->
+          <div id="adminEditCard" class="content-card profile-edit-panel d-none" style="margin-top: 2rem;">
+            <div class="card-header">
+              <div class="card-header-icon" style="background:rgba(99,102,241,0.12);color:var(--primary);">
+                <i class="ri-user-settings-line"></i>
+              </div>
+              <div>
+                <h3 data-key="edit_profile">Edit Admin Profile</h3>
+                <p class="card-subtitle">Update your profile information</p>
+              </div>
+            </div>
+            <form id="editProfileForm" class="form-grid" onsubmit="updateAdminProfile(event)">
+              <div class="form-group">
+                <label data-key="new_name">New Admin Name</label>
+                <div class="input-wrapper">
+                  <i class="ri-user-line input-icon"></i>
+                  <input type="text" id="newAdminName" class="form-control" placeholder="Enter new name" required>
+                </div>
+              </div>
+              <div class="form-group">
+                <label data-key="new_password">New Password</label>
+                <div class="input-wrapper">
+                  <i class="ri-lock-line input-icon"></i>
+                  <input type="password" id="newAdminPassword" class="form-control" placeholder="Enter new password"
+                    required>
+                </div>
+              </div>
+              <div class="form-group form-action-group">
+                <button type="submit" class="btn-submit">
+                  <i class="ri-save-line"></i>
+                  <span data-key="update_profile_btn">Update Profile</span>
+                </button>
+              </div>
+            </form>
+          </div>
+        </section>
+
+        <!-- ==================== CUSTOMER PROFILE SECTION (Admin) ==================== -->
+        <section id="customerProfileSection" class="d-none section-animate">
+          <!-- Search Customer -->
+          <div class="content-card">
+            <div class="card-header">
+              <div class="card-header-icon" style="background:rgba(99,102,241,0.12);color:var(--primary);">
+                <i class="ri-user-search-line"></i>
+              </div>
+              <div>
+                <h3 data-key="customer_profile">Customer Profile</h3>
+                <p class="card-subtitle" data-key="search_customer_desc">Search for a customer to view
+                  and edit their records</p>
+              </div>
+            </div>
+            <div class="filter-row">
+              <div class="filter-item search-filter" style="flex:1;">
+                <div class="input-wrapper">
+                  <i class="ri-search-line input-icon"></i>
+                  <input type="text" id="customerSearchInput" class="form-control" placeholder="Enter client name..."
+                    oninput="searchCustomers()">
+                </div>
+              </div>
+            </div>
+            <!-- Customer Search Results -->
+            <div id="customerSearchResults" style="margin-top:1rem;"></div>
+          </div>
+
+          <!-- Customer Detail Card (hidden until selected) -->
+          <div id="customerDetailCard" class="content-card d-none">
+            <div class="customer-profile-header">
+              <div class="profile-avatar-large" style="width:56px;height:56px;font-size:1.4rem;">
+                <i class="ri-user-3-fill"></i>
+              </div>
+              <div>
+                <h2 id="customerDetailName">—</h2>
+                <p id="customerDetailStats" class="card-subtitle">—</p>
+              </div>
+            </div>
+            <div id="customerRecordsTable"></div>
+          </div>
+
+          <!-- Edit Modal -->
+          <div id="editModal" class="modal-overlay d-none" onclick="closeEditModal(event)">
+            <div class="modal-card" onclick="event.stopPropagation()">
+              <div class="modal-header">
+                <h3><i class="ri-edit-line"></i> <span data-key="edit_record">Edit Record</span></h3>
+                <button class="modal-close" onclick="closeEditModal()"><i class="ri-close-line"></i></button>
+              </div>
+              <form id="editRevenueForm" class="form-grid" onsubmit="saveEditedRevenue(event)">
+                <input type="hidden" id="editRevId">
+                <div class="form-group">
+                  <label data-key="client_name">Client Name</label>
+                  <div class="input-wrapper">
+                    <i class="ri-user-line input-icon"></i>
+                    <input type="text" id="editClientName" class="form-control" required>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label data-key="operation_type">Operation Type</label>
+                  <div class="input-wrapper">
+                    <i class="ri-file-list-3-line input-icon"></i>
+                    <select id="editOpType" class="form-control">
+                      <option value="Visa" data-key="visa">Visa</option>
+                      <option value="Work Contract" data-key="work_contract">Work Contract
+                      </option>
+                      <option value="Ticket" data-key="ticket">Ticket</option>
+                      <option value="Umrah" data-key="umrah">Umrah</option>
+                      <option value="Hajj" data-key="hajj">Hajj</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label data-key="contract_price">Contract Price ($)</label>
+                  <div class="input-wrapper">
+                    <i class="ri-price-tag-3-line input-icon"></i>
+                    <input type="number" id="editContractPrice" class="form-control" step="0.01" required>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label data-key="offer_price">Offer Price ($)</label>
+                  <div class="input-wrapper">
+                    <i class="ri-money-dollar-circle-line input-icon"></i>
+                    <input type="number" id="editOfferPrice" class="form-control" step="0.01" required>
+                  </div>
+                </div>
+                <div class="form-group" id="editPaidAmountGroup">
+                  <label data-key="paid_amount">Paid Amount ($)</label>
+                  <div class="input-wrapper">
+                    <i class="ri-wallet-3-line input-icon"></i>
+                    <input type="number" id="editPaidAmount" class="form-control" step="0.01" required>
+                  </div>
+                </div>
+                <div class="form-group form-action-group">
+                  <button type="submit" class="btn-submit">
+                    <i class="ri-save-line"></i>
+                    <span data-key="save_changes">Save Changes</span>
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==================== USER MANAGEMENT SECTION (Admin) ==================== -->
+        <section id="userManagementSection" class="d-none section-animate">
+          <div class="content-card">
+            <div class="card-header">
+              <div class="card-header-icon" style="background:rgba(139,92,246,0.12);color:var(--accent);">
+                <i class="ri-user-add-line"></i>
+              </div>
+              <div>
+                <h3 data-key="user_management">User Management</h3>
+                <p class="card-subtitle" data-key="create_user_desc">Create a new user account</p>
+              </div>
+            </div>
+            <form id="createUserForm" class="form-grid" onsubmit="createNewUser(event)">
+              <div class="form-group">
+                <label data-key="username">Username</label>
+                <div class="input-wrapper">
+                  <i class="ri-user-line input-icon"></i>
+                  <input type="text" id="newUsername" class="form-control" placeholder="Enter username" required>
+                </div>
+              </div>
+              <div class="form-group">
+                <label data-key="password">Password</label>
+                <div class="input-wrapper">
+                  <i class="ri-lock-line input-icon"></i>
+                  <input type="password" id="newPassword" class="form-control" placeholder="Enter password" required>
+                </div>
+              </div>
+              <div class="form-group">
+                <label data-key="role">Role</label>
+                <div class="input-wrapper">
+                  <i class="ri-shield-user-line input-icon"></i>
+                  <select id="newRole" class="form-control">
+                    <option value="User" data-key="user">Employee</option>
+                    <option value="Admin" data-key="admin">Administrator</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-group form-action-group">
+                <button type="submit" class="btn-submit"
+                  style="background:linear-gradient(135deg, var(--accent), var(--primary));">
+                  <i class="ri-user-add-line"></i>
+                  <span data-key="create_user_btn">Create User</span>
+                </button>
+              </div>
+            </form>
+          </div>
+        </section>
+
+        <!-- ==================== SETTINGS SECTION ==================== -->
+        <section id="settingsSection" class="d-none section-animate">
+
+          <!-- Language Card -->
+          <div class="content-card settings-card">
+            <div class="card-header">
+              <div class="card-header-icon" style="background:rgba(99,102,241,0.12);color:var(--primary);">
+                <i class="ri-translate-2"></i>
+              </div>
+              <div>
+                <h3 data-key="language_setting">Language</h3>
+                <p class="card-subtitle" data-key="language_desc">Choose your preferred display language
+                </p>
+              </div>
+            </div>
+
+            <div class="settings-option-group">
+              <button class="settings-option-btn" data-lang="ar" data-theme-btn="false"
+                onclick="setLang('ar'); syncSettingsUI();">
+                <div class="settings-option-icon">🇸🇦</div>
+                <div class="settings-option-info">
+                  <strong data-key="arabic">العربية</strong>
+                  <span>Arabic — RTL layout</span>
+                </div>
+                <div class="settings-option-check"><i class="ri-check-line"></i></div>
+              </button>
+              <button class="settings-option-btn" data-lang="en" data-theme-btn="false"
+                onclick="setLang('en'); syncSettingsUI();">
+                <div class="settings-option-icon">🇬🇧</div>
+                <div class="settings-option-info">
+                  <strong data-key="english">English</strong>
+                  <span>English — LTR layout</span>
+                </div>
+                <div class="settings-option-check"><i class="ri-check-line"></i></div>
+              </button>
+            </div>
+          </div>
+
+          <!-- Theme Card -->
+          <div class="content-card settings-card">
+            <div class="card-header">
+              <div class="card-header-icon" style="background:rgba(245,158,11,0.12);color:var(--warning);">
+                <i class="ri-palette-line"></i>
+              </div>
+              <div>
+                <h3 data-key="theme_setting">Appearance</h3>
+                <p class="card-subtitle" data-key="theme_desc">Select light or dark mode</p>
+              </div>
+            </div>
+
+            <div class="settings-option-group">
+              <button class="settings-option-btn theme-btn" data-theme="light"
+                onclick="setTheme('light'); syncSettingsUI();">
+                <div class="settings-option-icon settings-theme-icon settings-light-icon">
+                  <i class="ri-sun-line"></i>
+                </div>
+                <div class="settings-option-info">
+                  <strong data-key="light_mode">Light Mode</strong>
+                  <span data-key="light_mode_desc">Clean white interface</span>
+                </div>
+                <div class="settings-option-check"><i class="ri-check-line"></i></div>
+              </button>
+              <button class="settings-option-btn theme-btn" data-theme="dark"
+                onclick="setTheme('dark'); syncSettingsUI();">
+                <div class="settings-option-icon settings-theme-icon settings-dark-icon">
+                  <i class="ri-moon-line"></i>
+                </div>
+                <div class="settings-option-info">
+                  <strong data-key="dark_mode">Dark Mode</strong>
+                  <span data-key="dark_mode_desc">Easy on the eyes</span>
+                </div>
+                <div class="settings-option-check"><i class="ri-check-line"></i></div>
+              </button>
+              <button class="settings-option-btn theme-btn" data-theme="system"
+                onclick="setTheme('system'); syncSettingsUI();">
+                <div class="settings-option-icon settings-theme-icon settings-system-icon">
+                  <i class="ri-computer-line"></i>
+                </div>
+                <div class="settings-option-info">
+                  <strong data-key="system_mode">System Default</strong>
+                  <span data-key="system_mode_desc">Follow device setting</span>
+                </div>
+                <div class="settings-option-check"><i class="ri-check-line"></i></div>
+              </button>
+            </div>
+          </div>
+
+          <!-- App Info Card -->
+          <div class="content-card settings-card">
+            <div class="card-header">
+              <div class="card-header-icon" style="background:rgba(16,185,129,0.12);color:var(--success);">
+                <i class="ri-information-line"></i>
+              </div>
+              <div>
+                <h3 data-key="about_setting">About</h3>
+                <p class="card-subtitle" data-key="about_desc">Application information</p>
+              </div>
+            </div>
+            <div class="settings-info-grid">
+              <div class="settings-info-item">
+                <span class="settings-info-label" data-key="app_name">Application</span>
+                <span class="settings-info-value">Data Entry System</span>
+              </div>
+              <div class="settings-info-item">
+                <span class="settings-info-label" data-key="version">Version</span>
+                <span class="settings-info-value">2.0.0</span>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <!-- Success Message Toast -->
+  <div id="successMsg" class="toast-success">
+    <i class="ri-check-double-line"></i>
+    <span data-key="added_success">Added Successfully</span>
+  </div>
+
+  <script src="js/lang.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/dashboard.js"></script>
+  <script>
+    // Sidebar Toggle
+    function toggleSidebar() {
+      document.getElementById('sidebar').classList.toggle('open');
+      document.getElementById('sidebarOverlay').classList.toggle('active');
+    }
+
+    // RTL Hook for Dashboard
+    function updateRTL() {
+      const lang = localStorage.getItem('lang') || 'en';
+      if (lang === 'ar') {
+        document.body.dir = 'rtl';
+      } else {
+        document.body.dir = 'ltr';
+      }
+    }
+    document.addEventListener('DOMContentLoaded', updateRTL);
+  </script>
 </body>
 
 </html>
