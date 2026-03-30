@@ -1,145 +1,331 @@
 <!DOCTYPE html>
-<html lang="en">
+<html class="dark" lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <meta name="description" content="Login to Data Entry System - Manage revenues and expenses efficiently.">
-    <title>Sign In — Data Entry System</title>
-    <link rel="stylesheet" href="css/base.css">
-    <link rel="stylesheet" href="css/login.css">
+    <title>Noor Mozdalifah | Secure Login</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Inter:wght@300;400;500;600&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary-container": "#5a3bdd",
+                        "surface-dim": "#111319",
+                        "surface-container-high": "#282a30",
+                        "surface-variant": "#33343b",
+                        "primary-fixed-dim": "#c9bfff",
+                        "error": "#ffb4ab",
+                        "on-tertiary": "#552000",
+                        "on-error": "#690005",
+                        "secondary-fixed-dim": "#c1c6da",
+                        "on-tertiary-fixed-variant": "#793100",
+                        "surface-container-lowest": "#0c0e14",
+                        "primary-fixed": "#e5deff",
+                        "surface-bright": "#373940",
+                        "inverse-on-surface": "#2e3037",
+                        "on-primary-fixed-variant": "#451bc8",
+                        "tertiary-fixed-dim": "#ffb692",
+                        "inverse-surface": "#e2e2eb",
+                        "outline": "#928ea1",
+                        "surface-container": "#1e1f26",
+                        "secondary-container": "#414657",
+                        "inverse-primary": "#5d3fe0",
+                        "tertiary-fixed": "#ffdbcb",
+                        "on-surface-variant": "#c9c4d8",
+                        "surface-container-highest": "#33343b",
+                        "on-secondary-fixed-variant": "#414657",
+                        "on-primary": "#2e009c",
+                        "surface": "#111319",
+                        "secondary": "#c1c6da",
+                        "on-primary-fixed": "#1a0063",
+                        "secondary-fixed": "#dee2f7",
+                        "on-error-container": "#ffdad6",
+                        "on-tertiary-fixed": "#341100",
+                        "on-surface": "#e2e2eb",
+                        "on-secondary": "#2b3040",
+                        "outline-variant": "#484555",
+                        "tertiary-container": "#9a4000",
+                        "background": "#111319",
+                        "error-container": "#93000a",
+                        "on-secondary-fixed": "#161b2a",
+                        "on-primary-container": "#d6ceff",
+                        "on-tertiary-container": "#ffc8ae",
+                        "on-secondary-container": "#b0b4c8",
+                        "surface-tint": "#c9bfff",
+                        "primary": "#c9bfff",
+                        "tertiary": "#ffb692",
+                        "surface-container-low": "#191b22",
+                        "on-background": "#e2e2eb"
+                    },
+                    fontFamily: {
+                        "headline": ["Plus Jakarta Sans"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    },
+                    borderRadius: { "DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem" },
+                },
+            },
+        }
+    </script>
+    <style>
+        .glass-card {
+            background: rgba(51, 52, 59, 0.6);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(146, 142, 161, 0.1);
+        }
+
+        .dot-grid {
+            background-image: radial-gradient(#484555 1px, transparent 1px);
+            background-size: 24px 24px;
+            opacity: 0.05;
+        }
+
+        .auth-error {
+            display: none;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1rem;
+            background-color: #fef2f2;
+            color: #ef4444;
+            border-radius: 0.75rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-bottom: 1rem;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+        .shake {
+            animation: shake 0.4s ease-in-out;
+        }
+
+        .btn-loading {
+            position: relative;
+            color: transparent !important;
+        }
+        .btn-loading::after {
+            content: "";
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
 </head>
 
-<body>
-    <div class="auth-page">
-
-        <!-- ===== LEFT BRAND PANEL ===== -->
-        <aside class="auth-brand" aria-hidden="true">
-            <div class="auth-brand-inner">
-                <!-- Decorative blobs -->
-                <div class="auth-blob blob-1"></div>
-                <div class="auth-blob blob-2"></div>
-                <div class="auth-blob blob-3"></div>
-
-                <div class="auth-brand-content">
-                    <div class="auth-brand-logo">
-                        <img src="images/logo.png" alt="Noor Mozdalifah Logo" class="brand-logo-img">
-                    </div>
-                    <h1 class="auth-brand-title">نور مزدلفة<br><span class="auth-brand-subtitle">Noor Mozdalifah</span>
-                    </h1>
-                    <p class="auth-brand-desc">Manage revenues, expenses and client records from one powerful,
-                        streamlined dashboard.</p>
-
-                    <div class="auth-features">
-                        <div class="auth-feature-item">
-                            <div class="auth-feature-icon"><i class="ri-line-chart-line"></i></div>
-                            <span>Real-time financial tracking</span>
-                        </div>
-                        <div class="auth-feature-item">
-                            <div class="auth-feature-icon"><i class="ri-user-search-line"></i></div>
-                            <span>Full client profile management</span>
-                        </div>
-                        <div class="auth-feature-item">
-                            <div class="auth-feature-icon"><i class="ri-shield-check-line"></i></div>
-                            <span>Role-based secure access</span>
-                        </div>
-                    </div>
+<body class="bg-surface-dim text-on-surface font-body min-h-screen">
+    <!-- Main Split Screen Container -->
+    <main class="flex w-full min-h-screen" dir="ltr">
+        <!-- LEFT SIDE: Login Panel (Light/White surface focus) -->
+        <section
+            class="w-full lg:w-[45%] bg-white flex flex-col justify-between p-8 md:p-12 lg:p-16 relative overflow-y-auto"
+            dir="auto">
+            <!-- Branding Header -->
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-primary-container rounded-lg flex items-center justify-center text-white">
+                    <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">account_balance</span>
                 </div>
+                <span class="text-2xl font-headline font-extrabold text-slate-900 tracking-tight">Noor Mozdalifah</span>
             </div>
-        </aside>
-
-        <!-- ===== RIGHT FORM PANEL ===== -->
-        <main class="auth-form-panel" role="main">
-            <div class="auth-form-inner">
-
-
-
-                <!-- Heading -->
-                <div class="auth-heading">
-                    <div class="auth-form-logo">
-                        <img src="images/logo.png" alt="Noor Mozdalifah" class="auth-form-logo-img">
-                    </div>
-                    <h2 class="auth-company-name">نور مزدلفة</h2>
-                    <p class="auth-company-sub">Noor Mozdalifah</p>
-                    <p class="auth-subheading" data-key="login_title">أهلاً وسهلاً</p>
+            <!-- Login Form Area -->
+            <div class="max-w-md w-full mx-auto flex flex-col justify-center flex-1 py-8">
+                <div class="mb-10">
+                    <h1 class="text-4xl font-headline font-bold text-slate-900 mb-2 text-right">نور مزدلفة</h1>
+                    <h2 class="text-2xl font-headline font-semibold text-primary-container text-right">أهلاً وسهلاً</h2>
+                    <p class="text-slate-500 mt-4 font-medium" style="direction:ltr;text-align:left;" data-key="please_login">Please enter your credentials to access the dashboard</p>
                 </div>
 
-                <!-- Login Form -->
-                <form id="loginForm" class="auth-form" novalidate aria-label="Login form">
+                <!-- Error message -->
+                <div id="authError" class="auth-error" role="alert" aria-live="polite">
+                    <span class="material-symbols-outlined text-sm">error</span>
+                    <span id="errorMsg"></span>
+                </div>
 
-                    <div class="field-group">
-                        <label for="username" data-key="username">Username</label>
-                        <div class="field-wrapper">
-                            <i class="ri-user-line field-icon" aria-hidden="true"></i>
-                            <input type="text" id="username" name="username" class="field-input"
-                                placeholder="Enter your username" autocomplete="username" required aria-required="true">
+                <form id="loginForm" class="space-y-6">
+                    <!-- Username -->
+                    <div class="space-y-2" dir="ltr">
+                        <label class="block text-xs font-bold uppercase tracking-widest text-slate-400 ml-1" data-key="username">Username</label>
+                        <div class="relative group">
+                            <span
+                                class="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-slate-400 group-focus-within:text-primary-container transition-colors">person</span>
+                            <input id="username" name="username"
+                                class="w-full pl-12 pr-4 py-4 bg-slate-50 border-none rounded-xl focus:ring-2 focus:ring-primary-container/20 focus:bg-white transition-all text-slate-900 placeholder:text-slate-300 font-medium"
+                                placeholder="Enter your username" type="text" required dir="auto" />
                         </div>
                     </div>
-
-                    <div class="field-group">
-                        <label for="password" data-key="password">Password</label>
-                        <div class="field-wrapper">
-                            <i class="ri-lock-line field-icon" aria-hidden="true"></i>
-                            <input type="password" id="password" name="password" class="field-input"
-                                placeholder="••••••••" autocomplete="current-password" required aria-required="true">
-                            <button type="button" class="field-toggle-pw" id="togglePw"
-                                aria-label="Toggle password visibility" onclick="togglePassword()">
-                                <i class="ri-eye-off-line" id="togglePwIcon" aria-hidden="true"></i>
-                            </button>
+                    <!-- Password -->
+                    <div class="space-y-2" dir="ltr">
+                        <label class="block text-xs font-bold uppercase tracking-widest text-slate-400 ml-1" data-key="password">Password</label>
+                        <div class="relative group">
+                            <span
+                                class="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-slate-400 group-focus-within:text-primary-container transition-colors">lock</span>
+                            <input id="password" name="password"
+                                class="w-full pl-12 pr-12 py-4 bg-slate-50 border-none rounded-xl focus:ring-2 focus:ring-primary-container/20 focus:bg-white transition-all text-slate-900 placeholder:text-slate-300 font-medium"
+                                placeholder="••••••••" type="password" required dir="ltr" />
+                            <button id="togglePw" class="absolute right-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-slate-400 hover:text-slate-600 transition-colors"
+                                type="button" onclick="togglePassword()">visibility_off</button>
                         </div>
                     </div>
-
-                    <div class="field-group">
-                        <label for="role" data-key="role">Account Type</label>
-                        <div class="field-wrapper">
-                            <i class="ri-shield-user-line field-icon" aria-hidden="true"></i>
-                            <select id="role" name="role" class="field-input" required aria-required="true">
+                    <!-- Account Type Dropdown -->
+                    <div class="space-y-2" dir="ltr">
+                        <label class="block text-xs font-bold uppercase tracking-widest text-slate-400 ml-1" data-key="role">Account Type</label>
+                        <div class="relative group">
+                            <span
+                                class="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-slate-400 group-focus-within:text-primary-container transition-colors"
+                                style="font-variation-settings: 'FILL' 1;">shield</span>
+                            <select id="role" name="role" dir="ltr"
+                                class="w-full pl-12 pr-4 py-4 bg-slate-50 border-none rounded-xl focus:ring-2 focus:ring-primary-container/20 focus:bg-white transition-all text-slate-900 appearance-none font-medium">
                                 <option value="Admin" data-key="admin">Administrator</option>
                                 <option value="User" data-key="user">Employee</option>
                             </select>
+                            <span
+                                class="absolute right-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-slate-400 pointer-events-none">expand_more</span>
                         </div>
                     </div>
-
-                    <!-- Error message -->
-                    <div id="authError" class="auth-error" role="alert" aria-live="polite" style="display:none;"></div>
-
-                    <!-- Submit -->
-                    <button type="submit" class="btn-signin" id="submitBtn" aria-label="Sign in">
-                        <span data-key="login_btn">Sign In</span>
-                        <i class="ri-arrow-right-line btn-signin-icon" aria-hidden="true"></i>
-                        <div class="btn-signin-ripple"></div>
-                    </button>
-
+                    
+                    <div class="pt-4">
+                        <!-- Submit Button -->
+                        <button id="submitBtn" type="submit"
+                            class="w-full py-4 bg-primary-container text-white font-headline font-bold rounded-full flex items-center justify-center gap-2 shadow-xl shadow-primary-container/30 hover:shadow-primary-container/50 hover:scale-[1.02] active:scale-95 transition-all">
+                            <span data-key="login_btn">Sign In</span>
+                            <span class="material-symbols-outlined text-lg">arrow_forward</span>
+                        </button>
+                    </div>
                 </form>
-
-                <p class="auth-footer-note">Secure login · Role-based access control</p>
             </div>
-        </main>
-    </div>
+            <!-- Left Footer -->
+            <footer
+                class="flex items-center justify-between text-slate-400 text-xs border-t border-slate-100 pt-8 mt-auto">
+                <div class="flex items-center gap-4">
+                    <span class="flex items-center gap-1"><span
+                            class="material-symbols-outlined text-sm">verified_user</span> Secure login</span>
+                    <span class="w-1 h-1 bg-slate-200 rounded-full"></span>
+                    <span>Role-based access control</span>
+                </div>
+                <span>© 2024 Noor Mozdalifah</span>
+            </footer>
+        </section>
+        <!-- RIGHT SIDE: Info Panel (Dark Navy focus) -->
+        <section class="hidden lg:flex lg:w-[55%] bg-surface-dim relative flex-col justify-center p-16 lg:p-24">
+            <!-- Grid Background Decor -->
+            <div class="absolute inset-0 dot-grid pointer-events-none"></div>
+            <!-- Ambient Glow -->
+            <div class="absolute top-1/4 -right-24 w-96 h-96 bg-primary-container/20 rounded-full blur-[120px]"></div>
+            <div class="absolute bottom-1/4 -left-24 w-96 h-96 bg-tertiary-container/10 rounded-full blur-[100px]"></div>
+            <div class="relative z-10">
+                <!-- Badge -->
+                <div
+                    class="inline-flex items-center px-4 py-1.5 rounded-full bg-surface-container-high border border-outline-variant/20 mb-8">
+                    <span class="w-2 h-2 rounded-full bg-primary-container mr-3 animate-pulse"></span>
+                    <span class="text-[10px] font-bold tracking-[0.2em] text-on-surface-variant uppercase">Enterprise
+                        Edition 2.0</span>
+                </div>
+                <!-- Main Headlines -->
+                <h2 class="text-5xl xl:text-6xl font-headline font-extrabold text-on-surface leading-[1.1] mb-6">
+                    Precision Meets <br />
+                    <span
+                        class="text-transparent bg-clip-text bg-gradient-to-r from-primary to-primary-fixed-dim">Intelligence.</span>
+                </h2>
+                <p class="text-on-surface-variant text-lg max-w-xl mb-16 leading-relaxed">
+                    Designed for high-performance financial workflows. Manage your institutional data with sovereign
+                    architecture and real-time oversight.
+                </p>
+                <!-- Bento Grid Feature Cards -->
+                <div class="grid grid-cols-2 gap-4">
+                    <!-- Card 1 -->
+                    <div class="glass-card p-6 rounded-2xl group hover:bg-surface-container-highest/40 transition-colors">
+                        <div
+                            class="w-12 h-12 rounded-xl bg-primary-container/20 flex items-center justify-center text-primary-fixed-dim mb-4 group-hover:scale-110 transition-transform">
+                            <span class="material-symbols-outlined">analytics</span>
+                        </div>
+                        <h3 class="font-headline font-bold text-on-surface mb-2">Streamlined Data Entry</h3>
+                        <p class="text-sm text-on-surface-variant leading-relaxed">Professional system architected for
+                            complex business data ingestion.</p>
+                    </div>
+                    <!-- Card 2 -->
+                    <div class="glass-card p-6 rounded-2xl group hover:bg-surface-container-highest/40 transition-colors">
+                        <div
+                            class="w-12 h-12 rounded-xl bg-tertiary-container/20 flex items-center justify-center text-tertiary-fixed mb-4 group-hover:scale-110 transition-transform">
+                            <span class="material-symbols-outlined">query_stats</span>
+                        </div>
+                        <h3 class="font-headline font-bold text-on-surface mb-2">Real-time Financial Tracking</h3>
+                        <p class="text-sm text-on-surface-variant leading-relaxed">Granular monitoring of organizational
+                            revenues and overheads.</p>
+                    </div>
+                    <!-- Card 3 -->
+                    <div class="glass-card p-6 rounded-2xl group hover:bg-surface-container-highest/40 transition-colors">
+                        <div
+                            class="w-12 h-12 rounded-xl bg-secondary-container/20 flex items-center justify-center text-secondary-fixed mb-4 group-hover:scale-110 transition-transform">
+                            <span class="material-symbols-outlined">admin_panel_settings</span>
+                        </div>
+                        <h3 class="font-headline font-bold text-on-surface mb-2">Role-Based Management</h3>
+                        <p class="text-sm text-on-surface-variant leading-relaxed">Secure, compartmentalized access for
+                            administrators and specialists.</p>
+                    </div>
+                    <!-- Card 4 -->
+                    <div class="glass-card p-6 rounded-2xl group hover:bg-surface-container-highest/40 transition-colors">
+                        <div
+                            class="w-12 h-12 rounded-xl bg-surface-bright/20 flex items-center justify-center text-on-surface-variant mb-4 group-hover:scale-110 transition-transform">
+                            <span class="material-symbols-outlined">data_exploration</span>
+                        </div>
+                        <h3 class="font-headline font-bold text-on-surface mb-2">Operational Accuracy</h3>
+                        <p class="text-sm text-on-surface-variant leading-relaxed">Engineered for smooth daily operations
+                            and high-fidelity reporting.</p>
+                    </div>
+                </div>
+                <!-- Trust Indicators -->
+                <div class="mt-20 flex items-center gap-10 opacity-30 grayscale contrast-125">
+                    <div class="flex items-center gap-2 font-headline font-black text-xl italic tracking-tighter">
+                        FINANCE<span class="text-primary">CORE</span></div>
+                    <div class="flex items-center gap-2 font-headline font-black text-xl italic tracking-tighter">
+                        QUANTUM<span class="text-primary">SEC</span></div>
+                    <div class="flex items-center gap-2 font-headline font-black text-xl italic tracking-tighter">
+                        DATA<span class="text-primary">VINE</span></div>
+                </div>
+            </div>
+        </section>
+    </main>
 
     <!-- Scripts -->
     <script src="js/lang.js"></script>
     <script src="js/api.js"></script>
     <script>
-        // Apply theme before first paint to prevent flash
+        // Apply theme before first paint
         (function () {
             const theme = localStorage.getItem('theme') || 'light';
-            if (theme === 'dark') document.documentElement.setAttribute('data-theme', 'dark');
-            else document.documentElement.setAttribute('data-theme', 'light');
+            if (theme === 'dark') document.documentElement.classList.add('dark');
+            else document.documentElement.classList.remove('dark');
         })();
-
-        // RTL - applied by lang.js on DOMContentLoaded
 
         // Toggle Password Visibility
         function togglePassword() {
             const pw = document.getElementById('password');
-            const icon = document.getElementById('togglePwIcon');
+            const btn = document.getElementById('togglePw');
             if (pw.type === 'password') {
                 pw.type = 'text';
-                icon.className = 'ri-eye-line';
+                btn.textContent = 'visibility';
             } else {
                 pw.type = 'password';
-                icon.className = 'ri-eye-off-line';
+                btn.textContent = 'visibility_off';
             }
         }
 
@@ -148,8 +334,10 @@
             e.preventDefault();
             const btn = document.getElementById('submitBtn');
             const errorEl = document.getElementById('authError');
+            const errorText = document.getElementById('errorMsg');
+            const form = document.getElementById('loginForm');
 
-            btn.classList.add('loading');
+            btn.classList.add('btn-loading');
             btn.disabled = true;
             errorEl.style.display = 'none';
 
@@ -157,22 +345,30 @@
             const password = document.getElementById('password').value;
             const role = document.getElementById('role').value;
 
-            const success = await login(username, password, role);
+            try {
+                const success = await login(username, password, role);
 
-            if (success) {
-                btn.classList.remove('loading');
-                btn.classList.add('success');
-                btn.querySelector('span').textContent = currentLang === 'ar' ? 'جارٍ التوجيه...' : 'Redirecting...';
-                setTimeout(() => window.location.href = 'dashboard.html', 600);
-            } else {
-                btn.classList.remove('loading');
+                if (success) {
+                    btn.classList.remove('btn-loading');
+                    btn.querySelector('span').textContent = currentLang === 'ar' ? 'جارٍ التوجيه...' : 'Redirecting...';
+                    setTimeout(() => window.location.href = 'dashboard.html', 600);
+                } else {
+                    btn.classList.remove('btn-loading');
+                    btn.disabled = false;
+                    errorText.textContent = currentLang === 'ar'
+                        ? 'بيانات الدخول غير صحيحة. حاول مجدداً.'
+                        : 'Invalid credentials. Please try again.';
+                    errorEl.style.display = 'flex';
+                    form.classList.add('shake');
+                    setTimeout(() => form.classList.remove('shake'), 600);
+                }
+            } catch (err) {
+                btn.classList.remove('btn-loading');
                 btn.disabled = false;
-                errorEl.textContent = currentLang === 'ar'
-                    ? 'بيانات الدخول غير صحيحة. حاول مجدداً.'
-                    : 'Invalid credentials. Please try again.';
+                errorText.textContent = err.message || (currentLang === 'ar' ? 'حدث خطأ ما' : 'An error occurred');
                 errorEl.style.display = 'flex';
-                document.getElementById('loginForm').classList.add('shake');
-                setTimeout(() => document.getElementById('loginForm').classList.remove('shake'), 600);
+                form.classList.add('shake');
+                setTimeout(() => form.classList.remove('shake'), 600);
             }
         });
     </script>

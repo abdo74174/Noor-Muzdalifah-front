@@ -85,5 +85,6 @@
     "no_expense_records": "No expense records found",
     "date": "Date",
     "registered_users": "Registered Users",
-    "edit_user": "Edit User"
+    "edit_user": "Edit User",
+    "please_login": "Please enter your credentials to access the dashboard"
 }
