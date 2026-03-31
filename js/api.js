@@ -1,7 +1,7 @@
 const API_CONFIG = {
     URL: window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
          ? 'http://localhost:5239/api' 
-         : '/api'
+         : 'https://noor-muzdalifah.runasp.net/api'
 };
 
 
